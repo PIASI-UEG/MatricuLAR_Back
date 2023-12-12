@@ -2,6 +2,7 @@ package br.ueg.piasi.MatricuLAR;
 
 import br.ueg.piasi.MatricuLAR.model.Pessoa;
 import br.ueg.piasi.MatricuLAR.model.Usuario;
+import br.ueg.piasi.MatricuLAR.repository.PessoaRepository;
 import br.ueg.piasi.MatricuLAR.service.impl.UsuarioServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -19,12 +20,18 @@ public class InitialRunner implements ApplicationRunner {
     @Autowired
     private UsuarioServiceImpl usuarioService;
 
+    @Autowired
+    private PessoaRepository pessoaRepository;
+
     public void init() throws IOException {
+        Pessoa pessoa = Pessoa.builder()
+                .cpf("000")
+                .nome("Teste")
+                .build();
+        pessoa = pessoaRepository.save(pessoa);
+
         Usuario usuario = Usuario.builder()
-                .pessoa(Pessoa.builder()
-                        .cpf("000")
-                        .nome("Teste")
-                        .build())
+                .pessoa(pessoa)
                 .senha("admin")
                 .cargo("Tester")
                 .build();
@@ -37,7 +44,7 @@ public class InitialRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         try {
-            this.init();
+            init();
         } catch (Exception e) {
             e.printStackTrace();
         }
