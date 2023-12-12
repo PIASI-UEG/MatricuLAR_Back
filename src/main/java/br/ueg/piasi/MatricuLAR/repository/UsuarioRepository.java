@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long>, JpaSpecificationExecutor<Usuario> {
@@ -18,6 +19,5 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long>, JpaSpec
 
     @Query(value = "select count(*) from usuario ", nativeQuery = true)
     Integer countAll();
-
-    Usuario findUsuarioByLogin(String login);
+    Optional<Usuario> findUsuarioByPessoaCpf(String  pessoaCpf);
 }

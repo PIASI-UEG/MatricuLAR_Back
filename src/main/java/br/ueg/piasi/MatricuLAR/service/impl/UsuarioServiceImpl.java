@@ -39,15 +39,9 @@ public class UsuarioServiceImpl extends BaseCrudService<Usuario, Long, UsuarioRe
 
     }
 
-    public Usuario getUsuarioPorEmail(String usuarioLogin) {
+    public UsuarioDTO getUsuarioDTOPorPessoaCpf(String usuarioPessoaCpf) {
 
-        return repository.findUsuarioByLogin(usuarioLogin);
-
-    }
-
-    public UsuarioDTO getUsuarioDTOPorLogin(String usuarioLogin) {
-
-        Usuario usuario = repository.findUsuarioByLogin(usuarioLogin);
+        Usuario usuario = repository.findUsuarioByPessoaCpf(usuarioPessoaCpf).orElseThrow();
 
         UsuarioDTO usuarioDTO = usuarioMapper.toDTO(usuario);
         usuarioDTO.setSenha(usuario.getSenha());

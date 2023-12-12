@@ -15,8 +15,6 @@ public class UsuarioDTO {
 
     private Long codigo;
 
-    private  String Login;
-
     private String senha;
 
     private String cargo;

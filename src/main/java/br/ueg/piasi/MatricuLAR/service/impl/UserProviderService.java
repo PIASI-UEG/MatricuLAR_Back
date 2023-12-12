@@ -15,17 +15,13 @@ import java.util.Collections;
 public class UserProviderService implements br.ueg.prog.webi.api.service.UserProviderService {
 
     @Autowired
-    UsuarioController usuarioController;
-
-
-    @Autowired
     UsuarioServiceImpl usuarioService;
 
 
     @Override
-    public CredencialDTO getCredentialByLogin(String usuarioLogin) {
+    public CredencialDTO getCredentialByLogin(String usuarioPessoaCpf) {
 
-        return getCredencialDTO(usuarioService.getUsuarioDTOPorLogin(usuarioLogin));
+        return getCredencialDTO(usuarioService.getUsuarioDTOPorPessoaCpf(usuarioPessoaCpf));
     }
 
 
@@ -34,7 +30,7 @@ public class UserProviderService implements br.ueg.prog.webi.api.service.UserPro
         System.out.println(user.toString());
 
         return CredencialDTO.builder()
-                .login(user.getLogin())
+                .login(user.getPessoaCpf())
                 .id(user.getCodigo())
                 .nome(user.getPessoaNome())
                 .roles(Collections.singletonList(user.getCargo()))

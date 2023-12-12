@@ -50,21 +50,16 @@ public class SecurityConfig extends ApiSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         List<String> freeAccessPaternsList = new ArrayList<>(
                 Arrays.asList(urlAuthController.concat("/**"),
-                        "/**",
                         "/v2/api-docs",
                         "/v3/api-docs",
                         "/v3/api-docs/**",
                         "/swagger-resources",
                         "/swagger-resources/**",
                         "/configuration/ui",
-                        "/imagem/**",
-                        "localhost:4200/imagem/**",
                         "/configuration/security",
                         "/swagger-ui/**",
                         "/webjars/**",
-                        "/swagger-ui.html",
-                        "/api/v1/usuario/singup",
-                        "/api/v1/usuario/obterPorlogin"));
+                        "/swagger-ui.html"));
         freeAccessPaternsList.addAll(getCustomFreeAccessPaterns());
         String[] freeAccessPaterns = freeAccessPaternsList.toArray(new String[0]);
         http

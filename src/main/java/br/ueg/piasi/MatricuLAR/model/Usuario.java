@@ -48,9 +48,6 @@ public class Usuario extends BaseEntidade<Long> {
     @Searchable(label = "Código")
     private Long id;
 
-    @Column(name = Coluna.LOGIN, nullable = false, length = 30)
-    private String login;
-
     @Column(name = Coluna.SENHA, nullable = false)
     private String senha;
 
