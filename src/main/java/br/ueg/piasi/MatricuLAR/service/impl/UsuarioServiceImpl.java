@@ -3,6 +3,7 @@ package br.ueg.piasi.MatricuLAR.service.impl;
 
 import br.ueg.piasi.MatricuLAR.dto.UsuarioDTO;
 import br.ueg.piasi.MatricuLAR.mapper.UsuarioMapperImpl;
+import br.ueg.piasi.MatricuLAR.model.Pessoa;
 import br.ueg.piasi.MatricuLAR.model.Usuario;
 import br.ueg.piasi.MatricuLAR.repository.UsuarioRepository;
 import br.ueg.piasi.MatricuLAR.service.UsuarioService;
@@ -21,9 +22,18 @@ public class UsuarioServiceImpl extends BaseCrudService<Usuario, Long, UsuarioRe
     @Autowired
     private UsuarioMapperImpl usuarioMapper;
 
+    @Autowired
+    private PessoaServiceImpl pessoaService;
+
     @Override
     protected void prepararParaIncluir(Usuario usuario) {
 
+    }
+
+    public Usuario incluir(Usuario usuario) {
+        Pessoa pessoaInclusa = pessoaService.incluir(usuario.getPessoa());
+        usuario.setPessoa(pessoaInclusa);
+        return super.incluir(usuario);
     }
 
     @Override

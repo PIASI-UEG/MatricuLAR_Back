@@ -11,6 +11,8 @@ import org.mapstruct.Mapping;
 public interface UsuarioMapper extends BaseMapper<Usuario, UsuarioDTO> {
 
     @Override
+    @Mapping(source = "pessoaCpf", target = "pessoa.cpf")
+    @Mapping(source = "pessoaNome", target = "pessoa.nome")
     Usuario toModelo(UsuarioDTO usuarioDTO);
 
     @Override
