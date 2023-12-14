@@ -2,7 +2,7 @@ package br.ueg.piasi.MatricuLAR.service.impl;
 
 
 import br.ueg.piasi.MatricuLAR.dto.UsuarioDTO;
-import br.ueg.piasi.MatricuLAR.mapper.UsuarioMapperImpl;
+import br.ueg.piasi.MatricuLAR.mapper.UsuarioMapper;
 import br.ueg.piasi.MatricuLAR.model.Pessoa;
 import br.ueg.piasi.MatricuLAR.model.Usuario;
 import br.ueg.piasi.MatricuLAR.repository.UsuarioRepository;
@@ -20,7 +20,7 @@ public class UsuarioServiceImpl extends BaseCrudService<Usuario, Long, UsuarioRe
         implements UsuarioService {
 
     @Autowired
-    private UsuarioMapperImpl usuarioMapper;
+    private UsuarioMapper usuarioMapper;
 
     @Autowired
     private PessoaServiceImpl pessoaService;

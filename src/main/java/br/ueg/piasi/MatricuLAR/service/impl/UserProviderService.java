@@ -31,7 +31,7 @@ public class UserProviderService implements br.ueg.prog.webi.api.service.UserPro
 
         return CredencialDTO.builder()
                 .login(user.getPessoaCpf())
-                .id(user.getCodigo())
+                .id(user.getId())
                 .nome(user.getPessoaNome())
                 .roles(Collections.singletonList(user.getCargo()))
                 .statusAtivo(true)
