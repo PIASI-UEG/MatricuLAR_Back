@@ -17,6 +17,8 @@ public class UsuarioDTO {
 
     private String senha;
 
+    private String telefone;
+
     private String cargo;
 
     private String pessoaCpf;

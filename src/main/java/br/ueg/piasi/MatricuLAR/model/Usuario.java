@@ -28,6 +28,8 @@ public class Usuario extends BaseEntidade<Long> {
         public static final String CPF_PESSOA = "usuo_pessoa";
         public static final String CARGO = "usuo_carg";
 
+        public static final String TELEFONE = "usuo_tel";
+
 
     }
 
@@ -53,6 +55,9 @@ public class Usuario extends BaseEntidade<Long> {
 
     @Column(name = Coluna.CARGO, nullable = false)
     private String cargo;
+
+    @Column(name = Coluna.TELEFONE, nullable = false)
+    private String telefone;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = Coluna.CPF_PESSOA, unique = true, nullable = false,
