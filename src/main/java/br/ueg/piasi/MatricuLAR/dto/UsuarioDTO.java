@@ -25,4 +25,6 @@ public class UsuarioDTO {
 
     private String pessoaNome;
 
+    private String pessoaFone;
+
 }

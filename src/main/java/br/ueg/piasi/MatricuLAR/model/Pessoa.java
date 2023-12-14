@@ -24,6 +24,7 @@ public class Pessoa extends BaseEntidade<String> {
 
         public static final String NOME = "pess_nome";
         public static final String CPF = "pess_cpf";
+        public static final String FONE = "pess_fone";
 
     }
 
@@ -34,5 +35,8 @@ public class Pessoa extends BaseEntidade<String> {
     @Column(name = Coluna.NOME, nullable = false, length = 200)
     @Searchable()
     private String nome;
+
+    @Column(name = Coluna.FONE, nullable = false)
+    private String fone;
 
 }
