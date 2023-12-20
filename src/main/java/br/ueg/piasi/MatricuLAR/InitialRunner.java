@@ -27,6 +27,7 @@ public class InitialRunner implements ApplicationRunner {
         Pessoa pessoa = Pessoa.builder()
                 .cpf("000")
                 .nome("Teste")
+                .fone("(62)99999-9999")
                 .build();
         pessoa = pessoaRepository.save(pessoa);
 
