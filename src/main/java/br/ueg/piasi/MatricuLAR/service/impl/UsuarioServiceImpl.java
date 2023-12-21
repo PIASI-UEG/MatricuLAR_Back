@@ -3,12 +3,10 @@ package br.ueg.piasi.MatricuLAR.service.impl;
 
 import br.ueg.piasi.MatricuLAR.dto.UsuarioDTO;
 import br.ueg.piasi.MatricuLAR.mapper.UsuarioMapper;
-import br.ueg.piasi.MatricuLAR.model.Pessoa;
 import br.ueg.piasi.MatricuLAR.model.Usuario;
 import br.ueg.piasi.MatricuLAR.repository.UsuarioRepository;
 import br.ueg.piasi.MatricuLAR.service.UsuarioService;
 import br.ueg.prog.webi.api.service.BaseCrudService;
-import br.ueg.prog.webi.api.util.Reflexao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,18 +27,6 @@ public class UsuarioServiceImpl extends BaseCrudService<Usuario, Long, UsuarioRe
     @Override
     protected void prepararParaIncluir(Usuario usuario) {
 
-    }
-
-    public Usuario incluir(Usuario usuario) {
-        Pessoa pessoaInclusa = pessoaService.incluir(usuario.getPessoa());
-        usuario.setPessoa(pessoaInclusa);
-        return super.incluir(usuario);
-    }
-
-    public Usuario alterar(Usuario usuario, Long id) {
-        usuario.setId(id);
-        Usuario entidadeEditado = repository.saveAndFlush(usuario);;
-        return entidadeEditado;
     }
 
     @Override

@@ -17,45 +17,38 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@FieldNameConstants
 public class Usuario extends BaseEntidade<Long> {
 
     public static final String NOME_TABELA = "usuario";
-
-    public static final class Coluna {
-        public static final String ID = "usuo_id";
-        public static final String LOGIN = "usuo_login";
-        public static final String SENHA = "usuo_senha";
-        public static final String CPF_PESSOA = "usuo_pessoa";
-        public static final String CARGO = "usuo_carg";
-
-    }
 
     @SequenceGenerator(
             name = "usuario_gerador_sequence",
             sequenceName = "usuario_sequence",
             allocationSize = 1
     )
-
     @GeneratedValue(
             strategy = SEQUENCE,
             generator = "usuario_gerador_sequence"
-
     )
-
     @Id
-    @Column(name = Coluna.ID)
+    @Column(name = "id")
     @Searchable(label = "Código")
     private Long id;
 
-    @Column(name = Coluna.SENHA, nullable = false)
+    @Column(name = "senha", nullable = false, length = 200)
     private String senha;
 
-    @Column(name = Coluna.CARGO, nullable = false)
+    @Column(name = "cargo", nullable = false, length = 45)
+    @Searchable()
     private String cargo;
 
+    @Column(name = "email", nullable = false, length = 100)
+    private String email;
+
     @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = Coluna.CPF_PESSOA, unique = true, nullable = false,
-            referencedColumnName = Pessoa.Coluna.CPF,
+    @JoinColumn(name = "pessoa_cpf", unique = true, nullable = false,
+            referencedColumnName = Pessoa.Fields.cpf,
             foreignKey = @ForeignKey(name = "fk_usuario_pessoa"))
     @Searchable()
     private Pessoa pessoa;
