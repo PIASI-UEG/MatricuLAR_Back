@@ -3,7 +3,6 @@ package br.ueg.piasi.MatricuLAR.controller;
 
 import br.ueg.piasi.MatricuLAR.dto.UsuarioDTO;
 import br.ueg.piasi.MatricuLAR.mapper.UsuarioMapperImpl;
-import br.ueg.piasi.MatricuLAR.model.Pessoa;
 import br.ueg.piasi.MatricuLAR.model.Usuario;
 import br.ueg.piasi.MatricuLAR.service.impl.UsuarioServiceImpl;
 import br.ueg.prog.webi.api.controller.CrudController;

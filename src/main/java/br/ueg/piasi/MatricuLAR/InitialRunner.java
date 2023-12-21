@@ -25,9 +25,9 @@ public class InitialRunner implements ApplicationRunner {
 
     public void init() throws IOException {
         Pessoa pessoa = Pessoa.builder()
-                .cpf("000")
+                .cpf("12345678900")
                 .nome("Teste")
-                .fone("(62)99999-9999")
+                .telefone("62999999999")
                 .build();
         pessoa = pessoaRepository.save(pessoa);
 
@@ -35,7 +35,7 @@ public class InitialRunner implements ApplicationRunner {
                 .pessoa(pessoa)
                 .senha("admin")
                 .cargo("Tester")
-//                .telefone("(00) 0000-0000")
+                .email("admin@gmail.com")
                 .build();
 
         usuarioService.incluir(usuario);

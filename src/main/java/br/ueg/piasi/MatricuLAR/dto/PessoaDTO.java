@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PessoaDTO {
 
-    public String cpf;
+    private String cpf;
 
-    public String nome;
+    private String nome;
 
-    public String fone;
+    private String telefone;
 }
