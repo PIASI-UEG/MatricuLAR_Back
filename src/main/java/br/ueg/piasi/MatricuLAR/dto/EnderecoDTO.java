@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EnderecoDTO {
 
-    public String id;
+    public Long id;
 
     public String cep;
 

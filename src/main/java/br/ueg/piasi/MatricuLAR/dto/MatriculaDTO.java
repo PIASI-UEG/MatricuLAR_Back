@@ -13,13 +13,9 @@ public class MatriculaDTO {
 
     public String id;
 
-    public String cep;
+    public Long cpf_matricula;
 
-    public String bairro;
+    public String titulo;
 
-    public String cidade;
-
-    public String logradouro;
-
-    public String complemento;
+    public String descricao;
 }

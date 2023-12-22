@@ -37,7 +37,7 @@ public class Endereco extends BaseEntidade<Long> {
     )
 
     @Id
-    @Column(name = "id", nullable = false, length = 11,updatable = false)
+    @Column(name = "id")
     @Searchable()
     private Long id;
 

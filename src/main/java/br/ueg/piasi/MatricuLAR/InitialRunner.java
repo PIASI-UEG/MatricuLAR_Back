@@ -35,7 +35,7 @@ public class InitialRunner implements ApplicationRunner {
                 .pessoa(pessoa)
                 .senha("admin")
                 .cargo("Tester")
-                .telefone("(00) 0000-0000")
+//                .telefone("(00) 0000-0000")
                 .build();
 
         usuarioService.incluir(usuario);

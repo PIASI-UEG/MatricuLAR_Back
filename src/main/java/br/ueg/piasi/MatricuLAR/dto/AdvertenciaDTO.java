@@ -11,8 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AdvertenciaDTO {
 
-    public String cpf;
+    public String id;
 
-    public String nome;
+    public String cpf_matricula;
 
+    public String titulo;
+
+    public String descricao;
 }
