@@ -20,5 +20,6 @@ public interface UsuarioMapper extends BaseMapper<Usuario, UsuarioDTO> {
     @Mapping(source = "pessoa.cpf", target = "pessoaCpf")
     @Mapping(source = "pessoa.nome", target = "pessoaNome")
     @Mapping(source = "pessoa.telefone", target = "pessoaTelefone")
+    @Mapping(source = "senha", target = "senha", ignore = true)
     UsuarioDTO toDTO(Usuario modelo);
 }
