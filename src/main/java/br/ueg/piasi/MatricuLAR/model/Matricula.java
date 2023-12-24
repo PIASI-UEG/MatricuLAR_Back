@@ -1,5 +1,6 @@
 package br.ueg.piasi.MatricuLAR.model;
 
+import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import br.ueg.prog.webi.api.model.BaseEntidade;
 import br.ueg.prog.webi.api.model.annotation.Searchable;
 import jakarta.persistence.*;
@@ -18,20 +19,37 @@ import java.time.LocalDate;
 @Entity
 @Table(name = Matricula.NOME_TABELA)
 @FieldNameConstants
-public class Matricula extends BaseEntidade<Long> {
+public class Matricula extends BaseEntidade<String> {
 
     public static final String NOME_TABELA = "matricula";
 
     @Id
     @Column(name = "CPF", nullable = false, length = 11,updatable = false)
     @Searchable()
-    private Long cpf;
+    private String cpf;
 
-    @Column(name = "nome", nullable = false, length = 200)
+    @Column(name = "renda", nullable = false)
+    private Double renda;
+
+    @Column(name = "status", length = 11, nullable = false)
+    private StatusMatricula status;
+
+    @Column(name = "nascimento", nullable = false)
+    private LocalDate nascimento;
+
+    @Column(name = "pais_casados", nullable = false)
+    private Boolean paisCasados;
+
+    @Column(name = "pais_moram_juntos", nullable = false)
+    private Boolean moramJuntos;
+
+    @Column(name = "observacao", length = 200)
+    private String observacao;
+
+    @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "endereco", unique = true, nullable = false,
+            referencedColumnName = Endereco.Fields.id,
+            foreignKey = @ForeignKey(name = "fk_matricula_endereco"))
     @Searchable()
-    private String nome;
-
-    @Column(name = "telefone", length = 11)
-    private String telefone;
-
+    private Endereco endereco;
 }

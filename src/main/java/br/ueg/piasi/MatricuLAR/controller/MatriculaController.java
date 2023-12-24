@@ -23,5 +23,5 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/${app.api.version}/matricula")
-public class MatriculaController extends CrudController<Matricula, MatriculaDTO, Long, MatriculaMapper, MatriculaServiceImpl> {
+public class MatriculaController extends CrudController<Matricula, MatriculaDTO, String, MatriculaMapper, MatriculaServiceImpl> {
 }

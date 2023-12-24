@@ -46,19 +46,15 @@ public class Endereco extends BaseEntidade<Long> {
     private String cep;
 
     @Column(name = "bairro", nullable = false, length = 250)
-    @Searchable()
     private String bairro;
 
     @Column(name = "cidade", nullable = false, length = 250)
-    @Searchable()
     private String cidade;
 
     @Column(name = "logradouro", nullable = false, length = 250)
-    @Searchable()
     private String logradouro;
 
     @Column(name = "complemento", length = 250)
-    @Searchable()
     private String complemento;
 
 }

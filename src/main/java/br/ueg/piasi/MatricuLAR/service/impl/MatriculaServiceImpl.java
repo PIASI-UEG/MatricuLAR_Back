@@ -11,7 +11,7 @@ import br.ueg.prog.webi.api.service.BaseCrudService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, MatriculaRepository>
+public class MatriculaServiceImpl extends BaseCrudService<Matricula, String, MatriculaRepository>
         implements MatriculaService {
 
     @Override

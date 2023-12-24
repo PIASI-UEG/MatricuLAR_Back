@@ -15,4 +15,5 @@ public class PessoaDTO {
 
     public String nome;
 
+    public String fone;
 }

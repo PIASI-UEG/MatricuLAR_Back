@@ -1,9 +1,12 @@
 package br.ueg.piasi.MatricuLAR.dto;
 
+import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -11,11 +14,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MatriculaDTO {
 
-    public String id;
+    public String cpf;
 
-    public Long cpf_matricula;
+    public Double renda;
 
-    public String titulo;
+    public StatusMatricula status;
+
+    public LocalDate nascimento;
+
+    public Boolean paisCasados;
+
+    public Boolean moramJuntos;
 
     public String descricao;
+
+    public Long endereco_id;
 }
