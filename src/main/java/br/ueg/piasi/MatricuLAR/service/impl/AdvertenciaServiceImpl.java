@@ -3,6 +3,7 @@ package br.ueg.piasi.MatricuLAR.service.impl;
 
 import br.ueg.piasi.MatricuLAR.model.Advertencia;
 import br.ueg.piasi.MatricuLAR.model.Endereco;
+import br.ueg.piasi.MatricuLAR.model.pkComposta.PkAdvertencia;
 import br.ueg.piasi.MatricuLAR.repository.AdvertenciaRepository;
 import br.ueg.piasi.MatricuLAR.repository.EnderecoRepository;
 import br.ueg.piasi.MatricuLAR.service.AdvertenciaService;
@@ -11,7 +12,7 @@ import br.ueg.prog.webi.api.service.BaseCrudService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AdvertenciaServiceImpl extends BaseCrudService<Advertencia, Long, AdvertenciaRepository>
+public class AdvertenciaServiceImpl extends BaseCrudService<Advertencia, PkAdvertencia, AdvertenciaRepository>
         implements AdvertenciaService {
 
     @Override

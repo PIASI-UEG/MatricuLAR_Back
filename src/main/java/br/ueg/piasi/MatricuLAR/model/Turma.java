@@ -5,14 +5,13 @@ import br.ueg.piasi.MatricuLAR.converter.TurnoConverter;
 import br.ueg.prog.webi.api.model.BaseEntidade;
 import br.ueg.prog.webi.api.model.annotation.Searchable;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
@@ -63,4 +62,12 @@ public class Turma extends BaseEntidade<Long> {
     @Convert(converter = TurnoConverter.class)
     @Column(name = "turno", nullable = false, length = 1)
     private Turno turno;
+
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "turma",
+            fetch = FetchType.EAGER,
+            orphanRemoval = true,
+            cascade = CascadeType.ALL)
+    private Set<MatriculaTurma> turmaMatriculas = new HashSet<>();
+
 }

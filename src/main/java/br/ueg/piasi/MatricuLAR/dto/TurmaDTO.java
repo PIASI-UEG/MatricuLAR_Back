@@ -8,6 +8,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Data
 public class TurmaDTO {
@@ -27,4 +28,6 @@ public class TurmaDTO {
     @Schema(type = "String", pattern = "11:30")
     @Temporal(TemporalType.TIME)
     private LocalTime horaFim;
+
+    private List<MatriculaTurmaDTO> turmaMatriculas;
 }

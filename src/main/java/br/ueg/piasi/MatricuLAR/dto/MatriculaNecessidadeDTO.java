@@ -9,13 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdvertenciaDTO {
+public class MatriculaNecessidadeDTO {
 
-    public Long numero;
+    private Long necessidadeEspecialId;
 
-    public String cpf_matricula;
-
-    public String titulo;
-
-    public String descricao;
+    private String matriculaCpf;
 }

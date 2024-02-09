@@ -5,7 +5,7 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
-public class StatisMatriculaConverter implements AttributeConverter<StatusMatricula, String> {
+public class StatusMatriculaConverter implements AttributeConverter<StatusMatricula, String> {
 
     @Override
     public String convertToDatabaseColumn(StatusMatricula status) {

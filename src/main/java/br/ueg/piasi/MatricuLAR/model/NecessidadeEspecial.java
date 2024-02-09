@@ -3,11 +3,11 @@ package br.ueg.piasi.MatricuLAR.model;
 import br.ueg.prog.webi.api.model.BaseEntidade;
 import br.ueg.prog.webi.api.model.annotation.Searchable;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldNameConstants;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
@@ -39,7 +39,12 @@ public class NecessidadeEspecial extends BaseEntidade<Long> {
     @Column(name = "titulo", length = 50, nullable = false)
     @Searchable
     private String titulo;
+
     @Column(name = "observacoes", length = 300, nullable = false)
     private String observacoes;
 
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "necessidadeEspecial",
+            fetch = FetchType.EAGER)
+    private Set<MatriculaNecessidade> matriculaNecessidade = new HashSet<>();
 }

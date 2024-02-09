@@ -1,12 +1,16 @@
 package br.ueg.piasi.MatricuLAR.dto;
 
 import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
@@ -14,19 +18,25 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class MatriculaDTO {
 
-    public String cpf;
+    private String cpf;
 
-    public Double renda;
+    private String nome;
 
-    public StatusMatricula status;
+    private Double renda;
 
-    public LocalDate nascimento;
+    private StatusMatricula status;
 
-    public Boolean paisCasados;
+    @Temporal(TemporalType.DATE)
+    private LocalDate nascimento;
 
-    public Boolean moramJuntos;
+    private Boolean paisCasados;
 
-    public String descricao;
+    private Boolean moramJuntos;
 
-    public Long endereco_id;
+    private String descricao;
+
+    private Long endereco_id;
+
+    private List<MatriculaNecessidadeDTO> matriculaNecessidades = new ArrayList<>();
+
 }

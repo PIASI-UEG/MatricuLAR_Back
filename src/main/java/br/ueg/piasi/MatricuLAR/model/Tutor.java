@@ -23,16 +23,14 @@ public class Tutor extends BaseEntidade<String> {
     public static final String NOME_TABELA = "tutor";
 
     @Id
-    @Column(name = "pessoa_cpf")
     @Searchable (label = "CPF")
     private String cpf;
 
     @MapsId
     @OneToOne(optional = false)
     @JoinColumn(name = Fields.cpf,
-            referencedColumnName = Pessoa.Fields.cpf,
+            referencedColumnName = Pessoa.Fields.cpf, nullable = false,
             foreignKey = @ForeignKey(name = "fk_tutor_pessoa"))
-    @Searchable()
     private Pessoa pessoa;
 
     @Column(name = "empresa_telefone", nullable = false, length = 11)

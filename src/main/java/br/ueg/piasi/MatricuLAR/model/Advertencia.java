@@ -1,12 +1,10 @@
 package br.ueg.piasi.MatricuLAR.model;
 
+import br.ueg.piasi.MatricuLAR.model.pkComposta.PkAdvertencia;
 import br.ueg.prog.webi.api.model.BaseEntidade;
 import br.ueg.prog.webi.api.model.annotation.Searchable;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDate;
@@ -20,11 +18,12 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Entity
 @Table(name = Advertencia.NOME_TABELA)
 @FieldNameConstants
-public class Advertencia extends BaseEntidade<Long> {
+@IdClass(PkAdvertencia.class)
+public class Advertencia extends BaseEntidade<PkAdvertencia> {
 
     public static final String NOME_TABELA = "advertencia";
 
-    public static final String CPF_MATRICULA = "adv_matricula";
+    public static final String CPF_MATRICULA = "matricula_pessoa_cpf";
 
     @SequenceGenerator(
             name = "advertencia_gerador_sequence",
@@ -39,12 +38,14 @@ public class Advertencia extends BaseEntidade<Long> {
     )
 
     @Id
-    @Column(name = "id")
+    @Column(name = "numero")
     @Searchable()
-    private Long id;
+    private Long numero;
 
+    @Id
+    @ToString.Exclude
     @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = Advertencia.CPF_MATRICULA, unique = true, nullable = false,
+    @JoinColumn(name = Advertencia.CPF_MATRICULA, nullable = false,
             referencedColumnName = Matricula.Fields.cpf,
             foreignKey = @ForeignKey(name = "fk_advertencia_matricula"))
     @Searchable()

@@ -7,6 +7,7 @@ import br.ueg.piasi.MatricuLAR.mapper.AdvertenciaMapper;
 import br.ueg.piasi.MatricuLAR.mapper.UsuarioMapperImpl;
 import br.ueg.piasi.MatricuLAR.model.Advertencia;
 import br.ueg.piasi.MatricuLAR.model.Usuario;
+import br.ueg.piasi.MatricuLAR.model.pkComposta.PkAdvertencia;
 import br.ueg.piasi.MatricuLAR.service.impl.AdvertenciaServiceImpl;
 import br.ueg.piasi.MatricuLAR.service.impl.UsuarioServiceImpl;
 import br.ueg.prog.webi.api.controller.CrudController;
@@ -23,6 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/${app.api.version}/advertencia")
-public class AdvertenciaController extends CrudController<Advertencia, AdvertenciaDTO, Long, AdvertenciaMapper, AdvertenciaServiceImpl> {
+public class AdvertenciaController extends
+        CrudController<Advertencia, AdvertenciaDTO, PkAdvertencia, AdvertenciaMapper, AdvertenciaServiceImpl> {
 
 }
