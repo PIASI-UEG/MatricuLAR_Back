@@ -14,7 +14,4 @@ public class NecessidadeEspecialDTO {
     private String titulo;
     private String observacoes;
 
-    @JsonIgnore
-    private List<MatriculaNecessidadeDTO>  matriculaNecessidade = new ArrayList<>();
-
 }
