@@ -2,11 +2,9 @@ package br.ueg.piasi.MatricuLAR.service.impl;
 
 
 import br.ueg.piasi.MatricuLAR.model.Matricula;
-import br.ueg.piasi.MatricuLAR.model.MatriculaNecessidade;
 import br.ueg.piasi.MatricuLAR.model.MatriculaTurma;
 import br.ueg.piasi.MatricuLAR.model.Responsavel;
 import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
-import br.ueg.piasi.MatricuLAR.service.MatriculaNecessidadeService;
 import br.ueg.piasi.MatricuLAR.service.MatriculaService;
 import br.ueg.prog.webi.api.service.BaseCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -23,9 +20,6 @@ import java.util.Set;
 @Transactional(propagation = Propagation.REQUIRED)
 public class MatriculaServiceImpl extends BaseCrudService<Matricula, String, MatriculaRepository>
         implements MatriculaService {
-
-    @Autowired
-    private MatriculaNecessidadeServiceImpl matriculaNecessidadeService;
 
     @Autowired
     private MatriculaTurmaServiceImpl matriculaTurmaService;
@@ -116,16 +110,6 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, String, Mat
 
     }
 
-    private void salvaNecessidadesMatricula(Matricula matriculaSalva, Set<MatriculaNecessidade> matriculaNecessidades, Set<MatriculaNecessidade>matriculaNecessidadesSalvas ){
-
-        for (MatriculaNecessidade matriculaNecessidade : matriculaNecessidades){
-            matriculaNecessidade.setMatricula(matriculaSalva);
-            matriculaNecessidadesSalvas.add(
-                    matriculaNecessidadeService.incluir(matriculaNecessidade)
-            );
-        }
-
-    }
 
     private Set<Responsavel> tratarMatriculaResponsaveis(Matricula matricula) {
 
