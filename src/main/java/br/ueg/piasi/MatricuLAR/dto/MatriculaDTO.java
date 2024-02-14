@@ -1,6 +1,7 @@
 package br.ueg.piasi.MatricuLAR.dto;
 
 import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
+import br.ueg.piasi.MatricuLAR.model.NecessidadeEspecial;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
@@ -33,10 +34,12 @@ public class MatriculaDTO {
 
     private Boolean moramJuntos;
 
-    private String descricao;
+    private String observacao;
 
     private Long endereco_id;
 
-    private List<MatriculaNecessidadeDTO> matriculaNecessidades = new ArrayList<>();
+    private List<NecessidadeEspecialDTO> necessidades;
+
+    private List<ResponsavelDTO> responsaveis;
 
 }

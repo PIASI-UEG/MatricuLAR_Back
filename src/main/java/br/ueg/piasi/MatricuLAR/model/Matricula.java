@@ -53,22 +53,24 @@ public class Matricula extends BaseEntidade<String> {
     private String observacao;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "endereco", unique = true, nullable = false,
+    @JoinColumn(name = "endereco", nullable = false,
             referencedColumnName = Endereco.Fields.id,
             foreignKey = @ForeignKey(name = "fk_matricula_endereco"))
     @Searchable()
     private Endereco endereco;
 
-    @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "matricula",
-            fetch = FetchType.EAGER,
-            orphanRemoval = true,
-            cascade = CascadeType.ALL)
-    private Set<MatriculaNecessidade> matriculaNecessidades = new HashSet<>();
+    @ManyToMany
+    @JoinTable(name="matricula_necessidade", joinColumns=
+            {@JoinColumn(name="matricula_cpf")}, inverseJoinColumns=
+            {@JoinColumn(name="necessidade_id")})
+    private Set<NecessidadeEspecial> necessidades = new HashSet<>();
 
 
     @OneToMany(mappedBy = "matricula", fetch = FetchType.EAGER,
-            orphanRemoval = true,
             cascade = CascadeType.ALL)
-    private Set<MatriculaTurma> matriculaTurma = new HashSet<>();
+    private Set<MatriculaTurma> turmas = new HashSet<>();
+
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "matricula", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<Responsavel> responsaveis = new HashSet<>();
 }

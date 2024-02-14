@@ -13,8 +13,7 @@ public class NecessidadeEspecialServiceImpl extends BaseCrudService<NecessidadeE
 
 
     @Override
-    protected void prepararParaIncluir(NecessidadeEspecial entidade) {
-
+    protected void prepararParaIncluir(NecessidadeEspecial necessidadeEspecial) {
     }
 
     @Override

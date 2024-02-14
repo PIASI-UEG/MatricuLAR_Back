@@ -1,8 +1,6 @@
 package br.ueg.piasi.MatricuLAR.mapper;
 
-import br.ueg.piasi.MatricuLAR.dto.AdvertenciaDTO;
 import br.ueg.piasi.MatricuLAR.dto.MatriculaNecessidadeDTO;
-import br.ueg.piasi.MatricuLAR.model.Advertencia;
 import br.ueg.piasi.MatricuLAR.model.MatriculaNecessidade;
 import br.ueg.prog.webi.api.mapper.BaseMapper;
 import org.mapstruct.Mapper;

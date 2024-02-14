@@ -42,9 +42,4 @@ public class NecessidadeEspecial extends BaseEntidade<Long> {
 
     @Column(name = "observacoes", length = 300, nullable = false)
     private String observacoes;
-
-    @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "necessidadeEspecial",
-            fetch = FetchType.EAGER)
-    private Set<MatriculaNecessidade> matriculaNecessidade = new HashSet<>();
 }

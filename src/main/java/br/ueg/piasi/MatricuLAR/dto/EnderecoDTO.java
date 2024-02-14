@@ -11,15 +11,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EnderecoDTO {
 
-    public Long id;
+    private Long id;
 
-    public String cep;
+    private String cep;
 
-    public String bairro;
+    private String bairro;
 
-    public String cidade;
+    private String cidade;
 
-    public String logradouro;
+    private String logradouro;
 
-    public String complemento;
+    private String complemento;
 }

@@ -9,6 +9,6 @@ import java.io.Serializable;
 @Data
 public class PkMatriculaNecessidade implements Serializable {
 
-    private Long necessidadeEspecial;
-    private String matricula;
+    protected Long necessidadeEspecial;
+    protected String matricula;
 }
