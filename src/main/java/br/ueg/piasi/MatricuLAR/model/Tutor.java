@@ -1,5 +1,6 @@
 package br.ueg.piasi.MatricuLAR.model;
 
+import br.ueg.piasi.MatricuLAR.enums.Vinculo;
 import br.ueg.prog.webi.api.model.BaseEntidade;
 import br.ueg.prog.webi.api.model.annotation.Searchable;
 import jakarta.persistence.*;
@@ -47,4 +48,7 @@ public class Tutor extends BaseEntidade<String> {
 
     @Column(name = "whatsapp", nullable = false)
     private Boolean telefoneWhatsapp;
+
+    @Transient
+    private Vinculo vinculo;
 }

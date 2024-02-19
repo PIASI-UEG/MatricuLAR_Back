@@ -2,8 +2,8 @@ package br.ueg.piasi.MatricuLAR.service.impl;
 
 
 import br.ueg.piasi.MatricuLAR.model.Matricula;
-import br.ueg.piasi.MatricuLAR.model.MatriculaTurma;
 import br.ueg.piasi.MatricuLAR.model.Responsavel;
+import br.ueg.piasi.MatricuLAR.model.Tutor;
 import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
 import br.ueg.piasi.MatricuLAR.service.MatriculaService;
 import br.ueg.prog.webi.api.service.BaseCrudService;
@@ -20,9 +20,6 @@ import java.util.Set;
 @Transactional(propagation = Propagation.REQUIRED)
 public class MatriculaServiceImpl extends BaseCrudService<Matricula, String, MatriculaRepository>
         implements MatriculaService {
-
-    @Autowired
-    private MatriculaTurmaServiceImpl matriculaTurmaService;
 
     @Autowired
     private ResponsavelServiceImpl responsavelService;
@@ -44,107 +41,53 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, String, Mat
     }
 
     @Override
-    public Matricula alterar(Matricula entidade, String id) {
-        if(Objects.isNull(entidade.getResponsaveis())){
-            entidade.setResponsaveis(new HashSet<>());
-            entidade.setNecessidades(new HashSet<>());
-            entidade.setTurmas(new HashSet<>());
-        }
-        return super.alterar(entidade, id);
-    }
-
-    @Override
     public Matricula incluir(Matricula matricula) {
 
-//        Set<MatriculaNecessidade> matriculaNecessidades = tratarMatriculaNecessidade(matricula);
+        Set<Responsavel> responsavelSet = tratarMatriculaResponsaveis(matricula);
+        matricula.setAdvertencias(new HashSet<>());
+        matricula.setTurmas(new HashSet<>());
 
-        Set<MatriculaTurma> matriculaTurmas = tratarMatriculaTurmas(matricula);
+        matricula = super.incluir(matricula);
 
-        Set<Responsavel> matriculaResponsaveis = tratarMatriculaResponsaveis(matricula);
+        salvarResponsaveis(responsavelSet, matricula);
 
-        Matricula matriculaSalva = super.incluir(matricula);
-
-//        if (Objects.nonNull(matriculaNecessidades)){
-//
-//            Set<MatriculaNecessidade> matriculaNecessidadesSalvas = new HashSet<>();
-//            salvaNecessidadesMatricula(matriculaSalva, matriculaNecessidades, matriculaNecessidadesSalvas);
-//            matriculaSalva.setNecessidades(matriculaNecessidadesSalvas);
-//        }
-
-        if (Objects.nonNull(matriculaTurmas)){
-            Set<MatriculaTurma> matriculaTurmasSalvas = new HashSet<>();
-            salvaTurmasMatricula(matriculaSalva, matriculaTurmas, matriculaTurmasSalvas);
-            matriculaSalva.setTurmas(matriculaTurmasSalvas);
-        }
-
-        if (Objects.nonNull(matriculaResponsaveis)){
-            Set<Responsavel> matriculaResponsaveisSalvas = new HashSet<>();
-            salvaResponsaveisMatricula(matriculaSalva, matriculaResponsaveis, matriculaResponsaveisSalvas);
-            matriculaSalva.setResponsaveis(matriculaResponsaveisSalvas);
-
-        }
-
-        return matriculaSalva;
+        return matricula;
     }
 
-    private void salvaResponsaveisMatricula(Matricula matriculaSalva, Set<Responsavel> matriculaResponsaveis, Set<Responsavel> matriculaResponsaveisSalvas) {
+    private void salvarResponsaveis(Set<Responsavel> responsavelSet, Matricula matricula){
 
-        for (Responsavel responsavel : matriculaResponsaveis){
+        if (Objects.nonNull(responsavelSet)) {
+            Set<Responsavel> responsavelSetSalvos = new HashSet<>();
+            for (Responsavel responsavel : responsavelSet) {
+                responsavel.setMatricula(matricula);
+                responsavelSetSalvos.add(responsavelService.incluir(responsavel));
+            }
 
-            responsavel.setMatricula(matriculaSalva);
-            matriculaResponsaveisSalvas.add(
-                    responsavelService.incluir(responsavel)
-            );
+            matricula.setResponsaveis(responsavelSetSalvos);
         }
-
+        else
+            System.out.println(("A matricula deve ter pelo menos um responsavel"));
     }
-
-    private void salvaTurmasMatricula(Matricula matriculaSalva, Set<MatriculaTurma> matriculaTurmas, Set<MatriculaTurma> matriculaTurmasSalvas) {
-
-        for (MatriculaTurma matriculaTurma : matriculaTurmas){
-            matriculaTurma.setMatricula(matriculaSalva);
-            matriculaTurmasSalvas.add(
-                    matriculaTurmaService.incluir(matriculaTurma)
-            );
-        }
-
-    }
-
 
     private Set<Responsavel> tratarMatriculaResponsaveis(Matricula matricula) {
 
-        if(Objects.nonNull(matricula.getResponsaveis()) && !matricula.getResponsaveis().isEmpty()){
-            Set<Responsavel> matriculaResponsaveis = matricula.getResponsaveis();
+        if (Objects.nonNull(matricula.getTutorList()) && !matricula.getTutorList().isEmpty()){
+            Set<Responsavel> responsavelSet = new HashSet<>();
+
+            for (Tutor tutor : matricula.getTutorList()){
+                responsavelSet.add(Responsavel.builder()
+                                .matricula(matricula)
+                                .pessoa(tutor.getPessoa())
+                                .tutor(true)
+                                .vinculo(tutor.getVinculo())
+                        .build());
+            }
+
             matricula.setResponsaveis(new HashSet<>());
-            return matriculaResponsaveis;
+            return  responsavelSet;
         }
-
-        matricula.setResponsaveis(new HashSet<>());
+        else matricula.setResponsaveis(new HashSet<>());
         return null;
     }
 
-    private Set<MatriculaTurma> tratarMatriculaTurmas(Matricula matricula) {
-
-        if(Objects.nonNull(matricula.getTurmas()) && !matricula.getTurmas().isEmpty()){
-            Set<MatriculaTurma> matriculaTurmas = matricula.getTurmas();
-            matricula.setTurmas(new HashSet<>());
-            return matriculaTurmas;
-        }
-
-        matricula.setTurmas(new HashSet<>());
-        return null;
-
-    }
-
-//    private Set<MatriculaNecessidade> tratarMatriculaNecessidade(Matricula matricula) {
-////
-////        if(Objects.nonNull(matricula.getNecessidades()) && !matricula.getNecessidades().isEmpty()){
-////            Set<MatriculaNecessidade> matriculaNecessidades = matricula.getNecessidades();
-////            matricula.setNecessidades(new HashSet<>());
-////            return matriculaNecessidades;
-////        }
-////
-////        matricula.setNecessidades(new HashSet<>());
-//        return null;
-//    }
 }

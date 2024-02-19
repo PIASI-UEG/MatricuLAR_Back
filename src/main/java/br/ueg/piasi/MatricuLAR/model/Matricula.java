@@ -9,6 +9,7 @@ import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Builder
@@ -52,7 +53,7 @@ public class Matricula extends BaseEntidade<String> {
     @Column(name = "observacao", length = 200)
     private String observacao;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "endereco", nullable = false,
             referencedColumnName = Endereco.Fields.id,
             foreignKey = @ForeignKey(name = "fk_matricula_endereco"))
@@ -65,12 +66,24 @@ public class Matricula extends BaseEntidade<String> {
             {@JoinColumn(name="necessidade_id")})
     private Set<NecessidadeEspecial> necessidades = new HashSet<>();
 
-
-    @OneToMany(mappedBy = "matricula", fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "matricula", fetch = FetchType.EAGER)
+    @Builder.Default
+    @EqualsAndHashCode.Exclude
     private Set<MatriculaTurma> turmas = new HashSet<>();
 
     @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "matricula", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Builder.Default
+    @OneToMany(mappedBy = "matricula", fetch = FetchType.EAGER)
     private Set<Responsavel> responsaveis = new HashSet<>();
+
+    @OneToMany(mappedBy = "matricula",fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    @Searchable(label = "Advertências")
+    private Set<Advertencia> advertencias = new HashSet<>();
+
+    @Transient
+    private Turma turmaAtual;
+
+    @Transient
+    private List<Tutor> tutorList;
 }

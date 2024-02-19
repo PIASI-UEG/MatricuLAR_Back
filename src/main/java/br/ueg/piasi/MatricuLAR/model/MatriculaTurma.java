@@ -23,7 +23,6 @@ public class MatriculaTurma extends BaseEntidade<PkMatriculaTurma> {
     public static final String MATRICULA = "matricula_cpf";
 
     @Id
-    @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = MatriculaTurma.TURMA,
                 referencedColumnName = "id", nullable = false,
@@ -31,6 +30,7 @@ public class MatriculaTurma extends BaseEntidade<PkMatriculaTurma> {
     private Turma turma;
 
     @Id
+    @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = MatriculaTurma.MATRICULA,
                 referencedColumnName = Matricula.Fields.cpf, nullable = false,

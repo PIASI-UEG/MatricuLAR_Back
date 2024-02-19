@@ -4,10 +4,7 @@ import br.ueg.piasi.MatricuLAR.enums.Vinculo;
 import br.ueg.piasi.MatricuLAR.model.pkComposta.PkResponsavel;
 import br.ueg.prog.webi.api.model.BaseEntidade;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldNameConstants;
 
 
@@ -26,6 +23,7 @@ public class Responsavel extends BaseEntidade<PkResponsavel> {
     public static final String CPF_RESPONSAVEL = "pessoa_cpf";
 
     @Id
+    @EqualsAndHashCode.Exclude
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = Responsavel.CPF_MATRICULA, nullable = false,
             referencedColumnName = Matricula.Fields.cpf,

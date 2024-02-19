@@ -1,14 +1,13 @@
 package br.ueg.piasi.MatricuLAR.model;
 
-import br.ueg.piasi.MatricuLAR.enums.Turno;
 import br.ueg.piasi.MatricuLAR.converter.TurnoConverter;
+import br.ueg.piasi.MatricuLAR.enums.Turno;
 import br.ueg.prog.webi.api.model.BaseEntidade;
 import br.ueg.prog.webi.api.model.annotation.Searchable;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldNameConstants;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -47,9 +46,8 @@ public class Turma extends BaseEntidade<Long> {
     @Column(name = "nome_professor", length = 200, nullable = false)
     private String nomeProfessor;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "ano", nullable = false)
-    private LocalDate ano;
+    private Integer ano;
 
     @Temporal(TemporalType.TIME)
     @Column(name = "hora_inicio", nullable = false)

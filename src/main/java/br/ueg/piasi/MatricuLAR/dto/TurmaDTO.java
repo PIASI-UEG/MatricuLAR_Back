@@ -6,7 +6,6 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -18,8 +17,7 @@ public class TurmaDTO {
     private String nomeProfessor;
     private Turno turno;
 
-    @Temporal(TemporalType.DATE)
-    private LocalDate ano;
+    private Integer ano;
 
     @Schema(type = "String", pattern = "07:00")
     @Temporal(TemporalType.TIME)

@@ -1,7 +1,6 @@
 package br.ueg.piasi.MatricuLAR.dto;
 
 import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
-import br.ueg.piasi.MatricuLAR.model.NecessidadeEspecial;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
@@ -10,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -38,8 +36,16 @@ public class MatriculaDTO {
 
     private Long endereco_id;
 
+    private List<TutorDTO> tutorDTOList;
+
     private List<NecessidadeEspecialDTO> necessidades;
 
     private List<ResponsavelDTO> responsaveis;
+
+    private List<AdvertenciaDTO> advertencias;
+
+    private List<MatriculaTurmaDTO> turmasHistorico;
+
+    private TurmaDTO turmaAtual;
 
 }

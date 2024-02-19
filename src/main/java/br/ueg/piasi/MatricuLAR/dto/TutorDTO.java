@@ -1,6 +1,7 @@
 package br.ueg.piasi.MatricuLAR.dto;
 
 
+import br.ueg.piasi.MatricuLAR.enums.Vinculo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,5 +21,7 @@ public class TutorDTO {
     private boolean telefoneWhatsapp;
     private String pessoaNome;
     private String pessoaTelefone;
+
+    private Vinculo vinculo;
 
 }

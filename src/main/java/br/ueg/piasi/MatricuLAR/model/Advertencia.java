@@ -7,8 +7,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldNameConstants;
 
-import java.time.LocalDate;
-
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Builder
@@ -44,7 +42,7 @@ public class Advertencia extends BaseEntidade<PkAdvertencia> {
 
     @Id
     @ToString.Exclude
-    @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = Advertencia.CPF_MATRICULA, nullable = false,
             referencedColumnName = Matricula.Fields.cpf,
             foreignKey = @ForeignKey(name = "fk_advertencia_matricula"))
