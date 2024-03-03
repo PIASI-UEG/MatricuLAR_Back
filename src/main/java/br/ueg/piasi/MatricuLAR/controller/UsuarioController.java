@@ -5,6 +5,7 @@ import br.ueg.piasi.MatricuLAR.dto.UsuarioDTO;
 import br.ueg.piasi.MatricuLAR.mapper.UsuarioMapperImpl;
 import br.ueg.piasi.MatricuLAR.model.Usuario;
 import br.ueg.piasi.MatricuLAR.service.impl.UsuarioServiceImpl;
+import br.ueg.piasi.MatricuLAR.util.Email;
 import br.ueg.prog.webi.api.controller.CrudController;
 import br.ueg.prog.webi.api.exception.MessageResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +31,41 @@ public class UsuarioController extends CrudController<Usuario, UsuarioDTO, Long,
         UsuarioDTO novoUser = mapper.toDTO(service.incluir(usuarioParaIncluir));
         return ResponseEntity.ok(novoUser);
 
+    }
+
+    @Override
+    @PutMapping(path = "/{id}")
+    @Operation(description = "Método utilizado para altlerar os dados de uma entidiade", responses = {
+            @ApiResponse(responseCode = "200", description = "Listagem geral",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE)),
+            @ApiResponse(responseCode = "404", description = "Registro não encontrado",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = MessageResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Acesso negado",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = MessageResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Erro de Negócio",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = MessageResponse.class)))
+    }
+    )
+    public ResponseEntity<UsuarioDTO> alterar(@RequestBody() UsuarioDTO modeloDTO, @PathVariable Long id) {
+        Usuario pModelo = mapper.toModelo(modeloDTO);
+        Usuario alterar = service.alterar(pModelo, id, modeloDTO.getIdUsuarioRequisicao());
+        return ResponseEntity.ok(mapper.toDTO(alterar));
+    }
+
+
+    @PostMapping(path = "/teste")
+    public ResponseEntity enviaEmail(@RequestBody String destinatario){
+        try {
+            Email.enviaEmail(destinatario);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/sort/{field}")

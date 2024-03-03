@@ -1,11 +1,10 @@
 package br.ueg.piasi.MatricuLAR.dto;
 
+import br.ueg.piasi.MatricuLAR.enums.Cargo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @Builder
@@ -17,7 +16,7 @@ public class UsuarioDTO {
 
     private String senha;
 
-    private String cargo;
+    private Cargo cargo;
 
     private String email;
 
@@ -26,5 +25,7 @@ public class UsuarioDTO {
     private String pessoaNome;
 
     private String pessoaTelefone;
+
+    private Long idUsuarioRequisicao;
 
 }

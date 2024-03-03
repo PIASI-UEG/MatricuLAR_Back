@@ -1,5 +1,6 @@
 package br.ueg.piasi.MatricuLAR.model;
 
+import br.ueg.piasi.MatricuLAR.enums.Cargo;
 import br.ueg.prog.webi.api.model.BaseEntidade;
 import br.ueg.prog.webi.api.model.annotation.Searchable;
 import jakarta.persistence.*;
@@ -41,7 +42,7 @@ public class Usuario extends BaseEntidade<Long> {
 
     @Column(name = "cargo", nullable = false, length = 45)
     @Searchable()
-    private String cargo;
+    private Cargo cargo;
 
     @Column(name = "email", nullable = false, length = 100)
     private String email;

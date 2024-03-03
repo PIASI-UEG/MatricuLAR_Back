@@ -1,5 +1,6 @@
 package br.ueg.piasi.MatricuLAR;
 
+import br.ueg.piasi.MatricuLAR.enums.Cargo;
 import br.ueg.piasi.MatricuLAR.enums.Turno;
 import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.service.impl.*;
@@ -59,7 +60,7 @@ public class InitialRunner implements ApplicationRunner {
         Usuario usuario = Usuario.builder()
                 .pessoa(pessoaUsuario)
                 .senha("admin")
-                .cargo("Tester")
+                .cargo(Cargo.ADMIN)
                 .email("admin@gmail.com")
                 .build();
         usuarioService.incluir(usuario);
