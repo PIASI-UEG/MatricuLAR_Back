@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldNameConstants;
 
-import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,20 +45,26 @@ public class Turma extends BaseEntidade<Long> {
     @Column(name = "nome_professor", length = 200, nullable = false)
     private String nomeProfessor;
 
-    @Column(name = "ano", nullable = false)
+    @Column(name = "ano", nullable = false, length = 4)
     private Integer ano;
 
-    @Temporal(TemporalType.TIME)
-    @Column(name = "hora_inicio", nullable = false)
-    private LocalTime horaInicio;
+//    @Temporal(TemporalType.TIME)
+    @Column(name = "hora_inicio", nullable = false, length = 4)
+    private String horaInicio;
 
-    @Temporal(TemporalType.TIME)
-    @Column(name = "hora_fim", nullable = false)
-    private LocalTime horaFim;
+//    @Temporal(TemporalType.TIME)
+    @Column(name = "hora_fim", nullable = false, length = 4)
+    private String horaFim;
 
     @Convert(converter = TurnoConverter.class)
     @Column(name = "turno", nullable = false, length = 1)
     private Turno turno;
+
+    @Column(name = "telefone_professora", nullable = false, length = 11)
+    private String telefoneProfessor;
+
+    @Transient
+    private Long quantidadeAlunos;
 
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "turma",

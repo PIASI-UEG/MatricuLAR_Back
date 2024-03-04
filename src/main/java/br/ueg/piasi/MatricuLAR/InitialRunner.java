@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Component
 @Transactional(propagation = Propagation.REQUIRED)
@@ -107,8 +106,9 @@ public class InitialRunner implements ApplicationRunner {
                 .nomeProfessor("Professor de Teste")
                 .turno(Turno.MATUTINO)
                 .ano(LocalDate.now().getYear())
-                .horaInicio(LocalTime.parse("07:00"))
-                .horaFim(LocalTime.parse("11:30"))
+                .horaInicio("0700")
+                .horaFim("1130")
+                .telefoneProfessor("62991922192")
                 .build();
         turmaService.incluir(turma);
 
