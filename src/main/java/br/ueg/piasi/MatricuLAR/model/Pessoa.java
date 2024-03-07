@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDate;
 
@@ -16,27 +17,21 @@ import java.time.LocalDate;
 @Data
 @Entity
 @Table(name = Pessoa.NOME_TABELA)
+@FieldNameConstants
 public class Pessoa extends BaseEntidade<String> {
 
     public static final String NOME_TABELA = "pessoa";
 
-    public static final class Coluna{
-
-        public static final String NOME = "pess_nome";
-        public static final String CPF = "pess_cpf";
-        public static final String FONE = "pess_fone";
-
-    }
-
     @Id
-    @Column(name = Coluna.CPF, nullable = false, length = 11, updatable = false)
+    @Column(name = "cpf", nullable = false, length = 11,updatable = false)
+    @Searchable()
     private String cpf;
 
-    @Column(name = Coluna.NOME, nullable = false, length = 200)
+    @Column(name = "nome", nullable = false, length = 200)
     @Searchable()
     private String nome;
 
-    @Column(name = Coluna.FONE, nullable = false)
-    private String fone;
+    @Column(name = "telefone", length = 11)
+    private String telefone;
 
 }

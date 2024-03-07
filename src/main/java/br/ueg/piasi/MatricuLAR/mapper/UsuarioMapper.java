@@ -7,18 +7,19 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {PessoaMapperImpl.class})
 public interface UsuarioMapper extends BaseMapper<Usuario, UsuarioDTO> {
 
     @Override
     @Mapping(source = "pessoaCpf", target = "pessoa.cpf")
     @Mapping(source = "pessoaNome", target = "pessoa.nome")
-    @Mapping(source = "pessoaFone", target = "pessoa.fone")
+    @Mapping(source = "pessoaTelefone", target = "pessoa.telefone")
     Usuario toModelo(UsuarioDTO usuarioDTO);
 
     @Override
     @Mapping(source = "pessoa.cpf", target = "pessoaCpf")
     @Mapping(source = "pessoa.nome", target = "pessoaNome")
-    @Mapping(source = "pessoa.fone", target = "pessoaFone")
+    @Mapping(source = "pessoa.telefone", target = "pessoaTelefone")
+    @Mapping(source = "senha", target = "senha", ignore = true)
     UsuarioDTO toDTO(Usuario modelo);
 }

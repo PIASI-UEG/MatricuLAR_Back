@@ -1,7 +1,6 @@
 package br.ueg.piasi.MatricuLAR.service.impl;
 
 
-import br.ueg.piasi.MatricuLAR.controller.UsuarioController;
 import br.ueg.piasi.MatricuLAR.dto.UsuarioDTO;
 import br.ueg.prog.webi.api.dto.CredencialDTO;
 import br.ueg.prog.webi.api.dto.UsuarioSenhaDTO;
@@ -33,7 +32,8 @@ public class UserProviderService implements br.ueg.prog.webi.api.service.UserPro
                 .login(user.getPessoaCpf())
                 .id(user.getId())
                 .nome(user.getPessoaNome())
-                .roles(Collections.singletonList(user.getCargo()))
+                .email(user.getEmail())
+                .roles(Collections.singletonList(user.getCargo().getDescricao()))
                 .statusAtivo(true)
                 .senha(user.getSenha())
                 .build();

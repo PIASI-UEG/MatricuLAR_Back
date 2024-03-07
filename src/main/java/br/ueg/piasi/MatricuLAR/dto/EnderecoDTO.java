@@ -9,11 +9,17 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PessoaDTO {
+public class EnderecoDTO {
 
-    private String cpf;
+    private Long id;
 
-    private String nome;
+    private String cep;
 
-    private String telefone;
+    private String bairro;
+
+    private String cidade;
+
+    private String logradouro;
+
+    private String complemento;
 }

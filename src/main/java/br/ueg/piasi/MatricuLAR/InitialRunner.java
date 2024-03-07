@@ -1,9 +1,9 @@
 package br.ueg.piasi.MatricuLAR;
 
-import br.ueg.piasi.MatricuLAR.model.Pessoa;
-import br.ueg.piasi.MatricuLAR.model.Usuario;
-import br.ueg.piasi.MatricuLAR.repository.PessoaRepository;
-import br.ueg.piasi.MatricuLAR.service.impl.UsuarioServiceImpl;
+import br.ueg.piasi.MatricuLAR.enums.Cargo;
+import br.ueg.piasi.MatricuLAR.enums.Turno;
+import br.ueg.piasi.MatricuLAR.model.*;
+import br.ueg.piasi.MatricuLAR.service.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 @Component
 @Transactional(propagation = Propagation.REQUIRED)
@@ -21,34 +22,96 @@ public class InitialRunner implements ApplicationRunner {
     private UsuarioServiceImpl usuarioService;
 
     @Autowired
-    private PessoaRepository pessoaRepository;
+    private PessoaServiceImpl pessoaService;
 
-    public void init() throws IOException {
-        Pessoa pessoa = Pessoa.builder()
-                .cpf("000")
-                .nome("Teste")
-                .fone("(62)99999-9999")
-                .build();
-        pessoa = pessoaRepository.save(pessoa);
+    @Autowired
+    private EnderecoServiceImpl enderecoService;
 
-        Usuario usuario = Usuario.builder()
-                .pessoa(pessoa)
-                .senha("admin")
-                .cargo("Tester")
-                .telefone("(00) 0000-0000")
-                .build();
+    @Autowired
+    private NecessidadeEspecialServiceImpl necessidadeEspecialService;
 
-        usuarioService.incluir(usuario);
+    @Autowired
+    private TurmaServiceImpl turmaService;
 
-        System.out.println("Fim da inicialização");
-    }
+    @Autowired
+    private TutorServiceImpl tutorService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
         try {
-            init();
+            insereDadosParaTestes();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    public void insereDadosParaTestes() throws IOException {
+
+        //Insere pessoa de teste para usuario
+        Pessoa pessoaUsuario = Pessoa.builder()
+                .cpf("12345678900")
+                .nome("Teste Usuario")
+                .telefone("62999999999")
+                .build();
+
+        //Insere usuario de teste
+        Usuario usuario = Usuario.builder()
+                .pessoa(pessoaUsuario)
+                .senha("admin")
+                .cargo(Cargo.ADMIN)
+                .email("admin@gmail.com")
+                .build();
+        usuarioService.incluir(usuario);
+
+        //Insere pessoa de teste para tutor
+        Pessoa pessoaTutor = Pessoa.builder()
+                .cpf("12345678911")
+                .nome("Teste Tutor")
+                .telefone("62999999999")
+                .build();
+
+        //Insere tutor de teste
+        Tutor tutor = Tutor.builder()
+                .pessoa(pessoaTutor)
+                .cpf(pessoaTutor.getCpf())
+                .telefoneWhatsapp(true)
+                .empresaCnpj("11222333444455")
+                .empresaNome("Empresa Teste")
+                .empresaTelefone("6233339999")
+                .profissao("Profissão de teste")
+                .build();
+        tutorService.incluir(tutor);
+
+        //Insere endereço de teste
+        Endereco endereco = Endereco.builder()
+                .cep("12345678")
+                .bairro("Bairro Teste")
+                .cidade("Cidade Teste")
+                .logradouro("Av Teste Qd 00 Lt 99")
+                .complemento("Testes testes")
+                .build();
+        enderecoService.incluir(endereco);
+
+        //Insere necessidade especial de teste
+        NecessidadeEspecial necessidadeEspecial = NecessidadeEspecial.builder()
+                .titulo("Necessidade Teste")
+                .observacoes("Observações da necessidade especial de teste")
+                .build();
+        necessidadeEspecialService.incluir(necessidadeEspecial);
+
+        //Insere turma de teste
+        Turma turma = Turma.builder()
+                .titulo("Turma para teste")
+                .nomeProfessor("Professor de Teste")
+                .turno(Turno.MATUTINO)
+                .ano(LocalDate.now().getYear())
+                .horaInicio("0700")
+                .horaFim("1130")
+                .telefoneProfessor("62991922192")
+                .build();
+        turmaService.incluir(turma);
+
+        System.out.println("\n*** Fim da Inserção de dados para testes ***\n");
+    }
+
 }

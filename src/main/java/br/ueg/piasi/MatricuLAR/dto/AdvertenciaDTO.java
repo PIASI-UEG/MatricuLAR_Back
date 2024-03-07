@@ -9,11 +9,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PessoaDTO {
+public class AdvertenciaDTO {
 
-    private String cpf;
+    private Long numero;
 
-    private String nome;
+    private String cpf_matricula;
 
-    private String telefone;
+    private String titulo;
+
+    private String descricao;
 }
