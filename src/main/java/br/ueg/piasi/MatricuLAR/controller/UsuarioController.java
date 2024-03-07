@@ -25,7 +25,7 @@ public class UsuarioController extends CrudController<Usuario, UsuarioDTO, Long,
 
     @Override
     @PostMapping("/singup")
-    public ResponseEntity<UsuarioDTO> incluir(UsuarioDTO usuarioDTO) {
+    public ResponseEntity<UsuarioDTO> incluir(@RequestBody() UsuarioDTO usuarioDTO) {
 
         Usuario usuarioParaIncluir = mapper.toModelo(usuarioDTO);
         UsuarioDTO novoUser = mapper.toDTO(service.incluir(usuarioParaIncluir));

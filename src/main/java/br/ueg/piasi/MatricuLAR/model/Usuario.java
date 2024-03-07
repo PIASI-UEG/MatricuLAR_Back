@@ -47,7 +47,7 @@ public class Usuario extends BaseEntidade<Long> {
     @Column(name = "email", nullable = false, length = 100)
     private String email;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "pessoa_cpf", unique = true, nullable = false,
             referencedColumnName = Pessoa.Fields.cpf,
             foreignKey = @ForeignKey(name = "fk_usuario_pessoa"))

@@ -4,6 +4,7 @@ package br.ueg.piasi.MatricuLAR.service.impl;
 import br.ueg.piasi.MatricuLAR.dto.UsuarioDTO;
 import br.ueg.piasi.MatricuLAR.enums.Cargo;
 import br.ueg.piasi.MatricuLAR.mapper.UsuarioMapper;
+import br.ueg.piasi.MatricuLAR.model.Pessoa;
 import br.ueg.piasi.MatricuLAR.model.Usuario;
 import br.ueg.piasi.MatricuLAR.repository.UsuarioRepository;
 import br.ueg.piasi.MatricuLAR.service.UsuarioService;
@@ -31,6 +32,14 @@ public class UsuarioServiceImpl extends BaseCrudService<Usuario, Long, UsuarioRe
 
     @Override
     protected void prepararParaIncluir(Usuario usuario) {
+       usuario.setPessoa(pessoaService.incluir(
+               Pessoa.builder()
+                        .nome(usuario.getPessoa().getNome())
+                        .cpf(usuario.getPessoa().getCpf())
+                        .telefone(usuario.getPessoa().getTelefone())
+                .build()
+               )
+       );
         criptografarSenha(usuario);
     }
 
@@ -77,7 +86,7 @@ public class UsuarioServiceImpl extends BaseCrudService<Usuario, Long, UsuarioRe
 
     public Usuario alterar(Usuario entidade, Long id, Long idUsuarioRequisicao) {
 
-        if (id.equals(idUsuarioRequisicao)) {
+        if (id.equals(idUsuarioRequisicao) || editorEhAdmin(idUsuarioRequisicao)) {
             if (entidade.getSenha() == null || entidade.getSenha().isEmpty()) {
                 Usuario usuario = repository.findById(id).orElse(null);
                 if (Objects.isNull(usuario)) {
@@ -90,7 +99,12 @@ public class UsuarioServiceImpl extends BaseCrudService<Usuario, Long, UsuarioRe
 
             return super.alterar(entidade, id);
         }
-        throw new BusinessException(ERRO_USUARIO_SEM_PERMISSAO);
+
+        throw new BusinessException(ERRO_SOMENTE_DONO_ALTERA_SENHA);
+    }
+
+    private boolean editorEhAdmin(Long idUsuarioRequisicao) {
+        return Cargo.ADMIN.equals(repository.findById(idUsuarioRequisicao).get().getCargo());
     }
 
     @Override

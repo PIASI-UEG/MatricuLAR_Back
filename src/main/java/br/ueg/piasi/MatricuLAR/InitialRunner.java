@@ -53,7 +53,6 @@ public class InitialRunner implements ApplicationRunner {
                 .nome("Teste Usuario")
                 .telefone("62999999999")
                 .build();
-        pessoaUsuario = pessoaService.incluir(pessoaUsuario);
 
         //Insere usuario de teste
         Usuario usuario = Usuario.builder()
