@@ -9,6 +9,6 @@ import java.io.Serializable;
 @Data
 public class PkAdvertencia implements Serializable {
 
-    protected String matricula;
+    protected Long matricula;
     protected Long numero;
 }

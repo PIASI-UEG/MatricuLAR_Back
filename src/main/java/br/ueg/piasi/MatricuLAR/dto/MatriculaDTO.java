@@ -17,24 +17,18 @@ import java.util.List;
 @NoArgsConstructor
 public class MatriculaDTO {
 
+    private Long id;
+
     private String cpf;
 
     private String nome;
-
-    private Double renda;
 
     private StatusMatricula status;
 
     @Temporal(TemporalType.DATE)
     private LocalDate nascimento;
 
-    private Boolean paisCasados;
-
-    private Boolean moramJuntos;
-
-    private String observacao;
-
-    private Long endereco_id;
+    private Long enderecoId;
 
     private List<TutorDTO> tutorDTOList;
 
@@ -44,8 +38,8 @@ public class MatriculaDTO {
 
     private List<AdvertenciaDTO> advertencias;
 
-    private List<MatriculaTurmaDTO> turmasHistorico;
+    private TurmaDTO turma;
 
-    private TurmaDTO turmaAtual;
+    private InformacoesMatriculaDTO informacoesMatricula;
 
 }

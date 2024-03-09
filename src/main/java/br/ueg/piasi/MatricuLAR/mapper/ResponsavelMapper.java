@@ -12,12 +12,12 @@ public interface ResponsavelMapper extends BaseMapper<Responsavel, ResponsavelDT
 
     @Mapping(source = "pessoa.nome", target = "nomeResponsavel")
     @Mapping(source = "pessoa.cpf", target = "cpfResponsavel")
-    @Mapping(source = "matricula.cpf", target = "cpfAluno")
-    @Mapping(source = "matricula.pessoa.nome", target = "nomeAluno")
+    @Mapping(source = "matricula.id", target = "idMatricula")
+    @Mapping(source = "matricula.pessoa.nome", target = "nomeMatricula")
     ResponsavelDTO toDTO(Responsavel modelo);
 
     @Mapping(source = "cpfResponsavel", target = "pessoa.cpf")
-    @Mapping(source = "cpfAluno", target = "matricula.cpf")
+    @Mapping(source = "idMatricula", target = "matricula.id")
     Responsavel toModelo(ResponsavelDTO dto);
 }
 

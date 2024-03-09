@@ -7,9 +7,7 @@ import br.ueg.piasi.MatricuLAR.service.TurmaService;
 import br.ueg.prog.webi.api.service.BaseCrudService;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TurmaServiceImpl extends BaseCrudService<Turma, Long, TurmaRepository>
@@ -21,21 +19,11 @@ public class TurmaServiceImpl extends BaseCrudService<Turma, Long, TurmaReposito
     }
 
     @Override
-    protected void validarDados(Turma entidade) {
-
+    protected void validarDados(Turma turma) {
     }
 
     @Override
     protected void validarCamposObrigatorios(Turma entidade) {
-
-    }
-
-    @Override
-    public Turma incluir(Turma turma) {
-        if(Objects.isNull(turma.getTurmaMatriculas())){
-            turma.setTurmaMatriculas(new HashSet<>());
-        }
-        return super.incluir(turma);
     }
 
     @Override
@@ -48,7 +36,6 @@ public class TurmaServiceImpl extends BaseCrudService<Turma, Long, TurmaReposito
     private void getQuantidadeAlunosTurma(List<Turma> turmaList) {
 
         for (Turma turma : turmaList){
-            turma.setQuantidadeAlunos((long) turma.getTurmaMatriculas().size());
         }
 
     }

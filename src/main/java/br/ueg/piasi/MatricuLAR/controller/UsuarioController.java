@@ -5,7 +5,6 @@ import br.ueg.piasi.MatricuLAR.dto.UsuarioDTO;
 import br.ueg.piasi.MatricuLAR.mapper.UsuarioMapperImpl;
 import br.ueg.piasi.MatricuLAR.model.Usuario;
 import br.ueg.piasi.MatricuLAR.service.impl.UsuarioServiceImpl;
-import br.ueg.piasi.MatricuLAR.util.Email;
 import br.ueg.prog.webi.api.controller.CrudController;
 import br.ueg.prog.webi.api.exception.MessageResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -57,15 +56,10 @@ public class UsuarioController extends CrudController<Usuario, UsuarioDTO, Long,
     }
 
 
-    @PostMapping(path = "/teste")
-    public ResponseEntity enviaEmail(@RequestBody String destinatario){
-        try {
-            Email.enviaEmail(destinatario);
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return ResponseEntity.ok().build();
+    @PostMapping(path = "/redefinir-senha")
+    public ResponseEntity redefinirSenha(@RequestBody String emailUsuario){
+            service.redefinirSenha(emailUsuario);
+        return ResponseEntity.ok("Email enviado com sucesso");
     }
 
     @GetMapping("/sort/{field}")
@@ -133,7 +127,9 @@ public class UsuarioController extends CrudController<Usuario, UsuarioDTO, Long,
             )}
     )
     public ResponseEntity<List<UsuarioDTO>> listUsuariosWithPagination(@PathVariable int offset, @PathVariable int pageSize) {
-        return ResponseEntity.ok(this.mapper.toDTO(this.service.findUsuarioWithPagination(offset, pageSize)));
+        return ResponseEntity.ok(
+                this.mapper.toDTO(
+                        this.service.findUsuarioWithPagination(offset, pageSize)));
     }
 
     @GetMapping("/pagination")

@@ -59,7 +59,8 @@ public class SecurityConfig extends ApiSecurityConfig {
                         "/configuration/security",
                         "/swagger-ui/**",
                         "/webjars/**",
-                        "/swagger-ui.html"));
+                        "/swagger-ui.html",
+                        "/api/v1/usuario/redefinir-senha"));
         freeAccessPaternsList.addAll(getCustomFreeAccessPaterns());
         String[] freeAccessPaterns = freeAccessPaternsList.toArray(new String[0]);
         http

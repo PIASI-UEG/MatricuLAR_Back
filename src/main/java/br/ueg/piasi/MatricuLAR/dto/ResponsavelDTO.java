@@ -14,8 +14,8 @@ public class ResponsavelDTO {
 
     private String cpfResponsavel;
     private String nomeResponsavel;
-    private String cpfAluno;
-    private String nomeAluno;
+    private Long idMatricula;
+    private String nomeMatricula;
     private Vinculo vinculo;
     private Boolean tutor;
 

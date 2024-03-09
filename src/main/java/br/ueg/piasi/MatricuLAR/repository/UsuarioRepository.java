@@ -20,4 +20,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long>, JpaSpec
     @Query(value = "select count(*) from usuario ", nativeQuery = true)
     Integer countAll();
     Optional<Usuario> findUsuarioByPessoaCpf(String  pessoaCpf);
+
+    Optional<Usuario> findUsuarioByEmail(String email);
 }

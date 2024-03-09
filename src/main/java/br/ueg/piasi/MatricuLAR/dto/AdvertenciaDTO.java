@@ -13,7 +13,7 @@ public class AdvertenciaDTO {
 
     private Long numero;
 
-    private String cpf_matricula;
+    private Long idMatricula;
 
     private String titulo;
 

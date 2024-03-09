@@ -1,7 +1,9 @@
 package br.ueg.piasi.MatricuLAR;
 
 import br.ueg.piasi.MatricuLAR.enums.Cargo;
+import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import br.ueg.piasi.MatricuLAR.enums.Turno;
+import br.ueg.piasi.MatricuLAR.enums.Vinculo;
 import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.service.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
 
 @Component
 @Transactional(propagation = Propagation.REQUIRED)
@@ -35,6 +39,9 @@ public class InitialRunner implements ApplicationRunner {
 
     @Autowired
     private TutorServiceImpl tutorService;
+
+    @Autowired
+    private MatriculaServiceImpl matriculaService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -69,6 +76,7 @@ public class InitialRunner implements ApplicationRunner {
                 .nome("Teste Tutor")
                 .telefone("62999999999")
                 .build();
+        pessoaTutor = pessoaService.incluir(pessoaTutor);
 
         //Insere tutor de teste
         Tutor tutor = Tutor.builder()
@@ -79,8 +87,9 @@ public class InitialRunner implements ApplicationRunner {
                 .empresaNome("Empresa Teste")
                 .empresaTelefone("6233339999")
                 .profissao("Profissão de teste")
+                .vinculo(Vinculo.AVO)
                 .build();
-        tutorService.incluir(tutor);
+        tutor = tutorService.incluir(tutor);
 
         //Insere endereço de teste
         Endereco endereco = Endereco.builder()
@@ -90,7 +99,7 @@ public class InitialRunner implements ApplicationRunner {
                 .logradouro("Av Teste Qd 00 Lt 99")
                 .complemento("Testes testes")
                 .build();
-        enderecoService.incluir(endereco);
+        endereco = enderecoService.incluir(endereco);
 
         //Insere necessidade especial de teste
         NecessidadeEspecial necessidadeEspecial = NecessidadeEspecial.builder()
@@ -110,6 +119,22 @@ public class InitialRunner implements ApplicationRunner {
                 .telefoneProfessor("62991922192")
                 .build();
         turmaService.incluir(turma);
+
+        Pessoa pessoaMatricula = Pessoa.builder()
+                .cpf("12345678922")
+                .nome("Teste Matricula")
+                .build();
+
+        Matricula matricula = Matricula.builder()
+                .pessoa(pessoaMatricula)
+                .status(StatusMatricula.INATIVO)
+                .tutorList(List.of(tutor))
+                .nascimento(LocalDate.now())
+                .endereco(endereco)
+                .necessidades(new HashSet<>())
+                .build();
+
+        matriculaService.incluir(matricula);
 
         System.out.println("\n*** Fim da Inserção de dados para testes ***\n");
     }

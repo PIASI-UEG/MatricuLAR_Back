@@ -14,7 +14,7 @@ public class Email {
     private static final String SENHA = "ciyp vehk qgwe gyhd"; //senha de app do google
 
 
-    private static MultiPartEmail setEmail(String destinatario) {
+    private static MultiPartEmail montaEmailReseteSenha(String destinatario, String novaSenha) {
         MultiPartEmail email = new MultiPartEmail();
         email.setHostName("smtp.gmail.com");
         email.setSmtpPort(465);
@@ -25,8 +25,8 @@ public class Email {
         int number = rnd.nextInt(999999);
         try {
             email.setFrom(REMETENTE);
-            email.setSubject("Mensagem de teste");
-            email.setMsg("Esse é um teste para testar " + String.format("%06d", number));
+            email.setSubject("Nova senha para o sistema MatricuLAR");
+            email.setMsg("Sua nova senha é " + novaSenha);
             email.addTo(destinatario);
         } catch (EmailException e) {
             throw new RuntimeException(e);
@@ -34,8 +34,8 @@ public class Email {
         return email;
     }
 
-    public static void enviaEmail(String destinatario){
-        MultiPartEmail email = setEmail(destinatario);
+    public static void enviaEmail(String destinatario, String novaSenha){
+        MultiPartEmail email = montaEmailReseteSenha(destinatario, novaSenha);
         try {
             email.send();
         } catch (EmailException emailException) {

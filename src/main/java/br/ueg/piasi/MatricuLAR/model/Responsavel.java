@@ -19,14 +19,14 @@ import lombok.experimental.FieldNameConstants;
 public class Responsavel extends BaseEntidade<PkResponsavel> {
 
     public static final String NOME_TABELA = "responsavel";
-    public static final String CPF_MATRICULA = "matricula_pessoa_cpf";
+    public static final String ID_MATRICULA = "matricula_id";
     public static final String CPF_RESPONSAVEL = "pessoa_cpf";
 
     @Id
     @EqualsAndHashCode.Exclude
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    @JoinColumn(name = Responsavel.CPF_MATRICULA, nullable = false,
-            referencedColumnName = Matricula.Fields.cpf,
+    @JoinColumn(name = Responsavel.ID_MATRICULA, nullable = false,
+            referencedColumnName = Matricula.Fields.id,
             foreignKey = @ForeignKey(name = "fk_responsavel_matricula"))
     private Matricula matricula;
 

@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static jakarta.persistence.GenerationType.SEQUENCE;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,23 +21,31 @@ import java.util.Set;
 @Entity
 @Table(name = Matricula.NOME_TABELA)
 @FieldNameConstants
-public class Matricula extends BaseEntidade<String> {
+public class Matricula extends BaseEntidade<Long> {
 
     public static final String NOME_TABELA = "matricula";
 
-    @Id
-    @Searchable (label = "CPF")
-    private String cpf;
+    @SequenceGenerator(
+            name = "matricula_gerador_sequence",
+            sequenceName = "matricula_sequence",
+            allocationSize = 1
+    )
 
-    @MapsId
+    @GeneratedValue(
+            strategy = SEQUENCE,
+            generator = "matricula_gerador_sequence"
+
+    )
+
+    @Id
+    @Column(name = "id")
+    private Long id;
+
     @OneToOne(optional = false)
-    @JoinColumn(name = Fields.cpf,
+    @JoinColumn(name = "pessoa_cpf",
             referencedColumnName = Pessoa.Fields.cpf, nullable = false,
             foreignKey = @ForeignKey(name = "fk_matricula_pessoa"))
     private Pessoa pessoa;
-
-    @Column(name = "renda", nullable = false)
-    private Double renda;
 
     @Column(name = "status", length = 2, nullable = false)
     private StatusMatricula status;
@@ -43,15 +53,6 @@ public class Matricula extends BaseEntidade<String> {
     @Temporal(TemporalType.DATE)
     @Column(name = "nascimento", nullable = false)
     private LocalDate nascimento;
-
-    @Column(name = "pais_casados", nullable = false)
-    private Boolean paisCasados;
-
-    @Column(name = "pais_moram_juntos", nullable = false)
-    private Boolean moramJuntos;
-
-    @Column(name = "observacao", length = 200)
-    private String observacao;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "endereco", nullable = false,
@@ -62,14 +63,15 @@ public class Matricula extends BaseEntidade<String> {
 
     @ManyToMany
     @JoinTable(name="matricula_necessidade", joinColumns=
-            {@JoinColumn(name="matricula_cpf")}, inverseJoinColumns=
+            {@JoinColumn(name="matricula_id")}, inverseJoinColumns=
             {@JoinColumn(name="necessidade_id")})
     private Set<NecessidadeEspecial> necessidades = new HashSet<>();
 
-    @OneToMany(mappedBy = "matricula", fetch = FetchType.EAGER)
-    @Builder.Default
-    @EqualsAndHashCode.Exclude
-    private Set<MatriculaTurma> turmas = new HashSet<>();
+   @ManyToOne
+   @JoinColumn(name = "turma",
+           referencedColumnName = Turma.Fields.id,
+           foreignKey = @ForeignKey(name = "fk_matricula_tuma"))
+    private Turma turma;
 
     @EqualsAndHashCode.Exclude
     @Builder.Default
@@ -81,8 +83,8 @@ public class Matricula extends BaseEntidade<String> {
     @Searchable(label = "Advertências")
     private Set<Advertencia> advertencias = new HashSet<>();
 
-    @Transient
-    private Turma turmaAtual;
+    @OneToOne(mappedBy = "matricula")
+    private InformacoesMatricula informacoesMatricula;
 
     @Transient
     private List<Tutor> tutorList;

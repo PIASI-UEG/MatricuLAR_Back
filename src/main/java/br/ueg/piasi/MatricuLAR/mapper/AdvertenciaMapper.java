@@ -9,10 +9,10 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface AdvertenciaMapper extends BaseMapper<Advertencia, AdvertenciaDTO> {
     @Override
-    @Mapping(source = "cpf_matricula", target = "matricula.cpf")
+    @Mapping(source = "idMatricula", target = "matricula.id")
     Advertencia toModelo(AdvertenciaDTO DTO);
 
     @Override
-    @Mapping(source = "matricula.cpf", target = "cpf_matricula")
+    @Mapping(source = "matricula.id", target = "idMatricula")
     AdvertenciaDTO toDTO(Advertencia modelo);
 }

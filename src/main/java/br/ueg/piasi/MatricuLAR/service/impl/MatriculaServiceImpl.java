@@ -2,6 +2,7 @@ package br.ueg.piasi.MatricuLAR.service.impl;
 
 
 import br.ueg.piasi.MatricuLAR.model.Matricula;
+import br.ueg.piasi.MatricuLAR.model.Pessoa;
 import br.ueg.piasi.MatricuLAR.model.Responsavel;
 import br.ueg.piasi.MatricuLAR.model.Tutor;
 import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
@@ -18,16 +19,25 @@ import java.util.Set;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED)
-public class MatriculaServiceImpl extends BaseCrudService<Matricula, String, MatriculaRepository>
+public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, MatriculaRepository>
         implements MatriculaService {
 
     @Autowired
     private ResponsavelServiceImpl responsavelService;
 
+    @Autowired
+    private PessoaServiceImpl pessoaService;
+
 
     @Override
-    protected void prepararParaIncluir(Matricula entidade) {
-
+    protected void prepararParaIncluir(Matricula matricula) {
+        matricula.setPessoa(pessoaService.incluir(
+                        Pessoa.builder()
+                                .nome(matricula.getPessoa().getNome())
+                                .cpf(matricula.getPessoa().getCpf())
+                                .build()
+                )
+        );
     }
 
     @Override
@@ -45,7 +55,6 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, String, Mat
 
         Set<Responsavel> responsavelSet = tratarMatriculaResponsaveis(matricula);
         matricula.setAdvertencias(new HashSet<>());
-        matricula.setTurmas(new HashSet<>());
 
         matricula = super.incluir(matricula);
 

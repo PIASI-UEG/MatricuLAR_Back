@@ -8,8 +8,10 @@ import br.ueg.piasi.MatricuLAR.model.Pessoa;
 import br.ueg.piasi.MatricuLAR.model.Usuario;
 import br.ueg.piasi.MatricuLAR.repository.UsuarioRepository;
 import br.ueg.piasi.MatricuLAR.service.UsuarioService;
+import br.ueg.piasi.MatricuLAR.util.Email;
 import br.ueg.prog.webi.api.exception.BusinessException;
 import br.ueg.prog.webi.api.service.BaseCrudService;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -113,12 +115,27 @@ public class UsuarioServiceImpl extends BaseCrudService<Usuario, Long, UsuarioRe
         if (ehAdmin(id)){
             throw new BusinessException(ERRO_EXCLUIR_ADMIN);
         }
-
         return super.excluir(id);
     }
 
     private boolean ehAdmin(Long id) {
         Usuario usuario = repository.findById(id).orElse(null);
         return (Objects.nonNull(usuario) && usuario.getCargo().equals(Cargo.ADMIN));
+    }
+
+    public void redefinirSenha(String emailUsuario) {
+
+        Usuario usuario = repository.findUsuarioByEmail(emailUsuario).orElse(null);
+
+        if (Objects.nonNull(usuario)){
+            String novaSenha = RandomStringUtils.randomAlphanumeric(7,11);
+            usuario.setSenha(novaSenha);
+            criptografarSenha(usuario);
+            alterar(usuario, usuario.getId());
+            Email.enviaEmail(emailUsuario, novaSenha);
+            return;
+        }
+
+        throw new BusinessException(ERRO_USUARIO_NAO_EXISTE);
     }
 }

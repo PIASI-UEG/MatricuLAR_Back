@@ -5,7 +5,8 @@ import java.util.Arrays;
 public enum Cargo {
 
     ADMIN("A","admin"),
-    SECRETARIA("S","secretaria");
+    SECRETARIA("S","secretaria"),
+    COORDENADORA("C", "coordenadora");
 
     private final String id;
     private final String descricao;

@@ -44,7 +44,7 @@ public class Advertencia extends BaseEntidade<PkAdvertencia> {
     @ToString.Exclude
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = Advertencia.CPF_MATRICULA, nullable = false,
-            referencedColumnName = Matricula.Fields.cpf,
+            referencedColumnName = Matricula.Fields.id,
             foreignKey = @ForeignKey(name = "fk_advertencia_matricula"))
     @Searchable()
     private Matricula matricula;

@@ -5,11 +5,11 @@ import br.ueg.piasi.MatricuLAR.enums.Turno;
 import br.ueg.prog.webi.api.model.BaseEntidade;
 import br.ueg.prog.webi.api.model.annotation.Searchable;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
@@ -34,6 +34,7 @@ public class Turma extends BaseEntidade<Long> {
             strategy = SEQUENCE,
             generator = "turma_gerador_sequence"
     )
+
     @Id
     @Column(name = "id")
     private Long id;
@@ -48,11 +49,9 @@ public class Turma extends BaseEntidade<Long> {
     @Column(name = "ano", nullable = false, length = 4)
     private Integer ano;
 
-//    @Temporal(TemporalType.TIME)
     @Column(name = "hora_inicio", nullable = false, length = 4)
     private String horaInicio;
 
-//    @Temporal(TemporalType.TIME)
     @Column(name = "hora_fim", nullable = false, length = 4)
     private String horaFim;
 
@@ -65,12 +64,4 @@ public class Turma extends BaseEntidade<Long> {
 
     @Transient
     private Long quantidadeAlunos;
-
-    @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "turma",
-            fetch = FetchType.EAGER,
-            orphanRemoval = true,
-            cascade = CascadeType.ALL)
-    private Set<MatriculaTurma> turmaMatriculas = new HashSet<>();
-
 }
