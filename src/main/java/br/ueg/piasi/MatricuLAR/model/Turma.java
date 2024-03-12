@@ -40,10 +40,11 @@ public class Turma extends BaseEntidade<Long> {
     private Long id;
 
     @Column(name = "titulo", length = 100, nullable = false)
-    @Searchable
+    @Searchable(label = "Turma")
     private String titulo;
 
     @Column(name = "nome_professor", length = 200, nullable = false)
+    @Searchable(label = "Nome do(a) Professor(a)")
     private String nomeProfessor;
 
     @Column(name = "ano", nullable = false, length = 4)

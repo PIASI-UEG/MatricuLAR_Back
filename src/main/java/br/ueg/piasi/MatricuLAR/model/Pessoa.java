@@ -24,11 +24,11 @@ public class Pessoa extends BaseEntidade<String> {
 
     @Id
     @Column(name = "cpf", nullable = false, length = 11,updatable = false)
-    @Searchable()
+    @Searchable(label = "CPF")
     private String cpf;
 
     @Column(name = "nome", nullable = false, length = 200)
-    @Searchable()
+    @Searchable(label = "Nome")
     private String nome;
 
     @Column(name = "telefone", length = 11)

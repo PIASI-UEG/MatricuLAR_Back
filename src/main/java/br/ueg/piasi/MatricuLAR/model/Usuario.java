@@ -34,14 +34,13 @@ public class Usuario extends BaseEntidade<Long> {
     )
     @Id
     @Column(name = "id")
-    @Searchable(label = "Código")
     private Long id;
 
     @Column(name = "senha", nullable = false, length = 200)
     private String senha;
 
     @Column(name = "cargo", nullable = false, length = 45)
-    @Searchable()
+    @Searchable(label = "Cargo")
     private Cargo cargo;
 
     @Column(name = "email", nullable = false, length = 100)
@@ -51,6 +50,6 @@ public class Usuario extends BaseEntidade<Long> {
     @JoinColumn(name = "pessoa_cpf", unique = true, nullable = false,
             referencedColumnName = Pessoa.Fields.cpf,
             foreignKey = @ForeignKey(name = "fk_usuario_pessoa"))
-    @Searchable()
+    @Searchable(label = "funcionário")
     private Pessoa pessoa;
 }
