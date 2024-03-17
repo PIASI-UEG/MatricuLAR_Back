@@ -86,6 +86,10 @@ public class Matricula extends BaseEntidade<Long> {
     @OneToOne(mappedBy = "matricula")
     private InformacoesMatricula informacoesMatricula;
 
+    @OneToMany(mappedBy = "matricula")
+    @EqualsAndHashCode.Exclude
+    private Set<DocumentoMatricula> documentoMatricula = new HashSet<>();
+
     @Transient
     private List<Tutor> tutorList;
 }

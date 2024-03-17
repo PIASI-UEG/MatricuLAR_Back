@@ -1,4 +1,4 @@
-package br.ueg.piasi.MatricuLAR.converter;
+package br.ueg.piasi.MatricuLAR.enums.converter;
 
 import br.ueg.piasi.MatricuLAR.enums.Turno;
 import jakarta.persistence.AttributeConverter;

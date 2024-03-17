@@ -1,10 +1,8 @@
 package br.ueg.piasi.MatricuLAR.service.impl;
 
 
-import br.ueg.piasi.MatricuLAR.model.Matricula;
-import br.ueg.piasi.MatricuLAR.model.Pessoa;
-import br.ueg.piasi.MatricuLAR.model.Responsavel;
-import br.ueg.piasi.MatricuLAR.model.Tutor;
+import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
+import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
 import br.ueg.piasi.MatricuLAR.service.MatriculaService;
 import br.ueg.prog.webi.api.service.BaseCrudService;
@@ -23,14 +21,20 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         implements MatriculaService {
 
     @Autowired
+    private DocumentoMatriculaServiceImpl documentoMatriculaService;
+
+    @Autowired
     private ResponsavelServiceImpl responsavelService;
 
     @Autowired
     private PessoaServiceImpl pessoaService;
 
 
+
+
     @Override
     protected void prepararParaIncluir(Matricula matricula) {
+        matricula.setStatus(StatusMatricula.INATIVO);
         matricula.setPessoa(pessoaService.incluir(
                         Pessoa.builder()
                                 .nome(matricula.getPessoa().getNome())
@@ -53,14 +57,30 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     @Override
     public Matricula incluir(Matricula matricula) {
 
+        Set<DocumentoMatricula> documentos = matricula.getDocumentoMatricula();
+        matricula.setDocumentoMatricula(new HashSet<>());
+
         Set<Responsavel> responsavelSet = tratarMatriculaResponsaveis(matricula);
+
         matricula.setAdvertencias(new HashSet<>());
 
         matricula = super.incluir(matricula);
 
         salvarResponsaveis(responsavelSet, matricula);
+        salvarDocumentosMatricula(documentos, matricula);
 
         return matricula;
+    }
+
+    private void salvarDocumentosMatricula(Set<DocumentoMatricula> documentoMatriculas, Matricula matricula) {
+
+        if (Objects.nonNull(documentoMatriculas)){
+            for (DocumentoMatricula documentoMatricula : documentoMatriculas){
+                documentoMatricula.setMatricula(matricula);
+                documentoMatriculaService.incluir(documentoMatricula);
+            }
+        }
+
     }
 
     private void salvarResponsaveis(Set<Responsavel> responsavelSet, Matricula matricula){

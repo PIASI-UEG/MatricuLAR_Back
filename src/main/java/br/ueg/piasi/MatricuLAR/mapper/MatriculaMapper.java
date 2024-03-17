@@ -6,7 +6,8 @@ import br.ueg.prog.webi.api.mapper.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = {ResponsavelMapperImpl.class, NecessidadeEspecialMapperImpl.class, TutorMapperImpl.class})
+@Mapper(componentModel = "spring", uses = {ResponsavelMapperImpl.class, NecessidadeEspecialMapperImpl.class,
+        TutorMapperImpl.class, DocumentoMatriculaMapperImpl.class})
 public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
 
     @Mapping(source = "endereco.id", target = "enderecoId")

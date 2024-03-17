@@ -1,9 +1,6 @@
 package br.ueg.piasi.MatricuLAR;
 
-import br.ueg.piasi.MatricuLAR.enums.Cargo;
-import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
-import br.ueg.piasi.MatricuLAR.enums.Turno;
-import br.ueg.piasi.MatricuLAR.enums.Vinculo;
+import br.ueg.piasi.MatricuLAR.enums.*;
 import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.service.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +14,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @Transactional(propagation = Propagation.REQUIRED)
@@ -42,6 +40,9 @@ public class InitialRunner implements ApplicationRunner {
 
     @Autowired
     private MatriculaServiceImpl matriculaService;
+
+    @Autowired
+    private DocumentoMatriculaServiceImpl documentoMatriculaService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -125,6 +126,12 @@ public class InitialRunner implements ApplicationRunner {
                 .nome("Teste Matricula")
                 .build();
 
+        DocumentoMatricula documentoMatricula = DocumentoMatricula.builder()
+                .caminhoDocumento("caminhoteste")
+                .idTipoDocumento(TipoDocumento.FOTO_CRIANCA.getId())
+                .aceito(false)
+                .build();
+
         Matricula matricula = Matricula.builder()
                 .pessoa(pessoaMatricula)
                 .status(StatusMatricula.INATIVO)
@@ -132,6 +139,7 @@ public class InitialRunner implements ApplicationRunner {
                 .nascimento(LocalDate.now())
                 .endereco(endereco)
                 .necessidades(new HashSet<>())
+                .documentoMatricula(Set.of(documentoMatricula))
                 .build();
 
         matriculaService.incluir(matricula);
