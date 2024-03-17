@@ -43,6 +43,9 @@ public class InitialRunner implements ApplicationRunner {
     @Autowired
     private MatriculaServiceImpl matriculaService;
 
+    @Autowired
+    private DocumentoMatriculaServiceImpl documentoMatriculaService;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         try {

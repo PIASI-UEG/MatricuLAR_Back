@@ -1,17 +1,23 @@
 package br.ueg.piasi.MatricuLAR.service.impl;
 
 
+import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
+import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
+import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
 import br.ueg.piasi.MatricuLAR.model.Matricula;
 import br.ueg.piasi.MatricuLAR.model.Pessoa;
 import br.ueg.piasi.MatricuLAR.model.Responsavel;
 import br.ueg.piasi.MatricuLAR.model.Tutor;
 import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
 import br.ueg.piasi.MatricuLAR.service.MatriculaService;
+import br.ueg.prog.webi.api.exception.BusinessException;
 import br.ueg.prog.webi.api.service.BaseCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -23,14 +29,20 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         implements MatriculaService {
 
     @Autowired
+    private DocumentoMatriculaServiceImpl documentoMatriculaService;
+
+    @Autowired
     private ResponsavelServiceImpl responsavelService;
 
     @Autowired
     private PessoaServiceImpl pessoaService;
 
 
+
+
     @Override
     protected void prepararParaIncluir(Matricula matricula) {
+        matricula.setStatus(StatusMatricula.INATIVO);
         matricula.setPessoa(pessoaService.incluir(
                         Pessoa.builder()
                                 .nome(matricula.getPessoa().getNome())
@@ -53,7 +65,10 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     @Override
     public Matricula incluir(Matricula matricula) {
 
+        matricula.setDocumentoMatricula(new HashSet<>());
+
         Set<Responsavel> responsavelSet = tratarMatriculaResponsaveis(matricula);
+
         matricula.setAdvertencias(new HashSet<>());
 
         matricula = super.incluir(matricula);
@@ -99,4 +114,17 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         return null;
     }
 
+    public Matricula uploadDocumento(Long idMatricula, TipoDocumento tipoDocumento, MultipartFile multipartFile) {
+
+        if (Objects.nonNull(repository.findById(idMatricula).orElse(null))){
+            documentoMatriculaService.uploadDocumentos(idMatricula, tipoDocumento, multipartFile);
+            return repository.findById(idMatricula).get();
+        }
+
+        throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO_MATRICULA_NAO_ENCONTRADA);
+    }
+
+    public Resource carregaDocumentoPeloCaminho(String caminhoDoc){
+        return documentoMatriculaService.carregaDocumentoPeloCaminho(caminhoDoc);
+    }
 }

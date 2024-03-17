@@ -4,7 +4,9 @@ import java.util.Arrays;
 
 public enum StatusMatricula {
     ATIVO("A","Ativo"),
-    INATIVO("I","Inativo");
+    INATIVO("I","Inativo"),
+    AGUARDANDO_RENOVACAO("AR", "Aguardando Renovação"),
+    AGUARDANDO_ACEITE("AC", "Aguardando Aceite");
 
     private final String id;
     private final String descricao;
