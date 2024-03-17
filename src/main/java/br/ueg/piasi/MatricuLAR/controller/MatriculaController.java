@@ -26,9 +26,4 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
 
         return ResponseEntity.ok().build();
     }
-
-    @PutMapping(path = "/sopraaparecertipodocumentonofront")
-    public TipoDocumento tipoDocumento(){
-        return TipoDocumento.CERTIDAO_ESTADO_CIVIL;
-    }
 }
