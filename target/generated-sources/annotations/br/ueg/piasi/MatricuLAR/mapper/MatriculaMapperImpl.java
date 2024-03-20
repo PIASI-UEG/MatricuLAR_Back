@@ -1,6 +1,7 @@
 package br.ueg.piasi.MatricuLAR.mapper;
 
 import br.ueg.piasi.MatricuLAR.dto.AdvertenciaDTO;
+import br.ueg.piasi.MatricuLAR.dto.DocumentoMatriculaDTO;
 import br.ueg.piasi.MatricuLAR.dto.InformacoesMatriculaDTO;
 import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
 import br.ueg.piasi.MatricuLAR.dto.NecessidadeEspecialDTO;
@@ -8,6 +9,7 @@ import br.ueg.piasi.MatricuLAR.dto.ResponsavelDTO;
 import br.ueg.piasi.MatricuLAR.dto.TurmaDTO;
 import br.ueg.piasi.MatricuLAR.dto.TutorDTO;
 import br.ueg.piasi.MatricuLAR.model.Advertencia;
+import br.ueg.piasi.MatricuLAR.model.DocumentoMatricula;
 import br.ueg.piasi.MatricuLAR.model.Endereco;
 import br.ueg.piasi.MatricuLAR.model.InformacoesMatricula;
 import br.ueg.piasi.MatricuLAR.model.Matricula;
@@ -29,8 +31,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-03-09T13:35:41-0300",
-    comments = "version: 1.5.3.Final, compiler: javac, environment: Java 17.0.6 (Amazon.com Inc.)"
+    date = "2024-03-17T15:38:01-0300",
+    comments = "version: 1.5.3.Final, compiler: javac, environment: Java 17.0.3.1 (Oracle Corporation)"
 )
 @Component
 public class MatriculaMapperImpl implements MatriculaMapper {
@@ -41,6 +43,8 @@ public class MatriculaMapperImpl implements MatriculaMapper {
     private NecessidadeEspecialMapperImpl necessidadeEspecialMapperImpl;
     @Autowired
     private TutorMapperImpl tutorMapperImpl;
+    @Autowired
+    private DocumentoMatriculaMapperImpl documentoMatriculaMapperImpl;
 
     @Override
     public List<MatriculaDTO> toDTO(List<Matricula> lista) {
@@ -138,6 +142,19 @@ public class MatriculaMapperImpl implements MatriculaMapper {
         if ( source.getInformacoesMatricula() != null ) {
             target.setInformacoesMatricula( source.getInformacoesMatricula() );
         }
+        if ( target.getDocumentoMatricula() != null ) {
+            Set<DocumentoMatricula> set3 = source.getDocumentoMatricula();
+            if ( set3 != null ) {
+                target.getDocumentoMatricula().clear();
+                target.getDocumentoMatricula().addAll( set3 );
+            }
+        }
+        else {
+            Set<DocumentoMatricula> set3 = source.getDocumentoMatricula();
+            if ( set3 != null ) {
+                target.setDocumentoMatricula( new LinkedHashSet<DocumentoMatricula>( set3 ) );
+            }
+        }
         if ( target.getTutorList() != null ) {
             List<Tutor> list = source.getTutorList();
             if ( list != null ) {
@@ -172,6 +189,7 @@ public class MatriculaMapperImpl implements MatriculaMapper {
         matriculaDTO.responsaveis( responsavelSetToResponsavelDTOList( modelo.getResponsaveis() ) );
         matriculaDTO.advertencias( advertenciaSetToAdvertenciaDTOList( modelo.getAdvertencias() ) );
         matriculaDTO.informacoesMatricula( informacoesMatriculaToInformacoesMatriculaDTO( modelo.getInformacoesMatricula() ) );
+        matriculaDTO.documentoMatricula( documentoMatriculaSetToDocumentoMatriculaDTOList( modelo.getDocumentoMatricula() ) );
 
         return matriculaDTO.build();
     }
@@ -195,6 +213,7 @@ public class MatriculaMapperImpl implements MatriculaMapper {
         matricula.responsaveis( responsavelDTOListToResponsavelSet( dto.getResponsaveis() ) );
         matricula.advertencias( advertenciaDTOListToAdvertenciaSet( dto.getAdvertencias() ) );
         matricula.informacoesMatricula( informacoesMatriculaDTOToInformacoesMatricula( dto.getInformacoesMatricula() ) );
+        matricula.documentoMatricula( documentoMatriculaDTOListToDocumentoMatriculaSet( dto.getDocumentoMatricula() ) );
 
         return matricula.build();
     }
@@ -339,6 +358,19 @@ public class MatriculaMapperImpl implements MatriculaMapper {
         return informacoesMatriculaDTO.build();
     }
 
+    protected List<DocumentoMatriculaDTO> documentoMatriculaSetToDocumentoMatriculaDTOList(Set<DocumentoMatricula> set) {
+        if ( set == null ) {
+            return null;
+        }
+
+        List<DocumentoMatriculaDTO> list = new ArrayList<DocumentoMatriculaDTO>( set.size() );
+        for ( DocumentoMatricula documentoMatricula : set ) {
+            list.add( documentoMatriculaMapperImpl.toDTO( documentoMatricula ) );
+        }
+
+        return list;
+    }
+
     protected Endereco matriculaDTOToEndereco(MatriculaDTO matriculaDTO) {
         if ( matriculaDTO == null ) {
             return null;
@@ -470,5 +502,18 @@ public class MatriculaMapperImpl implements MatriculaMapper {
         informacoesMatricula.observacao( informacoesMatriculaDTO.getObservacao() );
 
         return informacoesMatricula.build();
+    }
+
+    protected Set<DocumentoMatricula> documentoMatriculaDTOListToDocumentoMatriculaSet(List<DocumentoMatriculaDTO> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        Set<DocumentoMatricula> set = new LinkedHashSet<DocumentoMatricula>( Math.max( (int) ( list.size() / .75f ) + 1, 16 ) );
+        for ( DocumentoMatriculaDTO documentoMatriculaDTO : list ) {
+            set.add( documentoMatriculaMapperImpl.toModelo( documentoMatriculaDTO ) );
+        }
+
+        return set;
     }
 }

@@ -22,7 +22,7 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
 
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path = "/documentos")
-    public ResponseEntity uploadDocumento(@RequestParam Long idMatricula, @RequestParam TipoDocumento tipoDocumento,
+    public ResponseEntity<MatriculaDTO> uploadDocumento(@RequestParam Long idMatricula, @RequestParam TipoDocumento tipoDocumento,
                                            @RequestBody MultipartFile multipartFile) throws IOException {
 
         return ResponseEntity.ok(
@@ -37,10 +37,28 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
     @GetMapping(path = "/documento/{caminhodoc}")
     public ResponseEntity<Resource> getDocumentoMatricula(@PathVariable(name = "caminhodoc") String caminhodoc){
 
-        Resource arquivo = service.carregaDocumentoPeloCaminho(caminhodoc);
+        Resource arquivo = service.getDocumentoMatricula(caminhodoc);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + arquivo.getFilename() + "\"").body(arquivo);
     }
 
+    @PostMapping(path = "valida")
+    public ResponseEntity<MatriculaDTO> validaMatricula(@RequestBody MatriculaDTO matriculaDTO){
 
+        Matricula matriculaValida = service.validaMatricula(mapper.toModelo(matriculaDTO));
+        return ResponseEntity.ok(mapper.toDTO(matriculaValida));
+
+    }
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/documento/atualiza-contra-cheque")
+    public ResponseEntity<MatriculaDTO> atualizaContraChequeMatricula(@RequestParam Long idMatricula, @RequestParam TipoDocumento tipoDocumento,
+                                                                      @RequestBody MultipartFile multipartFile){
+
+        return ResponseEntity.ok(
+                mapper.toDTO(
+                        service.atualizaContraChequeMatricula(
+                                idMatricula, tipoDocumento, multipartFile)
+                )
+        );
+    }
 }
