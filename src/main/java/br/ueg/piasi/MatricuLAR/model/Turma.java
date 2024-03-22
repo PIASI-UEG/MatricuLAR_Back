@@ -1,7 +1,7 @@
 package br.ueg.piasi.MatricuLAR.model;
 
-import br.ueg.piasi.MatricuLAR.converter.TurnoConverter;
 import br.ueg.piasi.MatricuLAR.enums.Turno;
+import br.ueg.piasi.MatricuLAR.enums.converter.TurnoConverter;
 import br.ueg.prog.webi.api.model.BaseEntidade;
 import br.ueg.prog.webi.api.model.annotation.Searchable;
 import jakarta.persistence.*;

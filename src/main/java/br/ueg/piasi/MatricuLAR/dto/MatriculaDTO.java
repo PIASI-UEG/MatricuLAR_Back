@@ -42,4 +42,6 @@ public class MatriculaDTO {
 
     private InformacoesMatriculaDTO informacoesMatricula;
 
+    private List<DocumentoMatriculaDTO> documentoMatricula;
+
 }

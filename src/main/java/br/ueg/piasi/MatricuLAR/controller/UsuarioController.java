@@ -57,8 +57,8 @@ public class UsuarioController extends CrudController<Usuario, UsuarioDTO, Long,
 
 
     @PostMapping(path = "/redefinir-senha")
-    public ResponseEntity redefinirSenha(@RequestBody String emailUsuario){
-            service.redefinirSenha(emailUsuario);
+    public ResponseEntity redefinirSenha(@RequestBody String cpfUsuario){
+            service.redefinirSenha(cpfUsuario);
         return ResponseEntity.ok("Email enviado com sucesso");
     }
 

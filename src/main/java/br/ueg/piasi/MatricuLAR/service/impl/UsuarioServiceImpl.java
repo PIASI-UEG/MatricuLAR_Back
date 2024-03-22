@@ -123,16 +123,16 @@ public class UsuarioServiceImpl extends BaseCrudService<Usuario, Long, UsuarioRe
         return (Objects.nonNull(usuario) && usuario.getCargo().equals(Cargo.ADMIN));
     }
 
-    public void redefinirSenha(String emailUsuario) {
+    public void redefinirSenha(String cpfUsuario) {
 
-        Usuario usuario = repository.findUsuarioByEmail(emailUsuario).orElse(null);
+        Usuario usuario = repository.findUsuarioByPessoaCpf(cpfUsuario).orElse(null);
 
         if (Objects.nonNull(usuario)){
             String novaSenha = RandomStringUtils.randomAlphanumeric(7,11);
             usuario.setSenha(novaSenha);
             criptografarSenha(usuario);
             alterar(usuario, usuario.getId());
-            Email.enviaEmail(emailUsuario, novaSenha);
+            Email.enviaEmail(usuario.getEmail(), novaSenha);
             return;
         }
 
