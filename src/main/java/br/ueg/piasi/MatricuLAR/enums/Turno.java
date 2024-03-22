@@ -18,11 +18,11 @@ public enum Turno {
     }
 
     public String getId() {
-        return id;
+        return descricao;
     }
 
     public String getDescricao() {
-        return descricao;
+        return id;
     }
 
     public static Turno getById(final String id) {

@@ -57,7 +57,8 @@ public class Turma extends BaseEntidade<Long> {
     private String horaFim;
 
     @Convert(converter = TurnoConverter.class)
-    @Column(name = "turno", nullable = false, length = 1)
+    @Column(name = "turno", nullable = false, length = 15)
+    @Searchable()
     private Turno turno;
 
     @Column(name = "telefone_professora", nullable = false, length = 11)

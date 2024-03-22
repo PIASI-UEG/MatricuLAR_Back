@@ -4,9 +4,9 @@ import java.util.Arrays;
 
 public enum Cargo {
 
-    ADMIN("A","admin"),
-    SECRETARIA("S","secretaria"),
-    COORDENADORA("C", "coordenadora");
+    ADMIN("A","Administrador"),
+    SECRETARIA("S","Secretaria"),
+    COORDENADORA("C", "Coordenadora");
 
     private final String id;
     private final String descricao;
@@ -20,14 +20,14 @@ public enum Cargo {
      * @return the id
      */
     public String getId() {
-        return id;
+        return descricao;
     }
 
     /**
      * @return the descricao
      */
     public String getDescricao() {
-        return descricao;
+        return id;
     }
 
     public static Cargo getById(final String id) {
