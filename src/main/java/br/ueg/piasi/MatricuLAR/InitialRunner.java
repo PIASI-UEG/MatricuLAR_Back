@@ -1,9 +1,6 @@
 package br.ueg.piasi.MatricuLAR;
 
-import br.ueg.piasi.MatricuLAR.enums.Cargo;
-import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
-import br.ueg.piasi.MatricuLAR.enums.Turno;
-import br.ueg.piasi.MatricuLAR.enums.Vinculo;
+import br.ueg.piasi.MatricuLAR.enums.*;
 import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.service.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,6 +135,28 @@ public class InitialRunner implements ApplicationRunner {
                 .build();
 
         matriculaService.incluir(matricula);
+
+        pessoaMatricula = Pessoa.builder()
+                .cpf("12345678923")
+                .nome("Teste Matricula 2")
+                .build();
+
+        matricula = Matricula.builder()
+                .pessoa(pessoaMatricula)
+                .status(StatusMatricula.INATIVO)
+                .tutorList(List.of(tutor))
+                .nascimento(LocalDate.now())
+                .endereco(endereco)
+                .necessidades(new HashSet<>())
+                .build();
+        matriculaService.incluir(matricula);
+
+        //Teste de upload de documentos
+//        byte [] bytes = Files.readAllBytes(Paths.get("C:\\Users\\lucas\\Downloads\\IMG_0923.png"));
+//        documentoMatriculaService.uploadDocumentos(1L, TipoDocumento.FOTO_CRIANCA,  new MockMultipartFile("teste","teste.jpg","image/jpg",bytes));
+
+//        bytes = Files.readAllBytes(Paths.get("C:\\Users\\lucas\\Downloads\\samsung_s23_ultra.png"));
+//        documentoMatriculaService.uploadDocumentos(2L, TipoDocumento.FOTO_CRIANCA,  new MockMultipartFile("teste","teste.png","image/png",bytes));
 
         System.out.println("\n*** Fim da Inserção de dados para testes ***\n");
     }
