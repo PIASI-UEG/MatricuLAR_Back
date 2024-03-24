@@ -1,9 +1,10 @@
 package br.ueg.piasi.MatricuLAR.service.impl;
 
 
+import br.ueg.piasi.MatricuLAR.dto.RedefinirSenhaDTO;
 import br.ueg.piasi.MatricuLAR.dto.UsuarioDTO;
 import br.ueg.piasi.MatricuLAR.enums.Cargo;
-import br.ueg.piasi.MatricuLAR.mapper.UsuarioMapper;
+import br.ueg.piasi.MatricuLAR.mapper.UsuarioMapperImpl;
 import br.ueg.piasi.MatricuLAR.model.Pessoa;
 import br.ueg.piasi.MatricuLAR.model.Usuario;
 import br.ueg.piasi.MatricuLAR.repository.UsuarioRepository;
@@ -27,7 +28,7 @@ public class UsuarioServiceImpl extends BaseCrudService<Usuario, Long, UsuarioRe
         implements UsuarioService {
 
     @Autowired
-    private UsuarioMapper usuarioMapper;
+    private UsuarioMapperImpl usuarioMapper;
 
     @Autowired
     private PessoaServiceImpl pessoaService;
@@ -123,17 +124,21 @@ public class UsuarioServiceImpl extends BaseCrudService<Usuario, Long, UsuarioRe
         return (Objects.nonNull(usuario) && usuario.getCargo().equals(Cargo.ADMIN));
     }
 
-    public void redefinirSenha(String cpfUsuario) {
+    public void redefinirSenha(RedefinirSenhaDTO dadosRefinirSenha) {
 
-        Usuario usuario = repository.findUsuarioByPessoaCpf(cpfUsuario).orElse(null);
+        Usuario usuario = repository.findUsuarioByPessoaCpf(dadosRefinirSenha.cpf()).orElse(null);
 
         if (Objects.nonNull(usuario)){
-            String novaSenha = RandomStringUtils.randomAlphanumeric(7,11);
-            usuario.setSenha(novaSenha);
-            criptografarSenha(usuario);
-            alterar(usuario, usuario.getId());
-            Email.enviaEmail(usuario.getEmail(), novaSenha);
-            return;
+
+            if (usuario.getEmail().equals(dadosRefinirSenha.email())){
+                String novaSenha = RandomStringUtils.randomAlphanumeric(7,11);
+                usuario.setSenha(novaSenha);
+                criptografarSenha(usuario);
+                alterar(usuario, usuario.getId());
+                Email.enviaEmail(usuario.getEmail(), novaSenha);
+                return;
+            }
+            throw new BusinessException(ERRO_EMAIL_INCORRETO);
         }
 
         throw new BusinessException(ERRO_USUARIO_NAO_EXISTE);

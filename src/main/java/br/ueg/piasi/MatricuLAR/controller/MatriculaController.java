@@ -26,11 +26,7 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                                            @RequestBody MultipartFile multipartFile) throws IOException {
 
         return ResponseEntity.ok(
-                mapper.toDTO(
-                    service.uploadDocumento(
-                    idMatricula, tipoDocumento, multipartFile)
-                )
-        );
+                mapper.toDTO(service.uploadDocumento(idMatricula, tipoDocumento, multipartFile)));
     }
 
 
@@ -53,12 +49,7 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/documento/atualiza-contra-cheque")
     public ResponseEntity<MatriculaDTO> atualizaContraChequeMatricula(@RequestParam Long idMatricula, @RequestParam TipoDocumento tipoDocumento,
                                                                       @RequestBody MultipartFile multipartFile){
-
         return ResponseEntity.ok(
-                mapper.toDTO(
-                        service.atualizaContraChequeMatricula(
-                                idMatricula, tipoDocumento, multipartFile)
-                )
-        );
+                mapper.toDTO(service.atualizaContraChequeMatricula(idMatricula, tipoDocumento, multipartFile)));
     }
 }

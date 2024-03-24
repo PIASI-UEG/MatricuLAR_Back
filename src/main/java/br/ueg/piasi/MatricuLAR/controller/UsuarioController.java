@@ -1,6 +1,7 @@
 package br.ueg.piasi.MatricuLAR.controller;
 
 
+import br.ueg.piasi.MatricuLAR.dto.RedefinirSenhaDTO;
 import br.ueg.piasi.MatricuLAR.dto.UsuarioDTO;
 import br.ueg.piasi.MatricuLAR.mapper.UsuarioMapperImpl;
 import br.ueg.piasi.MatricuLAR.model.Usuario;
@@ -57,9 +58,9 @@ public class UsuarioController extends CrudController<Usuario, UsuarioDTO, Long,
 
 
     @PostMapping(path = "/redefinir-senha")
-    public ResponseEntity redefinirSenha(@RequestBody String cpfUsuario){
-            service.redefinirSenha(cpfUsuario);
-        return ResponseEntity.ok("Email enviado com sucesso");
+    public ResponseEntity redefinirSenha(@RequestBody RedefinirSenhaDTO dadosRefinirSenha){
+            service.redefinirSenha(dadosRefinirSenha);
+        return ResponseEntity.ok("Email com nova senha enviado com sucesso");
     }
 
     @GetMapping("/sort/{field}")
