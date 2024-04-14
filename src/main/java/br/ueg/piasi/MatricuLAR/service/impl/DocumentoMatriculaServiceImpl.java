@@ -61,31 +61,34 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
             Path pathCaminhoDoc = this.root.resolve(caminhoDoc);
             Files.copy(documento.getInputStream(), pathCaminhoDoc);
 
-            if(documento.getSize()>500000){
-                File input = new File(pathCaminhoDoc.toString());
-                BufferedImage image = ImageIO.read(input);
-                File compressedImageFile = new File(pathCaminhoDoc.toString());
+            if(extension.equals("jpg") || extension.equals("jpeg") || extension.equals("png")){
+                if(documento.getSize()>500000){
+                    File input = new File(pathCaminhoDoc.toString());
+                    BufferedImage image = ImageIO.read(input);
+                    File compressedImageFile = new File(pathCaminhoDoc.toString());
 
-                while(compressedImageFile.length()>500000){
-                    OutputStream os = new FileOutputStream(compressedImageFile);
+                    while(compressedImageFile.length()>500000){
+                        OutputStream os = new FileOutputStream(compressedImageFile);
 
-                    Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName(extension);
-                    ImageWriter writer = writers.next();
+                        Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName(extension);
+                        ImageWriter writer = writers.next();
 
-                    ImageOutputStream ios = ImageIO.createImageOutputStream(os);
-                    writer.setOutput(ios);
+                        ImageOutputStream ios = ImageIO.createImageOutputStream(os);
+                        writer.setOutput(ios);
 
-                    ImageWriteParam param = writer.getDefaultWriteParam();
+                        ImageWriteParam param = writer.getDefaultWriteParam();
 
-                    param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-                    param.setCompressionQuality(0.5f);  // Change the quality value you prefer
-                    writer.write(null, new IIOImage(image, null, null), param);
+                        param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                        param.setCompressionQuality(0.5f);  // Change the quality value you prefer
+                        writer.write(null, new IIOImage(image, null, null), param);
 
-                    os.close();
-                    ios.close();
-                    writer.dispose();
+                        os.close();
+                        ios.close();
+                        writer.dispose();
+                    }
                 }
             }
+
 
             this.repository.save(
                     DocumentoMatricula.builder()
