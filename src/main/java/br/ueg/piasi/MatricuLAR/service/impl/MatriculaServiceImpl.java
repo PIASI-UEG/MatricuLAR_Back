@@ -4,10 +4,7 @@ package br.ueg.piasi.MatricuLAR.service.impl;
 import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
-import br.ueg.piasi.MatricuLAR.model.Matricula;
-import br.ueg.piasi.MatricuLAR.model.Pessoa;
-import br.ueg.piasi.MatricuLAR.model.Responsavel;
-import br.ueg.piasi.MatricuLAR.model.Tutor;
+import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
 import br.ueg.piasi.MatricuLAR.service.MatriculaService;
 import br.ueg.prog.webi.api.exception.BusinessException;
@@ -42,6 +39,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     @Override
     protected void prepararParaIncluir(Matricula matricula) {
+
         matricula.setStatus(StatusMatricula.INATIVO);
         matricula.setPessoa(pessoaService.incluir(
                         Pessoa.builder()
@@ -66,10 +64,8 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     public Matricula incluir(Matricula matricula) {
 
         matricula.setDocumentoMatricula(new HashSet<>());
-
-        Set<Responsavel> responsavelSet = tratarMatriculaResponsaveis(matricula);
-
         matricula.setAdvertencias(new HashSet<>());
+        Set<Responsavel> responsavelSet = tratarMatriculaResponsaveis(matricula);
 
         matricula = super.incluir(matricula);
 
@@ -78,19 +74,25 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         return matricula;
     }
 
+    @Override
+    public Matricula alterar(Matricula entidade, Long id) {
+
+        return super.alterar(entidade, id);
+    }
+
     private void salvarResponsaveis(Set<Responsavel> responsavelSet, Matricula matricula){
 
-        if (Objects.nonNull(responsavelSet)) {
-            Set<Responsavel> responsavelSetSalvos = new HashSet<>();
-            for (Responsavel responsavel : responsavelSet) {
-                responsavel.setMatricula(matricula);
-                responsavelSetSalvos.add(responsavelService.incluir(responsavel));
-            }
-
-            matricula.setResponsaveis(responsavelSetSalvos);
+        if (Objects.isNull(responsavelSet)) {
+            throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_SEM_RESPONSAVEL);
         }
-        else
-            System.out.println(("A matricula deve ter pelo menos um responsavel"));
+        Set<Responsavel> responsavelSetSalvos = new HashSet<>();
+
+        for (Responsavel responsavel : responsavelSet) {
+            responsavel.setMatricula(matricula);
+            responsavelSetSalvos.add(responsavelService.incluir(responsavel));
+        }
+
+        matricula.setResponsaveis(responsavelSetSalvos);
     }
 
     private Set<Responsavel> tratarMatriculaResponsaveis(Matricula matricula) {
@@ -99,7 +101,9 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             Set<Responsavel> responsavelSet = new HashSet<>();
 
             for (Tutor tutor : matricula.getTutorList()){
-                responsavelSet.add(Responsavel.builder()
+
+                responsavelSet.add(
+                        Responsavel.builder()
                                 .matricula(matricula)
                                 .pessoa(tutor.getPessoa())
                                 .tutor(true)
@@ -110,8 +114,8 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             matricula.setResponsaveis(new HashSet<>());
             return  responsavelSet;
         }
-        else matricula.setResponsaveis(new HashSet<>());
-        return null;
+        else
+            throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_SEM_RESPONSAVEL);
     }
 
     public Matricula uploadDocumento(Long idMatricula, TipoDocumento tipoDocumento, MultipartFile multipartFile) {
@@ -124,7 +128,38 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO_MATRICULA_NAO_ENCONTRADA);
     }
 
-    public Resource carregaDocumentoPeloCaminho(String caminhoDoc){
-        return documentoMatriculaService.carregaDocumentoPeloCaminho(caminhoDoc);
+    public Resource getDocumentoMatricula(String caminhoDoc){
+        return documentoMatriculaService.getDocumentoMatricula(caminhoDoc);
+    }
+
+    public Matricula validaMatricula(Matricula matricula) {
+
+        for (DocumentoMatricula documento : matricula.getDocumentoMatricula()){
+
+            if (!documento.getAceito()){
+                throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_NAO_ACEITO, documento.getCaminhoDocumento());
+            }
+
+        }
+
+        matricula.setStatus(StatusMatricula.ATIVO);
+
+        return alterar(matricula, matricula.getId());
+
+    }
+
+    public Matricula atualizaContraChequeMatricula(Long idMatricula, TipoDocumento tipoDocumento, MultipartFile multipartFile) {
+
+        try {
+            if (Objects.nonNull(repository.findById(idMatricula).orElse(null))){
+                documentoMatriculaService.atualizaContraChequeMatricula(idMatricula, tipoDocumento, multipartFile);
+                return repository.findById(idMatricula).get();
+            }
+            throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO_MATRICULA_NAO_ENCONTRADA);
+
+        }catch (Exception e){
+            throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO_MATRICULA_NAO_ENCONTRADA);
+        }
+
     }
 }
