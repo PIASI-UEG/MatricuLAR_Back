@@ -27,7 +27,12 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.Iterator;
+import java.util.Objects;
+import java.util.TimeZone;
+
+import static br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode.ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO;
 
 @Service
 public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatricula, PkDocumentoMatricula, DocumentoMatriculaRepository>
@@ -104,7 +109,43 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
         }
     }
 
-    public Resource carregaDocumentoPeloCaminho(String caminhdoDoc){
+    private String montaNomeArquivo(Long idMatricula, TipoDocumento tipoDocumento, MultipartFile documento) {
+
+        StringBuilder sbCaminhoDoc = new StringBuilder();
+        sbCaminhoDoc.append(tipoDocumento.getId())
+                .append("_")
+                .append(idMatricula);
+
+        if (ehContraCheque(tipoDocumento)){
+            adicionaMesAnoCaminho(sbCaminhoDoc);
+        }
+        sbCaminhoDoc.append(".")
+                .append(Objects.requireNonNull(documento.getContentType()).split("/")[1]);
+
+        return sbCaminhoDoc.toString();
+
+    }
+
+    private static void adicionaMesAnoCaminho(StringBuilder sbCaminhoDoc) {
+        TimeZone.setDefault(TimeZone.getTimeZone("America/Sao_Paulo"));
+        LocalDate localDate = LocalDate.now();
+        sbCaminhoDoc.append("_")
+                .append(localDate.getMonthValue())
+                .append("_")
+                .append(localDate.getYear());
+    }
+
+    private boolean ehContraCheque(TipoDocumento tipoDocumento) {
+
+        return tipoDocumento.equals(TipoDocumento.CONTRA_CHEQUE1T1)
+                || tipoDocumento.equals(TipoDocumento.CONTRA_CHEQUE2T1)
+                || tipoDocumento.equals(TipoDocumento.CONTRA_CHEQUE3T1)
+                || tipoDocumento.equals(TipoDocumento.CONTRA_CHEQUE1T2)
+                || tipoDocumento.equals(TipoDocumento.CONTRA_CHEQUE2T2)
+                || tipoDocumento.equals(TipoDocumento.CONTRA_CHEQUE3T2);
+    }
+
+    public Resource getDocumentoMatricula(String caminhdoDoc){
 
         try {
             Path arquivo = root.resolve(caminhdoDoc);
@@ -114,10 +155,29 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
             if (resource.exists() || resource.isReadable()){
                 return resource;
             }
-
+            throw new BusinessException(ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO);
         }catch (Exception e ){
-            throw new BusinessException(SistemaMessageCode.ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO);
+            throw new BusinessException(ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO);
         }
-        return null;
+    }
+
+    public void atualizaContraChequeMatricula(Long idMatricula, TipoDocumento tipoDocumento, MultipartFile multipartFile) {
+
+        DocumentoMatricula documentoMatricula =
+                repository.findByMatricula_IdAndIdTipoDocumento(idMatricula, tipoDocumento.getId())
+                        .orElse(null);
+
+        if (Objects.isNull(documentoMatricula)){
+            throw new BusinessException(ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO);
+        }
+
+        try{
+            Path arquivo = root.resolve(documentoMatricula.getCaminhoDocumento());
+            Files.delete(arquivo);
+            uploadDocumentos(idMatricula, tipoDocumento, multipartFile);
+
+        }catch (Exception e){
+            throw new BusinessException(ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO);
+        }
     }
 }
