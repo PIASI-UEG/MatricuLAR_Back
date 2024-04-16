@@ -62,8 +62,9 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
                 Files.createDirectories(root);
             }
             String extension = documento.getContentType().split("/")[1];
-            String caminhoDoc = tipoDocumento.getId() + idMatricula + "." +extension;
-            Path pathCaminhoDoc = this.root.resolve(caminhoDoc);
+            String nomeArquivo = montaNomeArquivo(idMatricula, tipoDocumento, documento);
+
+            Path pathCaminhoDoc = this.root.resolve(nomeArquivo);
             Files.copy(documento.getInputStream(), pathCaminhoDoc);
 
             if(extension.equals("jpg") || extension.equals("jpeg") || extension.equals("png")){
@@ -99,7 +100,7 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
                     DocumentoMatricula.builder()
                             .matricula(Matricula.builder().id(idMatricula).build())
                             .idTipoDocumento(tipoDocumento.getId())
-                            .caminhoDocumento(caminhoDoc)
+                            .caminhoDocumento(nomeArquivo)
                             .aceito(false)
                             .build()
             );
