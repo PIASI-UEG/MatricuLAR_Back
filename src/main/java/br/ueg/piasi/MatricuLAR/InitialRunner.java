@@ -8,7 +8,6 @@ import br.ueg.piasi.MatricuLAR.enums.Turno;
 import br.ueg.piasi.MatricuLAR.enums.Vinculo;
 import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.service.impl.*;
-import br.ueg.piasi.MatricuLAR.util.termoDeResponsabilidade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -27,9 +26,6 @@ import java.util.List;
 @Component
 @Transactional(propagation = Propagation.REQUIRED)
 public class InitialRunner implements ApplicationRunner {
-
-    @Autowired
-    private termoDeResponsabilidade termo;
 
     @Autowired
     private UsuarioServiceImpl usuarioService;
@@ -150,14 +146,12 @@ public class InitialRunner implements ApplicationRunner {
 
         System.out.println("\n*** Fim da Inserção de dados para testes ***\n");
 
-        AssinaturaDTO teste1 = AssinaturaDTO.builder()
+        AssinaturaDTO assinatura = AssinaturaDTO.builder()
                 .imagemAss(Files.readAllBytes(Paths.get("C:\\Users\\lucas\\Downloads\\assinatura teste.png")))
                 .build();
-        List<AssinaturaDTO> teste = new ArrayList<>();
+        List<AssinaturaDTO> assinaturaList = new ArrayList<>();
 
-        teste.add(teste1);
-
-        termoDeResponsabilidade.gerarTermoSemAss(teste);
+        assinaturaList.add(assinatura);
     }
 
 }
