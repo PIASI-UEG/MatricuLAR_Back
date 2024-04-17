@@ -1,11 +1,13 @@
 package br.ueg.piasi.MatricuLAR;
 
+import br.ueg.piasi.MatricuLAR.dto.TurmaDTO;
 import br.ueg.piasi.MatricuLAR.enums.Cargo;
 import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import br.ueg.piasi.MatricuLAR.enums.Turno;
 import br.ueg.piasi.MatricuLAR.enums.Vinculo;
 import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.service.impl.*;
+import br.ueg.piasi.MatricuLAR.util.termoDeResponsabilidade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -15,12 +17,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 @Component
 @Transactional(propagation = Propagation.REQUIRED)
 public class InitialRunner implements ApplicationRunner {
+
+    @Autowired
+    private termoDeResponsabilidade termo;
 
     @Autowired
     private UsuarioServiceImpl usuarioService;
@@ -140,6 +146,8 @@ public class InitialRunner implements ApplicationRunner {
         matriculaService.incluir(matricula);
 
         System.out.println("\n*** Fim da Inserção de dados para testes ***\n");
+
+        termoDeResponsabilidade.gerarTermoSemAss(new ArrayList<TurmaDTO>());
     }
 
 }

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sagradaFamiliaTermo_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5cb87eb5-5b29-4dac-9124-d117d98a545f">
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="132" splitType="Stretch">
+			<image>
+				<reportElement x="160" y="10" width="241" height="120" uuid="8dcaafac-a5f6-4288-825d-dece4f870818"/>
+				<imageExpression><![CDATA["C:/Users/Nahta/IdeaProjects/PIASI - Associacao Sagrada Familia/MatricuLAR_Back/src/main/resources/images/logo.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="640" splitType="Stretch">
+			<staticText>
+				<reportElement x="80" y="70" width="400" height="390" uuid="350f27ac-6cb0-4a9d-aea6-c2bcb495d2c2"/>
+				<textElement textAlignment="Justified">
+					<font size="20"/>
+				</textElement>
+				<text><![CDATA[    Eu, Responsável, portador(a) do CPF nº 123.456.789-00, residente na Rua Brasil Nº123, declaro estar ciente e de acordo com as condições estabelecidas para a matrícula oferecido pela Associação Sagrada Familia.
+
+        Comprometo-me a cumprir todas as normas e regulamentos da instituição durante o período da matrícula do Aluno, portador(a) do CPF nº 987.654.321-00.
+
+    Declaro ainda que todas as informações fornecidas neste formulário preenchido são verdadeiras e estou ciente de que qualquer falsidade poderá implicar na perda do direito à matrícula.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="120" y="0" width="330" height="70" uuid="e702c6c9-3c35-4b28-a69b-cdf428c769db"/>
+				<textElement textAlignment="Center">
+					<font size="26"/>
+				</textElement>
+				<text><![CDATA[Termo de Matrícula]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="530" width="250" height="30" uuid="4acb3077-cadd-4a8d-9146-68c9fddaf3b1"/>
+				<textElement>
+					<font size="20"/>
+				</textElement>
+				<text><![CDATA[Assinatura do Responsável: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="470" width="330" height="30" uuid="9bb87933-a7ad-4252-ac8c-60708c3f56af"/>
+				<textElement>
+					<font size="20"/>
+				</textElement>
+				<text><![CDATA[Anápolis, 16 de abril de 2024]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+</jasperReport>
