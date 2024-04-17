@@ -1,5 +1,6 @@
 package br.ueg.piasi.MatricuLAR.util;
 
+import br.ueg.piasi.MatricuLAR.dto.AssinaturaDTO;
 import br.ueg.piasi.MatricuLAR.dto.TurmaDTO;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -13,12 +14,16 @@ import java.util.Map;
 public class termoDeResponsabilidade {
     public static final String JASPER_TERMO = ".\\src\\main\\resources\\sagradaFamiliaTermo_A4.jrxml";
 
-    public static void gerarTermoSemAss(List<TurmaDTO> turmas) {
+    public static void gerarTermoSemAss(List<AssinaturaDTO> assinatura) {
         try {
+
+            Map<String, Object> parametros = new HashMap<String, Object>();
+
+            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(assinatura);
 
             JasperReport report = JasperCompileManager.compileReport(JASPER_TERMO);
 
-            JasperPrint print = JasperFillManager.fillReport(report, new HashMap<>(), new JREmptyDataSource());
+            JasperPrint print = JasperFillManager.fillReport(report, parametros, dataSource);
 
             //CAMINHO ONDE SERÁ SALVO O PDF (por enquanto deixando na pasta fotos)
             JasperExportManager.exportReportToPdfFile(print, ".\\src\\main\\resources\\images\\Termo-Responsabilidade.pdf");

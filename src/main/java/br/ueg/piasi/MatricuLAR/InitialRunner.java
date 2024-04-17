@@ -1,5 +1,6 @@
 package br.ueg.piasi.MatricuLAR;
 
+import br.ueg.piasi.MatricuLAR.dto.AssinaturaDTO;
 import br.ueg.piasi.MatricuLAR.dto.TurmaDTO;
 import br.ueg.piasi.MatricuLAR.enums.Cargo;
 import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
@@ -16,6 +17,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -147,7 +150,14 @@ public class InitialRunner implements ApplicationRunner {
 
         System.out.println("\n*** Fim da Inserção de dados para testes ***\n");
 
-        termoDeResponsabilidade.gerarTermoSemAss(new ArrayList<TurmaDTO>());
+        AssinaturaDTO teste1 = AssinaturaDTO.builder()
+                .imagemAss(Files.readAllBytes(Paths.get("C:\\Users\\lucas\\Downloads\\assinatura teste.png")))
+                .build();
+        List<AssinaturaDTO> teste = new ArrayList<>();
+
+        teste.add(teste1);
+
+        termoDeResponsabilidade.gerarTermoSemAss(teste);
     }
 
 }
