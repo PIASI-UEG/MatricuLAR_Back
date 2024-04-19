@@ -58,12 +58,15 @@ public class UsuarioServiceImpl extends BaseCrudService<Usuario, Long, UsuarioRe
 
     public UsuarioDTO getUsuarioDTOPorPessoaCpf(String usuarioPessoaCpf) {
 
-        Usuario usuario = repository.findUsuarioByPessoaCpf(usuarioPessoaCpf).orElseThrow();
+        Usuario usuario = repository.findUsuarioByPessoaCpf(usuarioPessoaCpf).orElse(null);
 
-        UsuarioDTO usuarioDTO = usuarioMapper.toDTO(usuario);
-        usuarioDTO.setSenha(usuario.getSenha());
+        if(Objects.nonNull(usuario)){
+            UsuarioDTO usuarioDTO = usuarioMapper.toDTO(usuario);
+            usuarioDTO.setSenha(usuario.getSenha());
+            return usuarioDTO;
+        }
 
-        return usuarioDTO;
+        throw new BusinessException(ERRO_USUARIO_NAO_EXISTE);
     }
 
 

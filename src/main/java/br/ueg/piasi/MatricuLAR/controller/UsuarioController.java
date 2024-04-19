@@ -63,7 +63,7 @@ public class UsuarioController extends CrudController<Usuario, UsuarioDTO, Long,
         return ResponseEntity.ok("Email com nova senha enviado com sucesso");
     }
 
-    @GetMapping("/sort/{field}")
+    @GetMapping(value = "/sort/{field}")
     @Operation(
             description = "Reliza busca ordenada de acordo com o campo",
             responses = {@ApiResponse(

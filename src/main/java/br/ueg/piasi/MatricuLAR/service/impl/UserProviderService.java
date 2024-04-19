@@ -26,8 +26,6 @@ public class UserProviderService implements br.ueg.prog.webi.api.service.UserPro
 
     private CredencialDTO getCredencialDTO(UsuarioDTO user) {
 
-        System.out.println(user.toString());
-
         return CredencialDTO.builder()
                 .login(user.getPessoaCpf())
                 .id(user.getId())
