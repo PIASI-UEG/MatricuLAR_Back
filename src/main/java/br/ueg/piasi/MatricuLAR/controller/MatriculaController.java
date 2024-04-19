@@ -1,11 +1,13 @@
 package br.ueg.piasi.MatricuLAR.controller;
 
 
+import br.ueg.piasi.MatricuLAR.dto.AssinaturaDTO;
 import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
 import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
 import br.ueg.piasi.MatricuLAR.model.Matricula;
 import br.ueg.piasi.MatricuLAR.service.impl.MatriculaServiceImpl;
+import br.ueg.piasi.MatricuLAR.util.TermoDeResponsabilidade;
 import br.ueg.prog.webi.api.controller.CrudController;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/${app.api.version}/matricula")
@@ -51,5 +54,10 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                                                                       @RequestBody MultipartFile multipartFile){
         return ResponseEntity.ok(
                 mapper.toDTO(service.atualizaContraChequeMatricula(idMatricula, tipoDocumento, multipartFile)));
+    }
+
+    @PostMapping(path ="/termo")
+    public ResponseEntity<List<AssinaturaDTO>> gerarTermoBack(@RequestBody List<AssinaturaDTO> assinaturaDTO){
+        return ResponseEntity.ok(TermoDeResponsabilidade.gerarTermoSemAss(assinaturaDTO));
     }
 }

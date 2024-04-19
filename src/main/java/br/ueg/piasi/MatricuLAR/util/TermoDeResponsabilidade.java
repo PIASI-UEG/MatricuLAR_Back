@@ -1,7 +1,6 @@
 package br.ueg.piasi.MatricuLAR.util;
 
 import br.ueg.piasi.MatricuLAR.dto.AssinaturaDTO;
-import br.ueg.piasi.MatricuLAR.dto.TurmaDTO;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.stereotype.Component;
@@ -11,10 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class termoDeResponsabilidade {
+public class TermoDeResponsabilidade {
     public static final String JASPER_TERMO = ".\\src\\main\\resources\\sagradaFamiliaTermo_A4.jrxml";
 
-    public static void gerarTermoSemAss(List<AssinaturaDTO> assinatura) {
+    public static List<AssinaturaDTO> gerarTermoSemAss(List<AssinaturaDTO> assinatura) {
         try {
 
             Map<String, Object> parametros = new HashMap<String, Object>();
@@ -32,6 +31,7 @@ public class termoDeResponsabilidade {
         } catch (Exception e) {
             System.out.println(e);
         }
+        return assinatura;
     }
 
 }

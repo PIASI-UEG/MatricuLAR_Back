@@ -1,13 +1,13 @@
 package br.ueg.piasi.MatricuLAR;
 
 import br.ueg.piasi.MatricuLAR.dto.AssinaturaDTO;
-import br.ueg.piasi.MatricuLAR.dto.TurmaDTO;
 import br.ueg.piasi.MatricuLAR.enums.Cargo;
 import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import br.ueg.piasi.MatricuLAR.enums.Turno;
 import br.ueg.piasi.MatricuLAR.enums.Vinculo;
 import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.service.impl.*;
+import br.ueg.piasi.MatricuLAR.util.TermoDeResponsabilidade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -147,11 +147,15 @@ public class InitialRunner implements ApplicationRunner {
         System.out.println("\n*** Fim da Inserção de dados para testes ***\n");
 
         AssinaturaDTO assinatura = AssinaturaDTO.builder()
-                .imagemAss(Files.readAllBytes(Paths.get("C:\\Users\\lucas\\Downloads\\assinatura teste.png")))
+                // assinatura do front
+                .imagemAss(Files.readAllBytes(Paths.get("C:\\Users\\Nahta\\Downloads\\assinatura.png")))
+                .CPFAss("12345678900")
                 .build();
         List<AssinaturaDTO> assinaturaList = new ArrayList<>();
 
         assinaturaList.add(assinatura);
+
+        TermoDeResponsabilidade.gerarTermoSemAss(assinaturaList);
     }
 
 }

@@ -12,7 +12,7 @@
 		<band height="132" splitType="Stretch">
 			<image>
 				<reportElement x="160" y="10" width="241" height="120" uuid="8dcaafac-a5f6-4288-825d-dece4f870818"/>
-				<imageExpression><![CDATA["C:/Portable20231/workspace/MatricuLAR_Back/src/main/resources/images/logo.png"]]></imageExpression>
+				<imageExpression><![CDATA["C:/Users/Nahta/IdeaProjects/PIASI - Associacao Sagrada Familia/MatricuLAR_Back/src/main/resources/images/logo.png"]]></imageExpression>
 			</image>
 		</band>
 	</title>

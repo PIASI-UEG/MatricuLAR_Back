@@ -7,4 +7,5 @@ import lombok.Data;
 @Builder
 public class AssinaturaDTO {
     private byte[] imagemAss;
+    private String CPFAss;
 }

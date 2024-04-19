@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sagradaFamiliaTermo_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5cb87eb5-5b29-4dac-9124-d117d98a545f">
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
+	<field name="imagemAss" class="byte[]"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -42,13 +43,17 @@
 				</textElement>
 				<text><![CDATA[Assinatura do Responsável: ]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="80" y="470" width="330" height="30" uuid="9bb87933-a7ad-4252-ac8c-60708c3f56af"/>
+			<textField>
+				<reportElement x="84" y="484" width="146" height="30" uuid="159333df-f8b0-47be-b1da-df5ef2d3d2de"/>
 				<textElement>
-					<font size="20"/>
+					<font size="14"/>
 				</textElement>
-				<text><![CDATA[Anápolis, 16 de abril de 2024]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd MMMM yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="80" y="560" width="300" height="80" uuid="81f47319-84bb-43b2-86de-238ee36f6ede"/>
+				<imageExpression><![CDATA[$F{imagemAss}]]></imageExpression>
+			</image>
 		</band>
 	</pageHeader>
 </jasperReport>
