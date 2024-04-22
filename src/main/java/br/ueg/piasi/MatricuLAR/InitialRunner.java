@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 
@@ -148,7 +149,7 @@ public class InitialRunner implements ApplicationRunner {
 
         AssinaturaDTO assinatura = AssinaturaDTO.builder()
                 // assinatura do front
-                .imagemAss(Files.readAllBytes(Paths.get("C:\\Users\\Nahta\\Downloads\\assinatura.png")))
+                .imagemAss(Base64.getEncoder().encodeToString(Files.readAllBytes(Paths.get("C:\\Users\\lucas\\Downloads\\assinatura teste.png"))))
                 .CPFAss("12345678900")
                 .build();
         List<AssinaturaDTO> assinaturaList = new ArrayList<>();

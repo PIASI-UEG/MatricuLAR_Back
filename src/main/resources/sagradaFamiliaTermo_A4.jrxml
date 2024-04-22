@@ -4,7 +4,7 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="imagemAss" class="byte[]"/>
+	<field name="imagemAss" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -12,7 +12,7 @@
 		<band height="132" splitType="Stretch">
 			<image>
 				<reportElement x="160" y="10" width="241" height="120" uuid="8dcaafac-a5f6-4288-825d-dece4f870818"/>
-				<imageExpression><![CDATA["C:/Users/Nahta/IdeaProjects/PIASI - Associacao Sagrada Familia/MatricuLAR_Back/src/main/resources/images/logo.png"]]></imageExpression>
+				<imageExpression><![CDATA["C:/Portable20231/workspace/MatricuLAR_Back/src/main/resources/images/logo.png"]]></imageExpression>
 			</image>
 		</band>
 	</title>
@@ -52,7 +52,7 @@
 			</textField>
 			<image>
 				<reportElement x="80" y="560" width="300" height="80" uuid="81f47319-84bb-43b2-86de-238ee36f6ede"/>
-				<imageExpression><![CDATA[$F{imagemAss}]]></imageExpression>
+				<imageExpression><![CDATA[new java.io.ByteArrayInputStream(org.apache.commons.codec.binary.Base64.decodeBase64($F{imagemAss}.getBytes()))]]></imageExpression>
 			</image>
 		</band>
 	</pageHeader>

@@ -58,6 +58,7 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
 
     @PostMapping(path ="/termo")
     public ResponseEntity<List<AssinaturaDTO>> gerarTermoBack(@RequestBody List<AssinaturaDTO> assinaturaDTO){
+        System.out.println("entrou no gerar termo");
         return ResponseEntity.ok(TermoDeResponsabilidade.gerarTermoSemAss(assinaturaDTO));
     }
 }

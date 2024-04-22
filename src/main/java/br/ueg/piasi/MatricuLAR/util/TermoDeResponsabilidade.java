@@ -15,7 +15,7 @@ public class TermoDeResponsabilidade {
 
     public static List<AssinaturaDTO> gerarTermoSemAss(List<AssinaturaDTO> assinatura) {
         try {
-
+            System.out.println("gerando termo");
             Map<String, Object> parametros = new HashMap<String, Object>();
 
             JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(assinatura);
