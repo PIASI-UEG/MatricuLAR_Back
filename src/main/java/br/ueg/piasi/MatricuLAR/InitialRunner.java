@@ -130,7 +130,7 @@ public class InitialRunner implements ApplicationRunner {
 
         Matricula matricula = Matricula.builder()
                 .pessoa(pessoaMatricula)
-                .status(StatusMatricula.INATIVO)
+                .status(StatusMatricula.AGUARDANDO_ACEITE)
                 .tutorList(List.of(tutor))
                 .nascimento(LocalDate.now())
                 .endereco(endereco)

@@ -48,6 +48,7 @@ public class Matricula extends BaseEntidade<Long> {
     private Pessoa pessoa;
 
     @Column(name = "status", length = 2, nullable = false)
+    @Searchable()
     private StatusMatricula status;
 
     @Temporal(TemporalType.DATE)
@@ -58,7 +59,7 @@ public class Matricula extends BaseEntidade<Long> {
     @JoinColumn(name = "endereco", nullable = false,
             referencedColumnName = Endereco.Fields.id,
             foreignKey = @ForeignKey(name = "fk_matricula_endereco"))
-    @Searchable()
+    //@Searchable()
     private Endereco endereco;
 
     @ManyToMany
@@ -80,7 +81,7 @@ public class Matricula extends BaseEntidade<Long> {
 
     @OneToMany(mappedBy = "matricula",fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    @Searchable(label = "Advertências")
+    //@Searchable(label = "Advertências")
     private Set<Advertencia> advertencias = new HashSet<>();
 
     @OneToOne(mappedBy = "matricula")
