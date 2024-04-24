@@ -1,5 +1,8 @@
 package br.ueg.piasi.MatricuLAR.util;
 
+import br.ueg.piasi.MatricuLAR.dto.AssinaturaDTO;
+
+import java.io.File;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -24,13 +27,14 @@ public class RemetenteAssiDig {
     }
 
 
-    public byte[] geraAssinatura(String mensagem) throws NoSuchAlgorithmException,
+    public byte[] geraAssinatura(File termo, AssinaturaDTO assinaturaDTO) throws NoSuchAlgorithmException,
             InvalidKeyException, SignatureException {
         Signature sig = Signature.getInstance("DSA");
+        String seed = assinaturaDTO.getImagemAss().concat(assinaturaDTO.getCPFAss());
 
         //Geração das chaves públicas e privadas
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("DSA");
-        SecureRandom secRan = new SecureRandom();
+        SecureRandom secRan = new SecureRandom(seed.getBytes());
         kpg.initialize(512, secRan);
         KeyPair keyP = kpg.generateKeyPair();
         this.pubKey = keyP.getPublic();
@@ -39,8 +43,8 @@ public class RemetenteAssiDig {
         //Inicializando Obj Signature com a Chave Privada
         sig.initSign(priKey);
 
-        //Gerar assinatura
-        sig.update(mensagem.getBytes());
+        sig.update(termo.toString().getBytes());
+        //assina
         byte[] assinatura = sig.sign();
 
         return assinatura;
