@@ -54,14 +54,14 @@ public class Matricula extends BaseEntidade<Long> {
     @Column(name = "nascimento", nullable = false)
     private LocalDate nascimento;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "endereco", nullable = false,
             referencedColumnName = Endereco.Fields.id,
             foreignKey = @ForeignKey(name = "fk_matricula_endereco"))
     @Searchable()
     private Endereco endereco;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name="matricula_necessidade", joinColumns=
             {@JoinColumn(name="matricula_id")}, inverseJoinColumns=
             {@JoinColumn(name="necessidade_id")})
@@ -78,7 +78,7 @@ public class Matricula extends BaseEntidade<Long> {
     @OneToMany(mappedBy = "matricula", fetch = FetchType.EAGER)
     private Set<Responsavel> responsaveis = new HashSet<>();
 
-    @OneToMany(mappedBy = "matricula",fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "matricula",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     @Searchable(label = "Advertências")
     private Set<Advertencia> advertencias = new HashSet<>();

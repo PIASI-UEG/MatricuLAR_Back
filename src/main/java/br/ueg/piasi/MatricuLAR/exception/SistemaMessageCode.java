@@ -11,6 +11,7 @@ public enum SistemaMessageCode implements MessageCode {
         151 - 200 mensagens para turma
         201 - 300 mensagens para matricula
     */
+
     ERRO_EXCLUIR_ADMIN("MSG-001", 400),
     ERRO_USUARIO_NAO_EXISTE("MSG-002", 400),
     ERRO_SOMENTE_DONO_ALTERA_SENHA("MSG-003", 400),
@@ -21,9 +22,8 @@ public enum SistemaMessageCode implements MessageCode {
     ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO("MSG-103", 404),
     ERRO_DOCUMENTO_NAO_ACEITO("MSG-104", 400 ),
 
-    ERRO_MATRICULA_SEM_RESPONSAVEL("MSG-201", 404)
-
-    ;
+    ERRO_MATRICULA_SEM_RESPONSAVEL("MSG-201", 404),
+    ERRO_LISTAR_MATRICULA_STATUS("MSG-202", 404 );
 
     private final String code;
     private final Integer status;

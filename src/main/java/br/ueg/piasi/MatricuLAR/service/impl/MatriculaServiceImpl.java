@@ -16,9 +16,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED)
@@ -34,13 +32,15 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     @Autowired
     private PessoaServiceImpl pessoaService;
 
+    @Autowired
+    private TutorServiceImpl tutorService;
 
 
 
     @Override
     protected void prepararParaIncluir(Matricula matricula) {
 
-        matricula.setStatus(StatusMatricula.INATIVO);
+        matricula.setStatus(StatusMatricula.AGUARDANDO_ACEITE);
         matricula.setPessoa(pessoaService.incluir(
                         Pessoa.builder()
                                 .nome(matricula.getPessoa().getNome())
@@ -161,5 +161,31 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO_MATRICULA_NAO_ENCONTRADA);
         }
 
+    }
+
+    @Override
+    public Matricula obterPeloId(Long id) {
+        Matricula matricula = super.obterPeloId(id);
+
+        List<Responsavel> responsavelTutores = matricula
+                .getResponsaveis()
+                .stream()
+                .filter(Responsavel::getTutor).toList();
+
+        List<Tutor> tutorList = new ArrayList<>();
+
+        responsavelTutores.forEach(responsavel -> {
+            tutorList.add(tutorService.obterPeloId(responsavel.getPessoa().getCpf()));
+        });
+
+        matricula.setTutorList(tutorList);
+        return matricula;
+    }
+
+    public List<Matricula> listarMatriculasListagemPorStatus(StatusMatricula statusMatricula) {
+
+      return repository.findByStatus(statusMatricula)
+                .orElseThrow(() -> new BusinessException
+                        (SistemaMessageCode.ERRO_LISTAR_MATRICULA_STATUS, statusMatricula.getDescricao()));
     }
 }

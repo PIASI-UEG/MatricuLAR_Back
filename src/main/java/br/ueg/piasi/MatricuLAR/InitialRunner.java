@@ -81,6 +81,13 @@ public class InitialRunner implements ApplicationRunner {
                 .build();
         pessoaTutor = pessoaService.incluir(pessoaTutor);
 
+        Pessoa pessoaTutor2 = Pessoa.builder()
+                .cpf("12345678912")
+                .nome("Teste Tutor2")
+                .telefone("62999999999")
+                .build();
+        pessoaTutor2 = pessoaService.incluir(pessoaTutor2);
+
         //Insere tutor de teste
         Tutor tutor = Tutor.builder()
                 .pessoa(pessoaTutor)
@@ -93,6 +100,18 @@ public class InitialRunner implements ApplicationRunner {
                 .vinculo(Vinculo.AVO)
                 .build();
         tutor = tutorService.incluir(tutor);
+
+        Tutor tutor2 = Tutor.builder()
+                .pessoa(pessoaTutor2)
+                .cpf(pessoaTutor2.getCpf())
+                .telefoneWhatsapp(true)
+                .empresaCnpj("11222333444455")
+                .empresaNome("Empresa Teste")
+                .empresaTelefone("6233339999")
+                .profissao("Profissão de teste")
+                .vinculo(Vinculo.PAI)
+                .build();
+        tutor2 = tutorService.incluir(tutor2);
 
         //Insere endereço de teste
         Endereco endereco = Endereco.builder()
@@ -131,7 +150,7 @@ public class InitialRunner implements ApplicationRunner {
         Matricula matricula = Matricula.builder()
                 .pessoa(pessoaMatricula)
                 .status(StatusMatricula.INATIVO)
-                .tutorList(List.of(tutor))
+                .tutorList(List.of(tutor, tutor2))
                 .nascimento(LocalDate.now())
                 .endereco(endereco)
                 .necessidades(new HashSet<>())

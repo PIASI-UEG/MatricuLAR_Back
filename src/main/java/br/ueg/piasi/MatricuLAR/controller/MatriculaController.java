@@ -2,6 +2,8 @@ package br.ueg.piasi.MatricuLAR.controller;
 
 
 import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
+import br.ueg.piasi.MatricuLAR.dto.MatriculaListagemDTO;
+import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
 import br.ueg.piasi.MatricuLAR.model.Matricula;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/${app.api.version}/matricula")
@@ -51,5 +54,15 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                                                                       @RequestBody MultipartFile multipartFile){
         return ResponseEntity.ok(
                 mapper.toDTO(service.atualizaContraChequeMatricula(idMatricula, tipoDocumento, multipartFile)));
+    }
+
+    @GetMapping("/listar-matriculas-status")
+    private ResponseEntity<List<MatriculaListagemDTO>> listarMatriculasListagemPorStatus(@RequestParam(required = true, name = "statusMatricula")
+                                                                        StatusMatricula statusMatricula){
+
+        List<Matricula> matriculas = service.listarMatriculasListagemPorStatus(statusMatricula);
+
+
+        return ResponseEntity.ok(mapper.toMatriculaListagemDTO(matriculas));
     }
 }
