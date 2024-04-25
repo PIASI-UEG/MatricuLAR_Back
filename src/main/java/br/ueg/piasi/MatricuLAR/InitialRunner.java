@@ -159,6 +159,8 @@ public class InitialRunner implements ApplicationRunner {
         matriculaService.incluir(matricula);
 
         System.out.println("\n*** Fim da Inserção de dados para testes ***\n");
+
+        matriculaService.geraTermo(1l);
     }
 
 }

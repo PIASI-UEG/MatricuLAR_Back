@@ -1,14 +1,20 @@
 package br.ueg.piasi.MatricuLAR.service.impl;
 
 
+import br.ueg.piasi.MatricuLAR.dto.DadosTermoDTO;
+import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
+import br.ueg.piasi.MatricuLAR.dto.ResponsavelDTO;
 import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
+import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
 import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
 import br.ueg.piasi.MatricuLAR.service.MatriculaService;
 import br.ueg.prog.webi.api.exception.BusinessException;
 import br.ueg.prog.webi.api.service.BaseCrudService;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -16,6 +22,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.*;
 
 @Service
@@ -35,7 +42,10 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     @Autowired
     private TutorServiceImpl tutorService;
 
+    @Autowired
+    private MatriculaMapper mapper;
 
+    private static String JASPER_TERMO = ".\\src\\main\\resources\\sagradaFamiliaTermo_A4.jrxml";
 
     @Override
     protected void prepararParaIncluir(Matricula matricula) {
@@ -199,5 +209,43 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     public Integer countRowsWithStatus(StatusMatricula statusMatricula) {
         return repository.countAllWithStatus(statusMatricula.getId());
+    }
+
+    public void geraTermo(Long idMatricula) {
+        try {
+            System.out.println("gerando termo");
+            List<DadosTermoDTO> listDadosTermo = preencheDTO(idMatricula);
+
+            Map<String, Object> parametros = new HashMap<String, Object>();
+
+            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(listDadosTermo);
+
+
+            JasperReport report = JasperCompileManager.compileReport(JASPER_TERMO);
+
+            JasperPrint print = JasperFillManager.fillReport(report, parametros, dataSource);
+
+            //CAMINHO ONDE SERÁ SALVO O PDF (por enquanto deixando na pasta fotos)
+            JasperExportManager.exportReportToPdfFile(print, ".\\src\\main\\resources\\Termo-Responsabilidade-"+listDadosTermo.get(0).getCpfCrianca()+".pdf");
+            System.out.println("Gerando pdf");
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    private List<DadosTermoDTO> preencheDTO(Long idMatricula){
+        List<DadosTermoDTO> dadosTermo = new ArrayList<>();
+        Matricula matricula = obterPeloId(idMatricula);
+        MatriculaDTO matriculaDTO = mapper.toDTO(matricula);
+        Endereco endereco = matricula.getEndereco();
+        ResponsavelDTO responsavel = matriculaDTO.getResponsaveis().get(0);
+        dadosTermo.add(DadosTermoDTO.builder()
+                .endereco(endereco.getLogradouro()+", "+endereco.getComplemento()+", "+endereco.getBairro())
+                .nomeResponsavel(responsavel.getNomeResponsavel())
+                .cpfCrianca(matricula.getPessoa().getCpf())
+                .cpfResponsavel(responsavel.getCpfResponsavel())
+                .build());
+        return dadosTermo;
     }
 }

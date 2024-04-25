@@ -30,11 +30,11 @@
 				<text><![CDATA[Termo de Matrícula]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="80" y="530" width="250" height="30" uuid="4acb3077-cadd-4a8d-9146-68c9fddaf3b1"/>
+				<reportElement x="80" y="530" width="440" height="30" uuid="4acb3077-cadd-4a8d-9146-68c9fddaf3b1"/>
 				<textElement>
-					<font size="20"/>
+					<font size="15"/>
 				</textElement>
-				<text><![CDATA[Assinatura do Responsável: ]]></text>
+				<text><![CDATA[Assinatura do Responsável: _________________________]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="84" y="484" width="146" height="30" uuid="159333df-f8b0-47be-b1da-df5ef2d3d2de"/>
@@ -43,16 +43,12 @@
 				</textElement>
 				<textFieldExpression><![CDATA[new SimpleDateFormat("dd MMMM yyyy").format(new java.util.Date())]]></textFieldExpression>
 			</textField>
-			<image>
-				<reportElement x="80" y="560" width="300" height="80" uuid="81f47319-84bb-43b2-86de-238ee36f6ede"/>
-				<imageExpression><![CDATA[new java.io.ByteArrayInputStream(org.apache.commons.codec.binary.Base64.decodeBase64($F{imagemAss}.getBytes()))]]></imageExpression>
-			</image>
 			<textField>
 				<reportElement x="84" y="100" width="436" height="350" uuid="b48eef4d-86b7-4342-b5a3-dd971a145a4d"/>
 				<textElement>
 					<font size="17"/>
 				</textElement>
-				<textFieldExpression><![CDATA[    "Eu, "+$F{nomeResponsavel}+", portador(a) do CPF nº "+$F{cpfResponsavel}+", residente na "+$F{endereco}+", declaro estar ciente e de acordo com as condições estabelecidas para a matrícula oferecido pela Associação Sagrada Familia.\n\n"+
+				<textFieldExpression><![CDATA["Eu, "+$F{nomeResponsavel}+", portador(a) do CPF nº "+$F{cpfResponsavel}+", residente na "+$F{endereco}+", declaro estar ciente e de acordo com as condições estabelecidas para a matrícula oferecido pela Associação Sagrada Familia.\n\n"+
 
         "Comprometo-me a cumprir todas as normas e regulamentos da instituição durante o período da matrícula do Aluno, portador(a) do CPF nº "+$F{cpfCrianca}+".\n\n"+
 
