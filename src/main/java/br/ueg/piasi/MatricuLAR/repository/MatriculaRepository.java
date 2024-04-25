@@ -17,7 +17,14 @@ import java.util.Optional;
 public interface MatriculaRepository extends JpaRepository<Matricula, Long>, JpaSpecificationExecutor<Matricula> {
 
     @Query("select matricula from Matricula matricula left join fetch Turma turma on matricula.turma.id = turma.id where matricula.status = :status")
-    Optional<List<Matricula>> findByStatus(@NonNull @Param("status") StatusMatricula status);
+    Optional<List<Matricula>> findByStatusFetchTurma(@NonNull @Param("status") StatusMatricula status);
 
+    @Query(value = "select matricula.* from matricula " +
+            "left join turma on matricula.turma = turma.id" +
+            " where matricula.status = :statusMatricula " +
+            "limit :pageSize offset :pagina", nativeQuery = true)
+    Optional<List<Matricula>> findByStatusFetchTurmaPage(@Param("pagina") int offset, @Param("pageSize") int pageSize, String statusMatricula);
 
+    @Query(value = "select count(*) from matricula where matricula.status = :status", nativeQuery = true)
+    Integer countAllWithStatus(@NonNull @Param("status") String status);
 }

@@ -184,8 +184,20 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     public List<Matricula> listarMatriculasListagemPorStatus(StatusMatricula statusMatricula) {
 
-      return repository.findByStatus(statusMatricula)
+      return repository.findByStatusFetchTurma(statusMatricula)
                 .orElseThrow(() -> new BusinessException
                         (SistemaMessageCode.ERRO_LISTAR_MATRICULA_STATUS, statusMatricula.getDescricao()));
+    }
+
+    public List<Matricula> listarMatriculaListaemPage(int offset, int pageSize, StatusMatricula statusMatricula) {
+        return repository.findByStatusFetchTurmaPage(offset, pageSize, statusMatricula.getId())
+                .orElseThrow(() -> new BusinessException
+                        (SistemaMessageCode.ERRO_LISTAR_MATRICULA_STATUS, statusMatricula.getDescricao()
+                        )
+                );
+    }
+
+    public Integer countRowsWithStatus(StatusMatricula statusMatricula) {
+        return repository.countAllWithStatus(statusMatricula.getId());
     }
 }

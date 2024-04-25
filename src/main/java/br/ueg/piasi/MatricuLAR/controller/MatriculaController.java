@@ -9,7 +9,16 @@ import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
 import br.ueg.piasi.MatricuLAR.model.Matricula;
 import br.ueg.piasi.MatricuLAR.service.impl.MatriculaServiceImpl;
 import br.ueg.prog.webi.api.controller.CrudController;
+import br.ueg.prog.webi.api.exception.MessageResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -57,12 +66,55 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
     }
 
     @GetMapping("/listar-matriculas-status")
-    private ResponseEntity<List<MatriculaListagemDTO>> listarMatriculasListagemPorStatus(@RequestParam(required = true, name = "statusMatricula")
+    private ResponseEntity<List<MatriculaListagemDTO>> listarMatriculasListagemPorStatus(@RequestParam(name = "statusMatricula")
                                                                         StatusMatricula statusMatricula){
 
         List<Matricula> matriculas = service.listarMatriculasListagemPorStatus(statusMatricula);
-
-
         return ResponseEntity.ok(mapper.toMatriculaListagemDTO(matriculas));
+    }
+
+
+    @GetMapping("/listar-matriculas-status-pagination/{offset}/{pageSize}")
+    public ResponseEntity<List<MatriculaListagemDTO>> listAllPageMatriculaListagemDTO(@PathVariable int offset, @PathVariable int pageSize,
+                                                                                      @RequestParam (name="statusMatricula") StatusMatricula statusMatricula) {
+        return ResponseEntity.ok(
+                this.mapper.toMatriculaListagemDTO(
+                        this.service.listarMatriculaListaemPage(offset, pageSize, statusMatricula)
+                )
+        );
+    }
+
+    @GetMapping("/listar-matriculas-status-pagination")
+    @Operation(
+            description = "Busca a quantidade de registros",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Listagem do resultado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema
+                    )}
+            ), @ApiResponse(
+                    responseCode = "400",
+                    description = "falha ao realizar a busca",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            ), @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            )}
+    )
+    public Integer count(@RequestParam StatusMatricula statusMatricula) {
+        return this.service.countRowsWithStatus(statusMatricula);
     }
 }
