@@ -4,7 +4,6 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="imagemAss" class="java.lang.String"/>
 	<field name="cpfResponsavel" class="java.lang.String"/>
 	<field name="cpfCrianca" class="java.lang.String"/>
 	<field name="nomeResponsavel" class="java.lang.String"/>

@@ -45,7 +45,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     @Autowired
     private MatriculaMapper mapper;
 
-    private static String JASPER_TERMO = ".\\src\\main\\resources\\sagradaFamiliaTermo_A4.jrxml";
+    private static String JASPER_TERMO = ".\\src\\main\\resources\\termo.jrxml";
 
     @Override
     protected void prepararParaIncluir(Matricula matricula) {
