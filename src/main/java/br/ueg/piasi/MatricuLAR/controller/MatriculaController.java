@@ -9,6 +9,7 @@ import br.ueg.piasi.MatricuLAR.model.Matricula;
 import br.ueg.piasi.MatricuLAR.service.impl.MatriculaServiceImpl;
 import br.ueg.piasi.MatricuLAR.util.TermoDeResponsabilidade;
 import br.ueg.prog.webi.api.controller.CrudController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -23,6 +24,8 @@ import java.util.List;
 @RequestMapping(path = "/api/${app.api.version}/matricula")
 public class MatriculaController extends CrudController<Matricula, MatriculaDTO, Long, MatriculaMapper, MatriculaServiceImpl> {
 
+    @Autowired
+    private TermoDeResponsabilidade termo;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path = "/documentos")
     public ResponseEntity<MatriculaDTO> uploadDocumento(@RequestParam Long idMatricula, @RequestParam TipoDocumento tipoDocumento,
@@ -56,9 +59,9 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                 mapper.toDTO(service.atualizaContraChequeMatricula(idMatricula, tipoDocumento, multipartFile)));
     }
 
-    @PostMapping(path ="/termo")
-    public ResponseEntity<List<AssinaturaDTO>> gerarTermoBack(@RequestBody List<AssinaturaDTO> assinaturaDTO){
+    @PostMapping(path ="/termo/{id}")
+    public ResponseEntity<List<AssinaturaDTO>> gerarTermoBack(@PathVariable Long id){
         System.out.println("entrou no gerar termo");
-        return ResponseEntity.ok(TermoDeResponsabilidade.gerarTermoSemAss(assinaturaDTO));
+        return ResponseEntity.ok(termo.gerarTermoSemAss("",id));
     }
 }

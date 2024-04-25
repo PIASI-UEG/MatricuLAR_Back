@@ -5,6 +5,10 @@
 		<![CDATA[]]>
 	</queryString>
 	<field name="imagemAss" class="java.lang.String"/>
+	<field name="cpfResponsavel" class="java.lang.String"/>
+	<field name="cpfCrianca" class="java.lang.String"/>
+	<field name="nomeResponsavel" class="java.lang.String"/>
+	<field name="endereco" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -18,17 +22,6 @@
 	</title>
 	<pageHeader>
 		<band height="640" splitType="Stretch">
-			<staticText>
-				<reportElement x="80" y="70" width="400" height="390" uuid="350f27ac-6cb0-4a9d-aea6-c2bcb495d2c2"/>
-				<textElement textAlignment="Justified">
-					<font size="20"/>
-				</textElement>
-				<text><![CDATA[    Eu, Responsável, portador(a) do CPF nº 123.456.789-00, residente na Rua Brasil Nº123, declaro estar ciente e de acordo com as condições estabelecidas para a matrícula oferecido pela Associação Sagrada Familia.
-
-        Comprometo-me a cumprir todas as normas e regulamentos da instituição durante o período da matrícula do Aluno, portador(a) do CPF nº 987.654.321-00.
-
-    Declaro ainda que todas as informações fornecidas neste formulário preenchido são verdadeiras e estou ciente de que qualquer falsidade poderá implicar na perda do direito à matrícula.]]></text>
-			</staticText>
 			<staticText>
 				<reportElement x="120" y="0" width="330" height="70" uuid="e702c6c9-3c35-4b28-a69b-cdf428c769db"/>
 				<textElement textAlignment="Center">
@@ -54,6 +47,17 @@
 				<reportElement x="80" y="560" width="300" height="80" uuid="81f47319-84bb-43b2-86de-238ee36f6ede"/>
 				<imageExpression><![CDATA[new java.io.ByteArrayInputStream(org.apache.commons.codec.binary.Base64.decodeBase64($F{imagemAss}.getBytes()))]]></imageExpression>
 			</image>
+			<textField>
+				<reportElement x="84" y="100" width="436" height="350" uuid="b48eef4d-86b7-4342-b5a3-dd971a145a4d"/>
+				<textElement>
+					<font size="17"/>
+				</textElement>
+				<textFieldExpression><![CDATA[    "Eu, "+$F{nomeResponsavel}+", portador(a) do CPF nº "+$F{cpfResponsavel}+", residente na "+$F{endereco}+", declaro estar ciente e de acordo com as condições estabelecidas para a matrícula oferecido pela Associação Sagrada Familia.\n\n"+
+
+        "Comprometo-me a cumprir todas as normas e regulamentos da instituição durante o período da matrícula do Aluno, portador(a) do CPF nº "+$F{cpfCrianca}+".\n\n"+
+
+    "Declaro ainda que todas as informações fornecidas neste formulário preenchido são verdadeiras e estou ciente de que qualquer falsidade poderá implicar na perda do direito à matrícula."]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 </jasperReport>

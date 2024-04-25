@@ -52,6 +52,9 @@ public class InitialRunner implements ApplicationRunner {
     @Autowired
     private DocumentoMatriculaServiceImpl documentoMatriculaService;
 
+    @Autowired
+    private TermoDeResponsabilidade termo;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         try {
@@ -147,16 +150,7 @@ public class InitialRunner implements ApplicationRunner {
 
         System.out.println("\n*** Fim da Inserção de dados para testes ***\n");
 
-        AssinaturaDTO assinatura = AssinaturaDTO.builder()
-                // assinatura do front
-                .imagemAss(Base64.getEncoder().encodeToString(Files.readAllBytes(Paths.get("C:\\Users\\lucas\\Downloads\\assinatura teste.png"))))
-                .CPFAss("12345678900")
-                .build();
-        List<AssinaturaDTO> assinaturaList = new ArrayList<>();
-
-        assinaturaList.add(assinatura);
-
-        TermoDeResponsabilidade.gerarTermoSemAss(assinaturaList);
+        termo.gerarTermoSemAss(Base64.getEncoder().encodeToString(Files.readAllBytes(Paths.get("C:\\Users\\lucas\\Downloads\\assinatura teste.png"))),1l);
     }
 
 }

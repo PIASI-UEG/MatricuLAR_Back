@@ -7,5 +7,8 @@ import lombok.Data;
 @Builder
 public class AssinaturaDTO {
     private String imagemAss;
-    private String CPFAss;
+    private String cpfResponsavel;
+    private String cpfCrianca;
+    private String nomeResponsavel;
+    private String endereco;
 }
