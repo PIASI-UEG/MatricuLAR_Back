@@ -211,7 +211,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         return repository.countAllWithStatus(statusMatricula.getId());
     }
 
-    public void geraTermo(Long idMatricula) {
+    public Matricula geraTermo(Long idMatricula) {
         try {
             System.out.println("gerando termo");
             List<DadosTermoDTO> listDadosTermo = preencheDTO(idMatricula);
@@ -232,6 +232,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         } catch (Exception e) {
             System.out.println(e);
         }
+        return obterPeloId(idMatricula);
     }
 
     private List<DadosTermoDTO> preencheDTO(Long idMatricula){

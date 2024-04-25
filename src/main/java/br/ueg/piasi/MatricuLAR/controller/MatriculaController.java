@@ -117,4 +117,10 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
     public Integer count(@RequestParam StatusMatricula statusMatricula) {
         return this.service.countRowsWithStatus(statusMatricula);
     }
+
+    @PostMapping(path = "/termo/{id}")
+    public ResponseEntity<MatriculaDTO> gerarTermo(@PathVariable(name = "id") Long id){
+        return ResponseEntity.ok(
+                mapper.toDTO(service.geraTermo(id)));
+    }
 }
