@@ -31,6 +31,7 @@ import java.security.SignatureException;
 import java.util.*;
 
 import static br.ueg.piasi.MatricuLAR.util.TermoDeResponsabilidade.JASPER_TERMO;
+import static br.ueg.piasi.MatricuLAR.util.TermoDeResponsabilidade.JASPER_TERMO_ASSINADO;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED)
@@ -148,15 +149,37 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         return documentoMatriculaService.getDocumentoMatricula(caminhoDoc);
     }
 
-    public Resource getTermo(String caminhoDoc){
-        return documentoMatriculaService.getTermo(caminhoDoc);
-    }
 
-    public Matricula uploadTermo(Long idMatricula, String imgAss) throws JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
+    public Matricula uploadTermoAssinado(Long idMatricula, String imgAss) throws JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
 
         try {
             System.out.println("gerando termo");
             List<AssinaturaDTO> assinatura = preencheDTO(imgAss, idMatricula);
+
+            Map<String, Object> parametros = new HashMap<String, Object>();
+
+            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(assinatura);
+
+
+            JasperReport report = JasperCompileManager.compileReport(JASPER_TERMO_ASSINADO);
+
+            JasperPrint print = JasperFillManager.fillReport(report, parametros, dataSource);
+
+            //CAMINHO ONDE SERÁ SALVO O PDF (por enquanto deixando na pasta fotos)
+            JasperExportManager.exportReportToPdfFile(print, ".\\src\\main\\resources\\images\\Termo-Responsabilidade-Assinado"+assinatura.get(0).getCpfCrianca()+".pdf");
+            System.out.println("Gerando pdf");
+            return repository.findById(idMatricula).get();
+        } catch (Exception e) {
+            System.out.println(e);
+            throw e;
+        }
+    }
+
+    public Matricula uploadTermo(Long idMatricula) throws JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
+
+        try {
+            System.out.println("gerando termo");
+            List<AssinaturaDTO> assinatura = preencheDTO("", idMatricula);
 
             Map<String, Object> parametros = new HashMap<String, Object>();
 
@@ -170,22 +193,6 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             //CAMINHO ONDE SERÁ SALVO O PDF (por enquanto deixando na pasta fotos)
             JasperExportManager.exportReportToPdfFile(print, ".\\src\\main\\resources\\images\\Termo-Responsabilidade-"+assinatura.get(0).getCpfCrianca()+".pdf");
             System.out.println("Gerando pdf");
-
-            //termo assinado
-            File termo = new File(".\\src\\main\\resources\\images\\Termo-Responsabilidade-"+assinatura.get(0).getCpfCrianca()+".pdf");
-
-            //termo de teste
-            File testeTermoErrado = new File("C:\\Users\\lucas\\Downloads\\termo.pdf");
-
-            DestinatarioAssiDig destinatario = new DestinatarioAssiDig();
-
-            RemetenteAssiDig remetente = new RemetenteAssiDig();
-
-            //assina o termo
-            byte[] assinaturas = remetente.geraAssinatura(termo, assinatura.get(0));
-
-            //verifica a assinatura do termo
-            destinatario.recebeMensagem(remetente.getPubKey(), testeTermoErrado, assinaturas);
             return repository.findById(idMatricula).get();
         } catch (Exception e) {
             System.out.println(e);
