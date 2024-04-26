@@ -8,6 +8,7 @@ import br.ueg.piasi.MatricuLAR.enums.Vinculo;
 import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.service.impl.*;
 import br.ueg.piasi.MatricuLAR.util.TermoDeResponsabilidade;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -18,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -64,7 +68,7 @@ public class InitialRunner implements ApplicationRunner {
         }
     }
 
-    public void insereDadosParaTestes() throws IOException {
+    public void insereDadosParaTestes() throws IOException, JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
 
         //Insere pessoa de teste para usuario
         Pessoa pessoaUsuario = Pessoa.builder()
@@ -150,7 +154,7 @@ public class InitialRunner implements ApplicationRunner {
 
         System.out.println("\n*** Fim da Inserção de dados para testes ***\n");
 
-        termo.gerarTermoSemAss(Base64.getEncoder().encodeToString(Files.readAllBytes(Paths.get("C:\\Users\\lucas\\Downloads\\assinatura teste.png"))),1l);
+        matriculaService.uploadTermo(1l);
     }
 
 }

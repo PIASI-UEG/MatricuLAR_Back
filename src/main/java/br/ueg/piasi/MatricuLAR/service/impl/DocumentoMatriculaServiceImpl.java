@@ -158,19 +158,4 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
 
 
     }
-    public Resource getTermo(String caminhdoDoc){
-
-        try {
-            Path arquivo = root.resolve(caminhdoDoc);
-
-            Resource resource = new UrlResource(arquivo.toUri());
-
-            if (resource.exists() || resource.isReadable()){
-                return resource;
-            }
-            throw new BusinessException(ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO);
-        }catch (Exception e ){
-            throw new BusinessException(ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO);
-        }
-    }
 }

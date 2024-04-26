@@ -39,12 +39,19 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                 mapper.toDTO(service.uploadDocumento(idMatricula, tipoDocumento, multipartFile)));
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path = "/termo")
-    public ResponseEntity<MatriculaDTO> uploadTermo(@RequestParam Long idMatricula,
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path = "/termoAssinado")
+    public ResponseEntity<MatriculaDTO> uploadTermoAssinado(@RequestParam Long idMatricula,
                                                         @RequestBody String imgAss) throws IOException, JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
 
         return ResponseEntity.ok(
-                mapper.toDTO(service.uploadTermo(idMatricula, imgAss)));
+                mapper.toDTO(service.uploadTermoAssinado(idMatricula, imgAss)));
+    }
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path = "/termo")
+    public ResponseEntity<MatriculaDTO> uploadTermo(@RequestParam Long idMatricula) throws IOException, JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
+
+        return ResponseEntity.ok(
+                mapper.toDTO(service.uploadTermo(idMatricula)));
     }
 
 
@@ -56,10 +63,18 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + arquivo.getFilename() + "\"").body(arquivo);
     }
 
+    @GetMapping(path = "/termoAssinado/{caminhodoc}")
+    public ResponseEntity<Resource> getTermoAssinado(@PathVariable(name = "caminhodoc") String caminhodoc){
+
+        Resource arquivo = service.getDocumentoMatricula(caminhodoc);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + arquivo.getFilename() + "\"").body(arquivo);
+    }
+
     @GetMapping(path = "/termo/{caminhodoc}")
     public ResponseEntity<Resource> getTermo(@PathVariable(name = "caminhodoc") String caminhodoc){
 
-        Resource arquivo = service.getTermo(caminhodoc);
+        Resource arquivo = service.getDocumentoMatricula(caminhodoc);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + arquivo.getFilename() + "\"").body(arquivo);
     }
