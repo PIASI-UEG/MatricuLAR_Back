@@ -21,7 +21,9 @@ import java.util.*;
 
 @Component
 public class TermoDeResponsabilidade {
-    public static final String JASPER_TERMO = ".\\src\\main\\resources\\sagradaFamiliaTermo_A4.jrxml";
+    public static final String JASPER_TERMO_ASSINADO = ".\\src\\main\\resources\\sagradaFamiliaTermo_A4.jrxml";
+
+    public static final String JASPER_TERMO = ".\\src\\main\\resources\\termoSemAssinatura.jrxml";
 
     @Autowired
     private MatriculaServiceImpl matriculaService;
