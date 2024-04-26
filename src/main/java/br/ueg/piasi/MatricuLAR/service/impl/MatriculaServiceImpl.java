@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 @Service
@@ -211,7 +213,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         return repository.countAllWithStatus(statusMatricula.getId());
     }
 
-    public Matricula geraTermo(Long idMatricula) {
+    public File geraTermo(Long idMatricula) throws JRException {
         try {
             System.out.println("gerando termo");
             List<DadosTermoDTO> listDadosTermo = preencheDTO(idMatricula);
@@ -220,19 +222,22 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
             JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(listDadosTermo);
 
+            Path caminhoTermo = Paths.get(".\\src\\main\\resources\\Termo-Responsabilidade-"+listDadosTermo.get(0).getCpfCrianca()+".pdf");
 
             JasperReport report = JasperCompileManager.compileReport(JASPER_TERMO);
 
             JasperPrint print = JasperFillManager.fillReport(report, parametros, dataSource);
 
             //CAMINHO ONDE SERÁ SALVO O PDF (por enquanto deixando na pasta fotos)
-            JasperExportManager.exportReportToPdfFile(print, ".\\src\\main\\resources\\Termo-Responsabilidade-"+listDadosTermo.get(0).getCpfCrianca()+".pdf");
+            JasperExportManager.exportReportToPdfFile(print, caminhoTermo.toString());
             System.out.println("Gerando pdf");
+
+            return new File(caminhoTermo.toString());
 
         } catch (Exception e) {
             System.out.println(e);
+            throw e;
         }
-        return obterPeloId(idMatricula);
     }
 
     private List<DadosTermoDTO> preencheDTO(Long idMatricula){

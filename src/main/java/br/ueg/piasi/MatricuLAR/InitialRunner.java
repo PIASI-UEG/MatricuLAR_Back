@@ -6,6 +6,7 @@ import br.ueg.piasi.MatricuLAR.enums.Turno;
 import br.ueg.piasi.MatricuLAR.enums.Vinculo;
 import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.service.impl.*;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -55,7 +56,7 @@ public class InitialRunner implements ApplicationRunner {
         }
     }
 
-    public void insereDadosParaTestes() throws IOException {
+    public void insereDadosParaTestes() throws IOException, JRException {
 
         //Insere pessoa de teste para usuario
         Pessoa pessoaUsuario = Pessoa.builder()

@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -119,8 +121,36 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
     }
 
     @PostMapping(path = "/termo/{id}")
-    public ResponseEntity<MatriculaDTO> gerarTermo(@PathVariable(name = "id") Long id){
+    @Operation(
+            description = "Gera o termo da matricula",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Caminho do termo",
+                    content = {@Content(
+                            mediaType = "application/json"
+                    )}
+            ), @ApiResponse(
+                    responseCode = "400",
+                    description = "Falha ao gerar termo",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            ), @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            )}
+    )
+    public ResponseEntity<File> gerarTermo(@PathVariable(name = "id") Long id) throws JRException {
         return ResponseEntity.ok(
-                mapper.toDTO(service.geraTermo(id)));
+                service.geraTermo(id));
     }
 }
