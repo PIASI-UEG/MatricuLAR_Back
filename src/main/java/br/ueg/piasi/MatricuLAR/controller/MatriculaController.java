@@ -39,7 +39,7 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                 mapper.toDTO(service.uploadDocumento(idMatricula, tipoDocumento, multipartFile)));
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path = "/termoAssinado")
+    @PostMapping(path = "/termoAssinado")
     public ResponseEntity<MatriculaDTO> uploadTermoAssinado(@RequestParam Long idMatricula,
                                                         @RequestBody String imgAss) throws IOException, JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
 
@@ -47,7 +47,7 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                 mapper.toDTO(service.uploadTermoAssinado(idMatricula, imgAss)));
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path = "/termo")
+    @PostMapping(path = "/termo")
     public ResponseEntity<MatriculaDTO> uploadTermo(@RequestParam Long idMatricula) throws IOException, JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
 
         return ResponseEntity.ok(
@@ -94,9 +94,9 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                 mapper.toDTO(service.atualizaContraChequeMatricula(idMatricula, tipoDocumento, multipartFile)));
     }
 
-    @PostMapping(path ="/termo/{id}")
-    public ResponseEntity<List<AssinaturaDTO>> gerarTermoBack(@PathVariable Long id){
-        System.out.println("entrou no gerar termo");
-        return ResponseEntity.ok(termo.gerarTermoSemAss("",id));
-    }
+//    @PostMapping(path ="/termo/{id}")
+//    public ResponseEntity<List<AssinaturaDTO>> gerarTermoBack(@PathVariable Long id){
+//        System.out.println("entrou no gerar termo");
+//        return ResponseEntity.ok(termo.gerarTermoSemAss("",id));
+//    }
 }
