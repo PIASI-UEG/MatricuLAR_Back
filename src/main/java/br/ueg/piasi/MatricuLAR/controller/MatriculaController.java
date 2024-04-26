@@ -9,6 +9,7 @@ import br.ueg.piasi.MatricuLAR.model.Matricula;
 import br.ueg.piasi.MatricuLAR.service.impl.MatriculaServiceImpl;
 import br.ueg.piasi.MatricuLAR.util.TermoDeResponsabilidade;
 import br.ueg.prog.webi.api.controller.CrudController;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -18,6 +19,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.util.List;
 
 @RestController
@@ -35,11 +39,27 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                 mapper.toDTO(service.uploadDocumento(idMatricula, tipoDocumento, multipartFile)));
     }
 
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path = "/termo")
+    public ResponseEntity<MatriculaDTO> uploadTermo(@RequestParam Long idMatricula,
+                                                        @RequestBody String imgAss) throws IOException, JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
+
+        return ResponseEntity.ok(
+                mapper.toDTO(service.uploadTermo(idMatricula, imgAss)));
+    }
+
 
     @GetMapping(path = "/documento/{caminhodoc}")
     public ResponseEntity<Resource> getDocumentoMatricula(@PathVariable(name = "caminhodoc") String caminhodoc){
 
         Resource arquivo = service.getDocumentoMatricula(caminhodoc);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + arquivo.getFilename() + "\"").body(arquivo);
+    }
+
+    @GetMapping(path = "/termo/{caminhodoc}")
+    public ResponseEntity<Resource> getTermo(@PathVariable(name = "caminhodoc") String caminhodoc){
+
+        Resource arquivo = service.getTermo(caminhodoc);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + arquivo.getFilename() + "\"").body(arquivo);
     }

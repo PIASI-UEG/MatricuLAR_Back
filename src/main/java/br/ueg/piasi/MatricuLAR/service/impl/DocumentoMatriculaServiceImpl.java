@@ -1,29 +1,40 @@
 package br.ueg.piasi.MatricuLAR.service.impl;
 
 
+import br.ueg.piasi.MatricuLAR.dto.AssinaturaDTO;
+import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
+import br.ueg.piasi.MatricuLAR.dto.ResponsavelDTO;
 import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
+import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
 import br.ueg.piasi.MatricuLAR.model.DocumentoMatricula;
+import br.ueg.piasi.MatricuLAR.model.Endereco;
 import br.ueg.piasi.MatricuLAR.model.Matricula;
 import br.ueg.piasi.MatricuLAR.model.pkComposta.PkDocumentoMatricula;
 import br.ueg.piasi.MatricuLAR.repository.DocumentoMatriculaRepository;
 import br.ueg.piasi.MatricuLAR.service.DocumentoMatriculaService;
+import br.ueg.piasi.MatricuLAR.service.MatriculaService;
+import br.ueg.piasi.MatricuLAR.util.DestinatarioAssiDig;
+import br.ueg.piasi.MatricuLAR.util.RemetenteAssiDig;
 import br.ueg.prog.webi.api.exception.BusinessException;
 import br.ueg.prog.webi.api.service.BaseCrudService;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.Objects;
-import java.util.TimeZone;
+import java.util.*;
 
 import static br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode.ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO;
+import static br.ueg.piasi.MatricuLAR.util.TermoDeResponsabilidade.JASPER_TERMO;
 
 @Service
 public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatricula, PkDocumentoMatricula, DocumentoMatriculaRepository>
@@ -146,5 +157,20 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
         }
 
 
+    }
+    public Resource getTermo(String caminhdoDoc){
+
+        try {
+            Path arquivo = root.resolve(caminhdoDoc);
+
+            Resource resource = new UrlResource(arquivo.toUri());
+
+            if (resource.exists() || resource.isReadable()){
+                return resource;
+            }
+            throw new BusinessException(ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO);
+        }catch (Exception e ){
+            throw new BusinessException(ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO);
+        }
     }
 }

@@ -1,14 +1,22 @@
 package br.ueg.piasi.MatricuLAR.service.impl;
 
 
+import br.ueg.piasi.MatricuLAR.dto.AssinaturaDTO;
+import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
+import br.ueg.piasi.MatricuLAR.dto.ResponsavelDTO;
 import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
+import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
 import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
 import br.ueg.piasi.MatricuLAR.service.MatriculaService;
+import br.ueg.piasi.MatricuLAR.util.DestinatarioAssiDig;
+import br.ueg.piasi.MatricuLAR.util.RemetenteAssiDig;
 import br.ueg.prog.webi.api.exception.BusinessException;
 import br.ueg.prog.webi.api.service.BaseCrudService;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -16,9 +24,13 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.io.File;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
+import java.util.*;
+
+import static br.ueg.piasi.MatricuLAR.util.TermoDeResponsabilidade.JASPER_TERMO;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED)
@@ -33,6 +45,9 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     @Autowired
     private PessoaServiceImpl pessoaService;
+
+    @Autowired
+    private MatriculaMapper mapper;
 
 
 
@@ -128,8 +143,71 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO_MATRICULA_NAO_ENCONTRADA);
     }
 
+
     public Resource getDocumentoMatricula(String caminhoDoc){
         return documentoMatriculaService.getDocumentoMatricula(caminhoDoc);
+    }
+
+    public Resource getTermo(String caminhoDoc){
+        return documentoMatriculaService.getTermo(caminhoDoc);
+    }
+
+    public Matricula uploadTermo(Long idMatricula, String imgAss) throws JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
+
+        try {
+            System.out.println("gerando termo");
+            List<AssinaturaDTO> assinatura = preencheDTO(imgAss, idMatricula);
+
+            Map<String, Object> parametros = new HashMap<String, Object>();
+
+            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(assinatura);
+
+
+            JasperReport report = JasperCompileManager.compileReport(JASPER_TERMO);
+
+            JasperPrint print = JasperFillManager.fillReport(report, parametros, dataSource);
+
+            //CAMINHO ONDE SERÁ SALVO O PDF (por enquanto deixando na pasta fotos)
+            JasperExportManager.exportReportToPdfFile(print, ".\\src\\main\\resources\\images\\Termo-Responsabilidade-"+assinatura.get(0).getCpfCrianca()+".pdf");
+            System.out.println("Gerando pdf");
+
+            //termo assinado
+            File termo = new File(".\\src\\main\\resources\\images\\Termo-Responsabilidade-"+assinatura.get(0).getCpfCrianca()+".pdf");
+
+            //termo de teste
+            File testeTermoErrado = new File("C:\\Users\\lucas\\Downloads\\termo.pdf");
+
+            DestinatarioAssiDig destinatario = new DestinatarioAssiDig();
+
+            RemetenteAssiDig remetente = new RemetenteAssiDig();
+
+            //assina o termo
+            byte[] assinaturas = remetente.geraAssinatura(termo, assinatura.get(0));
+
+            //verifica a assinatura do termo
+            destinatario.recebeMensagem(remetente.getPubKey(), testeTermoErrado, assinaturas);
+            return repository.findById(idMatricula).get();
+        } catch (Exception e) {
+            System.out.println(e);
+            throw e;
+        }
+    }
+
+    private List<AssinaturaDTO> preencheDTO(String imgAss, Long idMatricula){
+        List<AssinaturaDTO> assinatura = new ArrayList<>();
+        Matricula matricula = this.obterPeloId(idMatricula);
+        MatriculaDTO matriculaDTO = this.mapper.toDTO(matricula);
+        Endereco endereco = matricula.getEndereco();
+        //TODO ver como obter responsavel do set
+        ResponsavelDTO responsavel = matriculaDTO.getResponsaveis().get(0);
+        assinatura.add(AssinaturaDTO.builder()
+                .imagemAss(imgAss)
+                .endereco(endereco.getLogradouro()+", "+endereco.getComplemento()+", "+endereco.getBairro())
+                .nomeResponsavel(responsavel.getNomeResponsavel())
+                .cpfCrianca(matricula.getPessoa().getCpf())
+                .cpfResponsavel(responsavel.getCpfResponsavel())
+                .build());
+        return assinatura;
     }
 
     public Matricula validaMatricula(Matricula matricula) {
