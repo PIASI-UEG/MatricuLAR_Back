@@ -36,7 +36,7 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                 mapper.toDTO(service.uploadDocumento(idMatricula, tipoDocumento, multipartFile)));
     }
 
-    @PostMapping(path = "/termo")
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/termo")
     public ResponseEntity<MatriculaDTO> uploadTermo(@RequestParam String cpfCrianca ,@RequestBody MultipartFile multipartFile) throws IOException, JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
 
         return ResponseEntity.ok(mapper.toDTO(service.uploadTermo(cpfCrianca, multipartFile)));
