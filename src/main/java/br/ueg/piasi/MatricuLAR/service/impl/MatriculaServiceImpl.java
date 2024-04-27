@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -148,7 +149,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO_MATRICULA_NAO_ENCONTRADA);
     }
 
-    public Resource geraTermo(String cpfCrianca) throws JRException, MalformedURLException {
+    public Resource geraTermo(String cpfCrianca) throws JRException, IOException {
         System.out.println("gerando termo");
         Pessoa crianca = pessoaService.obterPeloId(cpfCrianca);
         List<AssinaturaDTO> assinatura = preencheDTO(repository.findMatriculaByPessoa(crianca).getId());
@@ -158,14 +159,19 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(assinatura);
 
 
-        JasperReport report = JasperCompileManager.compileReport(JASPER_TERMO_ASSINADO);
+        JasperReport report = JasperCompileManager.compileReport(JASPER_TERMO);
 
         JasperPrint print = JasperFillManager.fillReport(report, parametros, dataSource);
 
+        if (!Files.exists(root)) {
+            Files.createDirectories(root);
+        }
+
         //CAMINHO ONDE SERÁ SALVO O PDF (por enquanto deixando na pasta fotos)
-        JasperExportManager.exportReportToPdfFile(print, ".docs\\Termo-Responsabilidade-Assinado"+assinatura.get(0).getCpfCrianca()+".pdf");
+        Path caminhoTermo = this.root.resolve("Termo-Responsabilidade"+assinatura.get(0).getCpfCrianca()+".pdf");
+        JasperExportManager.exportReportToPdfFile(print, caminhoTermo.toString());
         System.out.println("Gerando pdf");
-        Path caminho = this.root.resolve("Termo-Responsabilidade-Assinado"+assinatura.get(0).getCpfCrianca()+".pdf");
+        Path caminho = this.root.resolve("Termo-Responsabilidade"+assinatura.get(0).getCpfCrianca()+".pdf");
         return new UrlResource(caminho.toUri());
     }
 

@@ -90,7 +90,7 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
 //    }
 
     @GetMapping(path = "/termo")
-    public ResponseEntity<Resource> geraTermo(@RequestParam String cpfCrianca) throws MalformedURLException, JRException {
+    public ResponseEntity<Resource> geraTermo(@RequestParam String cpfCrianca) throws IOException, JRException {
 
         Resource arquivo = service.geraTermo(cpfCrianca);
         return ResponseEntity.ok()
