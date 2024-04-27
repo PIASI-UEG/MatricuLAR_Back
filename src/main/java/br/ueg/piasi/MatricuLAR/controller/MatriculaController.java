@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -87,4 +88,12 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
 //        System.out.println("entrou no gerar termo");
 //        return ResponseEntity.ok(termo.gerarTermoSemAss("",id));
 //    }
+
+    @GetMapping(path = "/termo")
+    public ResponseEntity<Resource> geraTermo(@RequestParam String cpfCrianca) throws MalformedURLException, JRException {
+
+        Resource arquivo = service.geraTermo(cpfCrianca);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + arquivo.getFilename() + "\"").body(arquivo);
+    }
 }

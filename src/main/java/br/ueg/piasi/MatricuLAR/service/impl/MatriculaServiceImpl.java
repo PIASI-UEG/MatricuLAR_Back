@@ -19,12 +19,14 @@ import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -146,6 +148,26 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO_MATRICULA_NAO_ENCONTRADA);
     }
 
+    public Resource geraTermo(String cpfCrianca) throws JRException, MalformedURLException {
+        System.out.println("gerando termo");
+        Pessoa crianca = pessoaService.obterPeloId(cpfCrianca);
+        List<AssinaturaDTO> assinatura = preencheDTO(repository.findMatriculaByPessoa(crianca).getId());
+
+        Map<String, Object> parametros = new HashMap<String, Object>();
+
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(assinatura);
+
+
+        JasperReport report = JasperCompileManager.compileReport(JASPER_TERMO_ASSINADO);
+
+        JasperPrint print = JasperFillManager.fillReport(report, parametros, dataSource);
+
+        //CAMINHO ONDE SERÁ SALVO O PDF (por enquanto deixando na pasta fotos)
+        JasperExportManager.exportReportToPdfFile(print, ".\\src\\main\\resources\\images\\Termo-Responsabilidade-Assinado"+assinatura.get(0).getCpfCrianca()+".pdf");
+        System.out.println("Gerando pdf");
+        return new UrlResource(".\\src\\main\\resources\\images\\Termo-Responsabilidade-Assinado"+assinatura.get(0).getCpfCrianca()+".pdf");
+    }
+
 
     public Resource getDocumentoMatricula(String caminhoDoc){
         return documentoMatriculaService.getDocumentoMatricula(caminhoDoc);
@@ -214,15 +236,13 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         return repository.findMatriculaByPessoa(pessoaService.obterPeloId(cpfCrianca));
     }
 
-    private List<AssinaturaDTO> preencheDTO(String imgAss, Long idMatricula){
+    private List<AssinaturaDTO> preencheDTO(Long idMatricula){
         List<AssinaturaDTO> assinatura = new ArrayList<>();
         Matricula matricula = this.obterPeloId(idMatricula);
         MatriculaDTO matriculaDTO = this.mapper.toDTO(matricula);
         Endereco endereco = matricula.getEndereco();
-        //TODO ver como obter responsavel do set
         ResponsavelDTO responsavel = matriculaDTO.getResponsaveis().get(0);
         assinatura.add(AssinaturaDTO.builder()
-                .imagemAss(imgAss)
                 .endereco(endereco.getLogradouro()+", "+endereco.getComplemento()+", "+endereco.getBairro())
                 .nomeResponsavel(responsavel.getNomeResponsavel())
                 .cpfCrianca(matricula.getPessoa().getCpf())
