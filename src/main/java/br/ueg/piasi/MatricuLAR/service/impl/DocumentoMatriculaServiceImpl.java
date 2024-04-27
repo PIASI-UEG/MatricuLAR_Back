@@ -12,6 +12,8 @@ import br.ueg.piasi.MatricuLAR.model.Endereco;
 import br.ueg.piasi.MatricuLAR.model.Matricula;
 import br.ueg.piasi.MatricuLAR.model.pkComposta.PkDocumentoMatricula;
 import br.ueg.piasi.MatricuLAR.repository.DocumentoMatriculaRepository;
+import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
+import br.ueg.piasi.MatricuLAR.repository.PessoaRepository;
 import br.ueg.piasi.MatricuLAR.service.DocumentoMatriculaService;
 import br.ueg.piasi.MatricuLAR.service.MatriculaService;
 import br.ueg.piasi.MatricuLAR.util.DestinatarioAssiDig;
@@ -30,6 +32,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.PublicKey;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -43,6 +46,18 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
 
     @Autowired
     private DocumentoMatriculaRepository repository;
+
+    @Autowired
+    private MatriculaServiceImpl matriculaService;
+
+    @Autowired
+    private PessoaRepository pessoaRepository;
+
+    @Autowired
+    private MatriculaRepository matriculaRepository;
+
+    @Autowired
+    private MatriculaMapper matriculaMapper;
 
     @Override
     protected void prepararParaIncluir(DocumentoMatricula entidade) {
@@ -159,13 +174,19 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
 
     }
 
-    public void uploadTermo(String cpfCrianca, MultipartFile documento) {
+    public void uploadTermo(String cpfCrianca, MultipartFile documento, PublicKey chavePub) {
 
         try {
             if (!Files.exists(root)) {
                 Files.createDirectories(root);
             }
 
+
+            MatriculaDTO crianca = this.matriculaMapper.toDTO(
+                    this.matriculaRepository.findMatriculaByPessoa(
+                            this.pessoaRepository.findById(cpfCrianca).get()));
+
+            crianca.getResponsaveis().get(0).setChavePub(chavePub);
             String nomeArquivo = "Termo-Responsabilidade-Assinado-"+cpfCrianca+".pdf";
 
             Path pathCaminhoDoc = this.root.resolve(nomeArquivo);

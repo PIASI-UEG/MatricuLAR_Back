@@ -233,9 +233,9 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
 
 
-    public Matricula uploadTermo(String cpfCrianca, MultipartFile termoAssinado) throws JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
+    public Matricula uploadTermo(String cpfCrianca, MultipartFile termoAssinado, PublicKey chavePub) throws JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
         try {
-            documentoMatriculaService.uploadTermo(cpfCrianca, termoAssinado);
+            documentoMatriculaService.uploadTermo(cpfCrianca, termoAssinado, chavePub);
         } catch (Exception e) {
             System.out.println(e);
             throw e;
