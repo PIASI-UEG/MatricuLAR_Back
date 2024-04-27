@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.security.PublicKey;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -18,5 +20,6 @@ public class ResponsavelDTO {
     private String nomeMatricula;
     private Vinculo vinculo;
     private Boolean tutor;
+    private PublicKey chavePub;
 
 }

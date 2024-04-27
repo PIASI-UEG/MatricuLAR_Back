@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldNameConstants;
 
+import java.security.PublicKey;
+
 
 @Builder
 @AllArgsConstructor
@@ -42,4 +44,7 @@ public class Responsavel extends BaseEntidade<PkResponsavel> {
 
     @Column(name = "tutor", nullable = false)
     private Boolean tutor;
+
+    @Column(name = "chavePub")
+    private PublicKey chavePublica;
 }
