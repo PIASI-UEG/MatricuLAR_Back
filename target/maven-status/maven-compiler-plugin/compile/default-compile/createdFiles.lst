@@ -47,6 +47,7 @@ br\ueg\piasi\MatricuLAR\mapper\InformacoesMatriculaMapperImpl.class
 br\ueg\piasi\MatricuLAR\controller\PessoaController.class
 br\ueg\piasi\MatricuLAR\model\NecessidadeEspecial$Fields.class
 br\ueg\piasi\MatricuLAR\repository\DocumentoMatriculaRepository.class
+br\ueg\piasi\MatricuLAR\util\TermoDeResponsabilidade.class
 br\ueg\piasi\MatricuLAR\repository\EnderecoRepository.class
 br\ueg\piasi\MatricuLAR\mapper\NecessidadeEspecialMapperImpl.class
 br\ueg\piasi\MatricuLAR\mapper\PessoaMapperImpl.class
@@ -122,6 +123,7 @@ br\ueg\piasi\MatricuLAR\controller\ResponsavelController.class
 br\ueg\piasi\MatricuLAR\model\Endereco.class
 br\ueg\piasi\MatricuLAR\repository\MatriculaRepository.class
 br\ueg\piasi\MatricuLAR\service\impl\UserProviderService.class
+br\ueg\piasi\MatricuLAR\dto\AssinaturaDTO.class
 br\ueg\piasi\MatricuLAR\enums\Vinculo.class
 br\ueg\piasi\MatricuLAR\service\impl\AdvertenciaServiceImpl.class
 br\ueg\piasi\MatricuLAR\service\InformacoesMatriculaService.class
@@ -132,6 +134,7 @@ br\ueg\piasi\MatricuLAR\enums\converter\VinculoConverter.class
 br\ueg\piasi\MatricuLAR\dto\NecessidadeEspecialDTO.class
 br\ueg\piasi\MatricuLAR\model\Matricula$MatriculaBuilder.class
 br\ueg\piasi\MatricuLAR\model\Turma.class
+br\ueg\piasi\MatricuLAR\dto\AssinaturaDTO$AssinaturaDTOBuilder.class
 br\ueg\piasi\MatricuLAR\dto\InformacoesMatriculaDTO.class
 br\ueg\piasi\MatricuLAR\controller\MatriculaController.class
 br\ueg\piasi\MatricuLAR\dto\AdvertenciaDTO$AdvertenciaDTOBuilder.class

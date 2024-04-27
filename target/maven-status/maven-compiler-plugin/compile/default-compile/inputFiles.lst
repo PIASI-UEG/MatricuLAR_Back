@@ -67,6 +67,7 @@ C:\Users\Nahta\IdeaProjects\PIASI - Associacao Sagrada Familia\MatricuLAR_Back\s
 C:\Users\Nahta\IdeaProjects\PIASI - Associacao Sagrada Familia\MatricuLAR_Back\src\main\java\br\ueg\piasi\MatricuLAR\dto\DocumentoMatriculaDTO.java
 C:\Users\Nahta\IdeaProjects\PIASI - Associacao Sagrada Familia\MatricuLAR_Back\src\main\java\br\ueg\piasi\MatricuLAR\enums\converter\VinculoConverter.java
 C:\Users\Nahta\IdeaProjects\PIASI - Associacao Sagrada Familia\MatricuLAR_Back\src\main\java\br\ueg\piasi\MatricuLAR\mapper\TurmaMapper.java
+C:\Users\Nahta\IdeaProjects\PIASI - Associacao Sagrada Familia\MatricuLAR_Back\src\main\java\br\ueg\piasi\MatricuLAR\util\TermoDeResponsabilidade.java
 C:\Users\Nahta\IdeaProjects\PIASI - Associacao Sagrada Familia\MatricuLAR_Back\src\main\java\br\ueg\piasi\MatricuLAR\model\Advertencia.java
 C:\Users\Nahta\IdeaProjects\PIASI - Associacao Sagrada Familia\MatricuLAR_Back\src\main\java\br\ueg\piasi\MatricuLAR\service\impl\EnderecoServiceImpl.java
 C:\Users\Nahta\IdeaProjects\PIASI - Associacao Sagrada Familia\MatricuLAR_Back\src\main\java\br\ueg\piasi\MatricuLAR\controller\EnderecoController.java
@@ -78,6 +79,7 @@ C:\Users\Nahta\IdeaProjects\PIASI - Associacao Sagrada Familia\MatricuLAR_Back\s
 C:\Users\Nahta\IdeaProjects\PIASI - Associacao Sagrada Familia\MatricuLAR_Back\src\main\java\br\ueg\piasi\MatricuLAR\util\DestinatarioAssiDig.java
 C:\Users\Nahta\IdeaProjects\PIASI - Associacao Sagrada Familia\MatricuLAR_Back\src\main\java\br\ueg\piasi\MatricuLAR\service\impl\NecessidadeEspecialServiceImpl.java
 C:\Users\Nahta\IdeaProjects\PIASI - Associacao Sagrada Familia\MatricuLAR_Back\src\main\java\br\ueg\piasi\MatricuLAR\service\UsuarioService.java
+C:\Users\Nahta\IdeaProjects\PIASI - Associacao Sagrada Familia\MatricuLAR_Back\src\main\java\br\ueg\piasi\MatricuLAR\dto\AssinaturaDTO.java
 C:\Users\Nahta\IdeaProjects\PIASI - Associacao Sagrada Familia\MatricuLAR_Back\src\main\java\br\ueg\piasi\MatricuLAR\mapper\EnderecoMapper.java
 C:\Users\Nahta\IdeaProjects\PIASI - Associacao Sagrada Familia\MatricuLAR_Back\src\main\java\br\ueg\piasi\MatricuLAR\Application.java
 C:\Users\Nahta\IdeaProjects\PIASI - Associacao Sagrada Familia\MatricuLAR_Back\src\main\java\br\ueg\piasi\MatricuLAR\dto\NecessidadeEspecialDTO.java

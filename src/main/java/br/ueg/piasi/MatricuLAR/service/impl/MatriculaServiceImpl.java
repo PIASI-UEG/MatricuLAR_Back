@@ -25,9 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.*;
 import java.util.*;
 
 import static br.ueg.piasi.MatricuLAR.util.TermoDeResponsabilidade.JASPER_TERMO;
@@ -50,7 +51,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     @Autowired
     private MatriculaMapper mapper;
 
-
+    private final Path root = Paths.get("docs");
 
 
     @Override
@@ -148,6 +149,57 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     public Resource getDocumentoMatricula(String caminhoDoc){
         return documentoMatriculaService.getDocumentoMatricula(caminhoDoc);
     }
+
+//    public String uploadTermoAssinadoFront(MultipartFile multipartFile, PublicKey publicKey) throws NoSuchAlgorithmException, SignatureException, InvalidKeyException {
+//
+//        // TODO implementar o salvamento do arquivo assinado e da chave publica
+//        // TODO apos isso implemenar algo para receber um pdf e validar ele de acordo com o pdf gerado no back
+////        try {
+////            if (!Files.exists(root)) {
+////                Files.createDirectories(root);
+////            }
+////
+////            Path pathCaminhoDoc = this.root.resolve(nomeArquivo);
+////            Files.copy(documento.getInputStream(), pathCaminhoDoc);
+////
+////            this.repository.saveAndFlush(
+////                    DocumentoMatricula.builder()
+////                            .matricula(Matricula.builder().id(idMatricula).build())
+////                            .idTipoDocumento(tipoDocumento.getId())
+////                            .caminhoDocumento(nomeArquivo)
+////                            .aceito(false)
+////                            .build()
+////            );
+////
+////        }catch (Exception e){
+////            throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO, e);
+////        }
+////        if (Objects.nonNull(multipartFile)){
+////            if(validarAssinatura(publicKey, multipartFile)) {
+////                return "Documento verificado, satatus ok";
+////            }else {
+////                return "Documento nao aceito, satatus invalido";
+////            }
+////        }
+////        return "Documento in";
+//
+//    }
+
+//    private boolean validarAssinatura(PublicKey pubKey, MultipartFile multipartFile) throws
+//            NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+//        Signature clientSig = Signature.getInstance("DSA");
+//        clientSig.initVerify(pubKey);
+//        clientSig.update(termo.toString().getBytes());
+//
+//        //verifica assinatura
+//        if (clientSig.verify(assinatura)) {
+//            //Mensagem corretamente assinada
+//            System.out.println("A Mensagem recebida foi assinada corretamente.");
+//        } else {
+//            //Mensagem não pode ser validada
+//            System.out.println("A Mensagem recebida NÃO pode ser validada.");
+//        }
+//    }
 
 
     public Matricula uploadTermoAssinado(Long idMatricula, String imgAss) throws JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {

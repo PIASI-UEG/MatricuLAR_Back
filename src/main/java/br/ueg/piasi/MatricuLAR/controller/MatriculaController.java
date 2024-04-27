@@ -1,7 +1,6 @@
 package br.ueg.piasi.MatricuLAR.controller;
 
 
-import br.ueg.piasi.MatricuLAR.dto.AssinaturaDTO;
 import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
 import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
@@ -21,8 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.security.SignatureException;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/${app.api.version}/matricula")
@@ -66,7 +65,7 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
     @GetMapping(path = "/termoAssinado/{caminhodoc}")
     public ResponseEntity<Resource> getTermoAssinado(@PathVariable(name = "caminhodoc") String caminhodoc){
 
-        Resource arquivo = service.getDocumentoMatricula(caminhodoc);
+        Resource arquivo = service.getDocumentoMatricula("C:\\Users\\Nahta\\IdeaProjects\\PIASI - Associacao Sagrada Familia\\MatricuLAR_Back\\src\\main\\resources\\images\\" + caminhodoc);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + arquivo.getFilename() + "\"").body(arquivo);
     }
@@ -74,10 +73,18 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
     @GetMapping(path = "/termo/{caminhodoc}")
     public ResponseEntity<Resource> getTermo(@PathVariable(name = "caminhodoc") String caminhodoc){
 
-        Resource arquivo = service.getDocumentoMatricula(caminhodoc);
+        Resource arquivo = service.getDocumentoMatricula("C:\\Users\\Nahta\\IdeaProjects\\PIASI - Associacao Sagrada Familia\\MatricuLAR_Back\\src\\main\\resources\\images\\" + caminhodoc);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + arquivo.getFilename() + "\"").body(arquivo);
     }
+
+//    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path = "/documentos")
+//    public ResponseEntity<String> uploadTermoAssinadoFront(@RequestParam PublicKey publicKey, @RequestBody MultipartFile multipartFile) throws NoSuchAlgorithmException, SignatureException, InvalidKeyException {
+//
+//        return ResponseEntity.ok(
+//                service.uploadTermoAssinadoFront(multipartFile, publicKey));
+//    }
+
 
     @PostMapping(path = "valida")
     public ResponseEntity<MatriculaDTO> validaMatricula(@RequestBody MatriculaDTO matriculaDTO){
