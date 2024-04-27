@@ -49,22 +49,6 @@ public class TermoDeResponsabilidade {
             JasperExportManager.exportReportToPdfFile(print, ".\\src\\main\\resources\\images\\Termo-Responsabilidade-"+assinatura.get(0).getCpfCrianca()+".pdf");
             System.out.println("Gerando pdf");
 
-            //termo assinado
-            File termo = new File(".\\src\\main\\resources\\images\\Termo-Responsabilidade-"+assinatura.get(0).getCpfCrianca()+".pdf");
-
-            //termo de teste
-            File testeTermoErrado = new File("C:\\Users\\lucas\\Downloads\\termo.pdf");
-
-            DestinatarioAssiDig destinatario = new DestinatarioAssiDig();
-
-            RemetenteAssiDig remetente = new RemetenteAssiDig();
-
-            //assina o termo
-            byte[] assinaturas = remetente.geraAssinatura(termo, assinatura.get(0));
-
-            //verifica a assinatura do termo
-            destinatario.recebeMensagem(remetente.getPubKey(), testeTermoErrado, assinaturas);
-
             return assinatura;
         } catch (Exception e) {
             System.out.println(e);

@@ -1,6 +1,9 @@
 package br.ueg.piasi.MatricuLAR.util;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -11,14 +14,14 @@ import java.security.SignatureException;
 
 public class DestinatarioAssiDig {
 
-    public void recebeMensagem(PublicKey pubKey, File termo, byte[] assinatura) throws
-            NoSuchAlgorithmException, InvalidKeyException, SignatureException {
-        Signature clientSig = Signature.getInstance("DSA");
+    public void validaAssinatura(PublicKey pubKey, MultipartFile termo, byte[] hash) throws
+            NoSuchAlgorithmException, InvalidKeyException, SignatureException, IOException {
+        Signature clientSig = Signature.getInstance("RSA");
         clientSig.initVerify(pubKey);
-        clientSig.update(termo.toString().getBytes());
+        clientSig.update(termo.getBytes());
 
         //verifica assinatura
-        if (clientSig.verify(assinatura)) {
+        if (clientSig.verify(hash)) {
             //Mensagem corretamente assinada
             System.out.println("A Mensagem recebida foi assinada corretamente.");
         } else {
