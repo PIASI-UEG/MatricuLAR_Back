@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -48,6 +50,8 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     private MatriculaMapper mapper;
 
     private static String JASPER_TERMO = ".\\src\\main\\resources\\termo.jrxml";
+
+    private final Path root = Paths.get("docs");
 
     @Override
     protected void prepararParaIncluir(Matricula matricula) {
@@ -213,16 +217,19 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         return repository.countAllWithStatus(statusMatricula.getId());
     }
 
-    public File geraTermo(Long idMatricula) throws JRException {
+    public Matricula geraTermo(Long idMatricula, String cpfTutor) throws JRException, IOException {
         try {
+            if (!Files.exists(root)) {
+                Files.createDirectories(root);
+            }
             System.out.println("gerando termo");
-            List<DadosTermoDTO> listDadosTermo = preencheDTO(idMatricula);
+            List<DadosTermoDTO> listDadosTermo = preencheDTO(idMatricula, cpfTutor);
 
             Map<String, Object> parametros = new HashMap<String, Object>();
 
             JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(listDadosTermo);
 
-            Path caminhoTermo = Paths.get(".\\src\\main\\resources\\Termo-Responsabilidade-"+listDadosTermo.get(0).getCpfCrianca()+".pdf");
+            Path caminhoTermo = this.root.resolve("Termo-Responsabilidade-"+listDadosTermo.get(0).getCpfCrianca()+".pdf");
 
             JasperReport report = JasperCompileManager.compileReport(JASPER_TERMO);
 
@@ -232,7 +239,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             JasperExportManager.exportReportToPdfFile(print, caminhoTermo.toString());
             System.out.println("Gerando pdf");
 
-            return new File(caminhoTermo.toString());
+            return obterPeloId(idMatricula);
 
         } catch (Exception e) {
             System.out.println(e);
@@ -240,18 +247,27 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         }
     }
 
-    private List<DadosTermoDTO> preencheDTO(Long idMatricula){
+    private List<DadosTermoDTO> preencheDTO(Long idMatricula, String cpfTutor){
         List<DadosTermoDTO> dadosTermo = new ArrayList<>();
+        DadosTermoDTO dados = new DadosTermoDTO();
         Matricula matricula = obterPeloId(idMatricula);
         MatriculaDTO matriculaDTO = mapper.toDTO(matricula);
         Endereco endereco = matricula.getEndereco();
-        ResponsavelDTO responsavel = matriculaDTO.getResponsaveis().get(0);
-        dadosTermo.add(DadosTermoDTO.builder()
-                .endereco(endereco.getLogradouro()+", "+endereco.getComplemento()+", "+endereco.getBairro())
-                .nomeResponsavel(responsavel.getNomeResponsavel())
-                .cpfCrianca(matricula.getPessoa().getCpf())
-                .cpfResponsavel(responsavel.getCpfResponsavel())
-                .build());
+        if(!matriculaDTO.getTutorDTOList().isEmpty()){
+            matriculaDTO.getTutorDTOList().forEach(tutorDTO -> {
+                if(tutorDTO.getCpf().equals(cpfTutor)){
+                    dados.setCpfResponsavel(tutorDTO.getCpf());
+                    dados.setNomeResponsavel(tutorDTO.getPessoaNome());
+                }
+            });
+        } else{
+            throw new BusinessException(SistemaMessageCode.ERRO_GERAR_TERMO);
+        }
+
+        dados.setEndereco(endereco.getLogradouro()+", "+endereco.getComplemento()+", "+endereco.getBairro());
+        dados.setCpfCrianca(matriculaDTO.getCpf());
+        dadosTermo.add(dados);
+        System.out.println(dados);
         return dadosTermo;
     }
 }

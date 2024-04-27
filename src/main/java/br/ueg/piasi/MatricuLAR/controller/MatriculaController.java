@@ -52,6 +52,14 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + arquivo.getFilename() + "\"").body(arquivo);
     }
 
+    @GetMapping(path = "/termo/{caminhodoc}")
+    public ResponseEntity<Resource> getTermo(@PathVariable(name = "caminhodoc") String caminhodoc){
+
+        Resource arquivo = service.getDocumentoMatricula(caminhodoc);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + arquivo.getFilename() + "\"").body(arquivo);
+    }
+
     @PostMapping(path = "valida")
     public ResponseEntity<MatriculaDTO> validaMatricula(@RequestBody MatriculaDTO matriculaDTO){
 
@@ -149,8 +157,8 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                     )}
             )}
     )
-    public ResponseEntity<File> gerarTermo(@PathVariable(name = "id") Long id) throws JRException {
+    public ResponseEntity<MatriculaDTO> gerarTermo(@PathVariable(name = "id") Long id, @RequestParam(name = "cpfTutor")String cpfTutor) throws JRException, IOException {
         return ResponseEntity.ok(
-                service.geraTermo(id));
+                mapper.toDTO(service.geraTermo(id, cpfTutor)));
     }
 }

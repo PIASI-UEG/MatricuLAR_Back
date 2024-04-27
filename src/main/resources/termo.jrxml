@@ -33,7 +33,7 @@
 				<textElement>
 					<font size="15"/>
 				</textElement>
-				<text><![CDATA[Assinatura do Responsável: _________________________]]></text>
+				<text><![CDATA[Assinatura do Tutor: _________________________]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="84" y="484" width="146" height="30" uuid="159333df-f8b0-47be-b1da-df5ef2d3d2de"/>

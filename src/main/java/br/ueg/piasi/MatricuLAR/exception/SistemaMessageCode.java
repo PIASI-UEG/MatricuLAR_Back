@@ -10,6 +10,7 @@ public enum SistemaMessageCode implements MessageCode {
         101 - 150 mensagens para documento
         151 - 200 mensagens para turma
         201 - 300 mensagens para matricula
+        301 - 400 mensagens para termo
     */
 
     //USUARIO
@@ -26,7 +27,9 @@ public enum SistemaMessageCode implements MessageCode {
 
     //MATRICULA
     ERRO_MATRICULA_SEM_RESPONSAVEL("MSG-201", 404),
-    ERRO_LISTAR_MATRICULA_STATUS("MSG-202", 404 );
+    ERRO_LISTAR_MATRICULA_STATUS("MSG-202", 404 ),
+
+    ERRO_GERAR_TERMO("MSG-301", 404);
 
     private final String code;
     private final Integer status;
