@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 public class DadosTermoDTO {
+    private String nomeCrianca;
     private String cpfCrianca;
     private String cpfResponsavel;
     private String nomeResponsavel;

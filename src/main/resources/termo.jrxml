@@ -8,6 +8,7 @@
 	<field name="cpfCrianca" class="java.lang.String"/>
 	<field name="nomeResponsavel" class="java.lang.String"/>
 	<field name="endereco" class="java.lang.String"/>
+	<field name="nomeCrianca" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -49,7 +50,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA["Eu, "+$F{nomeResponsavel}+", portador(a) do CPF nº "+$F{cpfResponsavel}+", residente na "+$F{endereco}+", declaro estar ciente e de acordo com as condições estabelecidas para a matrícula oferecido pela Associação Sagrada Familia.\n\n"+
 
-        "Comprometo-me a cumprir todas as normas e regulamentos da instituição durante o período da matrícula do Aluno, portador(a) do CPF nº "+$F{cpfCrianca}+".\n\n"+
+        "Comprometo-me a cumprir todas as normas e regulamentos da instituição durante o período da matrícula do(a) aluno(a) "+$F{nomeCrianca}+", portador(a) do CPF nº "+$F{cpfCrianca}+".\n\n"+
 
     "Declaro ainda que todas as informações fornecidas neste formulário preenchido são verdadeiras e estou ciente de que qualquer falsidade poderá implicar na perda do direito à matrícula."]]></textFieldExpression>
 			</textField>

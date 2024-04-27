@@ -264,7 +264,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         } else{
             throw new BusinessException(SistemaMessageCode.ERRO_GERAR_TERMO);
         }
-
+        dados.setNomeCrianca(matriculaDTO.getNome());
         dados.setEndereco(endereco.getLogradouro()+", "+endereco.getComplemento()+", "+endereco.getBairro());
         dados.setCpfCrianca(matriculaDTO.getCpf());
         dadosTermo.add(dados);
