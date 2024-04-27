@@ -51,6 +51,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     @Autowired
     private MatriculaMapper mapper;
 
+
     private final Path root = Paths.get("docs");
 
 
@@ -202,54 +203,15 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 //    }
 
 
-    public Matricula uploadTermoAssinado(Long idMatricula, String imgAss) throws JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
 
+    public Matricula uploadTermo(String cpfCrianca, MultipartFile termoAssinado) throws JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
         try {
-            System.out.println("gerando termo");
-            List<AssinaturaDTO> assinatura = preencheDTO(imgAss, idMatricula);
-
-            Map<String, Object> parametros = new HashMap<String, Object>();
-
-            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(assinatura);
-
-
-            JasperReport report = JasperCompileManager.compileReport(JASPER_TERMO_ASSINADO);
-
-            JasperPrint print = JasperFillManager.fillReport(report, parametros, dataSource);
-
-            //CAMINHO ONDE SERÁ SALVO O PDF (por enquanto deixando na pasta fotos)
-            JasperExportManager.exportReportToPdfFile(print, ".\\src\\main\\resources\\images\\Termo-Responsabilidade-Assinado"+assinatura.get(0).getCpfCrianca()+".pdf");
-            System.out.println("Gerando pdf");
-            return repository.findById(idMatricula).get();
+            documentoMatriculaService.uploadTermo(cpfCrianca, termoAssinado);
         } catch (Exception e) {
             System.out.println(e);
             throw e;
         }
-    }
-
-    public Matricula uploadTermo(Long idMatricula) throws JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
-
-        try {
-            System.out.println("gerando termo");
-            List<AssinaturaDTO> assinatura = preencheDTO("", idMatricula);
-
-            Map<String, Object> parametros = new HashMap<String, Object>();
-
-            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(assinatura);
-
-
-            JasperReport report = JasperCompileManager.compileReport(JASPER_TERMO);
-
-            JasperPrint print = JasperFillManager.fillReport(report, parametros, dataSource);
-
-            //CAMINHO ONDE SERÁ SALVO O PDF (por enquanto deixando na pasta fotos)
-            JasperExportManager.exportReportToPdfFile(print, ".\\src\\main\\resources\\images\\Termo-Responsabilidade-"+assinatura.get(0).getCpfCrianca()+".pdf");
-            System.out.println("Gerando pdf");
-            return repository.findById(idMatricula).get();
-        } catch (Exception e) {
-            System.out.println(e);
-            throw e;
-        }
+        return repository.findMatriculaByPessoa(pessoaService.obterPeloId(cpfCrianca));
     }
 
     private List<AssinaturaDTO> preencheDTO(String imgAss, Long idMatricula){

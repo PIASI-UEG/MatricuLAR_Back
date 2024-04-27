@@ -158,4 +158,22 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
 
 
     }
+
+    public void uploadTermo(String cpfCrianca, MultipartFile documento) {
+
+        try {
+            if (!Files.exists(root)) {
+                Files.createDirectories(root);
+            }
+
+            String nomeArquivo = "Termo-Responsabilidade-Assinado-"+cpfCrianca+".pdf";
+
+            Path pathCaminhoDoc = this.root.resolve(nomeArquivo);
+            Files.copy(documento.getInputStream(), pathCaminhoDoc);
+
+
+        }catch (Exception e){
+            throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO, e);
+        }
+    }
 }

@@ -27,8 +27,6 @@ import java.security.SignatureException;
 @RequestMapping(path = "/api/${app.api.version}/matricula")
 public class MatriculaController extends CrudController<Matricula, MatriculaDTO, Long, MatriculaMapper, MatriculaServiceImpl> {
 
-    @Autowired
-    private TermoDeResponsabilidade termo;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path = "/documentos")
     public ResponseEntity<MatriculaDTO> uploadDocumento(@RequestParam Long idMatricula, @RequestParam TipoDocumento tipoDocumento,
@@ -38,19 +36,10 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                 mapper.toDTO(service.uploadDocumento(idMatricula, tipoDocumento, multipartFile)));
     }
 
-    @PostMapping(path = "/termoAssinado")
-    public ResponseEntity<MatriculaDTO> uploadTermoAssinado(@RequestParam Long idMatricula,
-                                                        @RequestBody String imgAss) throws IOException, JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
-
-        return ResponseEntity.ok(
-                mapper.toDTO(service.uploadTermoAssinado(idMatricula, imgAss)));
-    }
-
     @PostMapping(path = "/termo")
-    public ResponseEntity<MatriculaDTO> uploadTermo(@RequestParam Long idMatricula) throws IOException, JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
+    public ResponseEntity<MatriculaDTO> uploadTermo(@RequestParam String cpfCrianca ,@RequestBody MultipartFile multipartFile) throws IOException, JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
 
-        return ResponseEntity.ok(
-                mapper.toDTO(service.uploadTermo(idMatricula)));
+        return ResponseEntity.ok(mapper.toDTO(service.uploadTermo(cpfCrianca, multipartFile)));
     }
 
 
@@ -58,14 +47,6 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
     public ResponseEntity<Resource> getDocumentoMatricula(@PathVariable(name = "caminhodoc") String caminhodoc){
 
         Resource arquivo = service.getDocumentoMatricula(caminhodoc);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + arquivo.getFilename() + "\"").body(arquivo);
-    }
-
-    @GetMapping(path = "/termoAssinado/{caminhodoc}")
-    public ResponseEntity<Resource> getTermoAssinado(@PathVariable(name = "caminhodoc") String caminhodoc){
-
-        Resource arquivo = service.getDocumentoMatricula("C:\\Users\\Nahta\\IdeaProjects\\PIASI - Associacao Sagrada Familia\\MatricuLAR_Back\\src\\main\\resources\\images\\" + caminhodoc);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + arquivo.getFilename() + "\"").body(arquivo);
     }

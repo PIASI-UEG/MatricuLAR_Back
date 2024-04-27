@@ -7,7 +7,7 @@ import br.ueg.piasi.MatricuLAR.enums.Turno;
 import br.ueg.piasi.MatricuLAR.enums.Vinculo;
 import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.service.impl.*;
-import br.ueg.piasi.MatricuLAR.util.TermoDeResponsabilidade;
+//import br.ueg.piasi.MatricuLAR.util.TermoDeResponsabilidade;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -56,8 +56,8 @@ public class InitialRunner implements ApplicationRunner {
     @Autowired
     private DocumentoMatriculaServiceImpl documentoMatriculaService;
 
-    @Autowired
-    private TermoDeResponsabilidade termo;
+//    @Autowired
+//    private TermoDeResponsabilidade termo;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -154,7 +154,6 @@ public class InitialRunner implements ApplicationRunner {
 
         System.out.println("\n*** Fim da Inserção de dados para testes ***\n");
 
-        matriculaService.uploadTermo(1l);
     }
 
 }
