@@ -4,7 +4,6 @@ package br.ueg.piasi.MatricuLAR.service.impl;
 import br.ueg.piasi.MatricuLAR.dto.DadosTermoDTO;
 import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
 import br.ueg.piasi.MatricuLAR.dto.ResponsavelDTO;
-import br.ueg.piasi.MatricuLAR.dto.MatriculaVisualizarDTO;
 import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
@@ -53,6 +52,8 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     private static String JASPER_TERMO = ".\\src\\main\\resources\\termo.jrxml";
 
     private final Path root = Paths.get("docs");
+    @Autowired
+    private MatriculaRepository matriculaRepository;
 
     @Override
     protected void prepararParaIncluir(Matricula matricula) {
@@ -270,5 +271,24 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         dadosTermo.add(dados);
         System.out.println(dados);
         return dadosTermo;
+    }
+
+    public Matricula uploadDocumentos(Long idMatricula, MultipartFile[] documentos) {
+
+        for(MultipartFile documento : documentos){
+
+            uploadDocumento(idMatricula, TipoDocumento.CPF_CRIANCA, documento);
+        }
+        return null;
+    }
+
+    public List<Matricula> listarAlunosPorTurma(Long idTurma) {
+        List<Matricula> matriculas =  matriculaRepository.findByTurma_Id(idTurma).orElse(null);
+
+       if(Objects.isNull(matriculas)) {
+            throw new BusinessException(SistemaMessageCode.ERRO_SEM_ALUNOS_TURMA, idTurma);
+        }
+
+        return matriculas;
     }
 }

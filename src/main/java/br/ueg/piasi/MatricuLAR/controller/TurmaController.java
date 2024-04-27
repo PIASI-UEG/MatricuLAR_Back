@@ -6,7 +6,6 @@ import br.ueg.piasi.MatricuLAR.mapper.TurmaMapperImpl;
 import br.ueg.piasi.MatricuLAR.model.Turma;
 import br.ueg.piasi.MatricuLAR.service.impl.TurmaServiceImpl;
 import br.ueg.prog.webi.api.controller.CrudController;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,8 +15,4 @@ public class TurmaController
         extends CrudController<Turma, TurmaDTO, Long, TurmaMapperImpl,
         TurmaServiceImpl> {
 
-    @Override
-    public ResponseEntity<TurmaDTO> incluir(TurmaDTO modeloDTO) {
-        return super.incluir(modeloDTO);
-    }
 }

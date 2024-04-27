@@ -66,4 +66,6 @@ public class Turma extends BaseEntidade<Long> {
 
     @Transient
     private Long quantidadeAlunos;
+
+
 }
