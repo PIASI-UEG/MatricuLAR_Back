@@ -276,4 +276,10 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
         );
 
     }
+
+    @PostMapping(path = "/termo/{id}")
+    public ResponseEntity<MatriculaDTO> gerarTermo(@PathVariable(name = "id") Long id){
+        return ResponseEntity.ok(
+                mapper.toDTO(service.geraTermo(id)));
+    }
 }
