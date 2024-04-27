@@ -165,7 +165,8 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         //CAMINHO ONDE SERÁ SALVO O PDF (por enquanto deixando na pasta fotos)
         JasperExportManager.exportReportToPdfFile(print, ".\\src\\main\\resources\\images\\Termo-Responsabilidade-Assinado"+assinatura.get(0).getCpfCrianca()+".pdf");
         System.out.println("Gerando pdf");
-        return new UrlResource(".\\src\\main\\resources\\images\\Termo-Responsabilidade-Assinado"+assinatura.get(0).getCpfCrianca()+".pdf");
+        Path caminho = this.root.resolve("Termo-Responsabilidade-Assinado"+assinatura.get(0).getCpfCrianca()+".pdf");
+        return new UrlResource(caminho.toUri());
     }
 
 
