@@ -33,7 +33,7 @@ import java.util.List;
 public class MatriculaController extends CrudController<Matricula, MatriculaDTO, Long, MatriculaMapper, MatriculaServiceImpl> {
 
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path = "/documentos")
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path = "/documento")
     public ResponseEntity<MatriculaDTO> uploadDocumento(@RequestParam Long idMatricula, @RequestParam TipoDocumento tipoDocumento,
                                            @RequestBody MultipartFile multipartFile) throws IOException {
 
