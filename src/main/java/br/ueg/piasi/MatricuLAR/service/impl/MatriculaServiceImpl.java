@@ -285,7 +285,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     public List<Matricula> listarAlunosPorTurma(Long idTurma) {
         List<Matricula> matriculas =  matriculaRepository.findByTurma_Id(idTurma).orElse(null);
 
-       if(Objects.isNull(matriculas)) {
+       if(Objects.isNull(matriculas) || matriculas.isEmpty()) {
             throw new BusinessException(SistemaMessageCode.ERRO_SEM_ALUNOS_TURMA, idTurma);
         }
 
