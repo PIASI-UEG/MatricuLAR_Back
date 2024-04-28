@@ -62,7 +62,7 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
     @GetMapping(path = "/termo/{caminhodoc}")
     public ResponseEntity<Resource> getTermo(@PathVariable(name = "caminhodoc") String caminhodoc){
 
-        Resource arquivo = service.getDocumentoMatricula("C:\\Users\\Nahta\\IdeaProjects\\PIASI - Associacao Sagrada Familia\\MatricuLAR_Back\\src\\main\\resources\\images\\" + caminhodoc);
+        Resource arquivo = service.getDocumentoMatricula(caminhodoc);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + arquivo.getFilename() + "\"").body(arquivo);
     }

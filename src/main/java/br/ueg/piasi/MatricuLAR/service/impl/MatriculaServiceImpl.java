@@ -1,6 +1,7 @@
 package br.ueg.piasi.MatricuLAR.service.impl;
 
 
+import br.ueg.piasi.MatricuLAR.controller.ResponsavelController;
 import br.ueg.piasi.MatricuLAR.dto.AssinaturaDTO;
 import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
 import br.ueg.piasi.MatricuLAR.dto.ResponsavelDTO;
@@ -9,6 +10,7 @@ import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
 import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
 import br.ueg.piasi.MatricuLAR.model.*;
+import br.ueg.piasi.MatricuLAR.model.pkComposta.PkResponsavel;
 import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
 import br.ueg.piasi.MatricuLAR.service.MatriculaService;
 import br.ueg.piasi.MatricuLAR.util.DestinatarioAssiDig;
@@ -18,6 +20,7 @@ import br.ueg.prog.webi.api.service.BaseCrudService;
 import io.swagger.v3.core.util.Json;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -34,6 +37,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.*;
 
 import static br.ueg.piasi.MatricuLAR.util.TermoDeResponsabilidade.JASPER_TERMO;
@@ -55,6 +59,9 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     @Autowired
     private MatriculaMapper mapper;
+
+    @Autowired
+    private ResponsavelController responsavelController;
 
 
     private final Path root = Paths.get("docs");
@@ -237,7 +244,36 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     public Matricula uploadTermo(String cpfCrianca, MultipartFile termoAssinado, String chavePub) throws JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, InvalidKeySpecException {
         try {
-            documentoMatriculaService.uploadTermo(cpfCrianca, termoAssinado, chavePub);
+            System.out.println("chavePubchegou" + chavePub);
+            JSONObject jwk = new JSONObject(chavePub);
+
+            String modulusBase64 = jwk.getString("n");
+            String exponentBase64 = jwk.getString("e");
+
+            byte[] modulusBytes = Base64.getUrlDecoder().decode(modulusBase64);
+            byte[] exponentBytes = Base64.getUrlDecoder().decode(exponentBase64);
+
+            RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(new java.math.BigInteger(1, modulusBytes), new java.math.BigInteger(1, exponentBytes));
+
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            PublicKey publicKey = keyFactory.generatePublic(rsaPublicKeySpec);
+
+            // salvar chave publica no primeiro tutor
+            Matricula criancaMatri = obterPeloId(1l);
+            MatriculaDTO matriculaDTO = mapper.toDTO(criancaMatri);
+            List<ResponsavelDTO> responsaveis = matriculaDTO.getResponsaveis();
+            ResponsavelDTO responsavelDTO = responsaveis.get(0);
+
+            responsavelDTO.setChavePub(chavePub);
+
+            PkResponsavel pkResponsavel = new PkResponsavel();
+
+            pkResponsavel.setMatricula(1L);
+            pkResponsavel.setPessoa("12345678911");
+
+            responsavelController.alterar(responsavelDTO, pkResponsavel);
+
+            System.out.println("Chave pública: " + publicKey);
         } catch (Exception e) {
             System.out.println(e);
             throw e;

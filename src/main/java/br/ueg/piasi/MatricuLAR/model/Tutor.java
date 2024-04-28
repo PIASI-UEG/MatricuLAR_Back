@@ -54,6 +54,6 @@ public class Tutor extends BaseEntidade<String> {
     @Transient
     private Vinculo vinculo;
 
-    @Column(name = "chavePub")
-    private PublicKey chavePublica;
+//    @Column(name = "chavePub")
+//    private String chavePublica;
 }

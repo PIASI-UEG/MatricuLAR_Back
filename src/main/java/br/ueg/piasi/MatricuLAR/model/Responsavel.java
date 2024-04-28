@@ -45,6 +45,6 @@ public class Responsavel extends BaseEntidade<PkResponsavel> {
     @Column(name = "tutor", nullable = false)
     private Boolean tutor;
 
-    @Column(name = "chavePub")
-    private PublicKey chavePub;
+    @Column(name = "chavePub", length = 1000000)
+    private String chavePub;
 }

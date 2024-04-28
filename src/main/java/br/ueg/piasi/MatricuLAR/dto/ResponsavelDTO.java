@@ -20,6 +20,6 @@ public class ResponsavelDTO {
     private String nomeMatricula;
     private Vinculo vinculo;
     private Boolean tutor;
-    private PublicKey chavePub;
+    private String chavePub;
 
 }

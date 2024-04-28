@@ -9,10 +9,7 @@ import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
 import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
 import br.ueg.piasi.MatricuLAR.mapper.ResponsavelMapper;
-import br.ueg.piasi.MatricuLAR.model.DocumentoMatricula;
-import br.ueg.piasi.MatricuLAR.model.Endereco;
-import br.ueg.piasi.MatricuLAR.model.Matricula;
-import br.ueg.piasi.MatricuLAR.model.Tutor;
+import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.model.pkComposta.PkDocumentoMatricula;
 import br.ueg.piasi.MatricuLAR.model.pkComposta.PkResponsavel;
 import br.ueg.piasi.MatricuLAR.repository.*;
@@ -72,12 +69,6 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
 
     @Autowired
     private PessoaServiceImpl pessoaService;
-
-    @Autowired
-    private ResponsavelMapper responsavelMapper;
-
-    @Autowired
-    private ResponsavelService responsavelService;
 
     @Autowired
     private ResponsavelController responsavelController;
@@ -194,48 +185,6 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
             throw new BusinessException(ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO);
         }
 
-
-    }
-
-    public void uploadTermo(String cpfCrianca, MultipartFile documento, String chavePub){
-
-        try {
-            System.out.println("chavePubchegou" + chavePub);
-            JSONObject jwk = new JSONObject(chavePub);
-
-            String modulusBase64 = jwk.getString("n");
-            String exponentBase64 = jwk.getString("e");
-
-            byte[] modulusBytes = Base64.getUrlDecoder().decode(modulusBase64);
-            byte[] exponentBytes = Base64.getUrlDecoder().decode(exponentBase64);
-
-            RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(new java.math.BigInteger(1, modulusBytes), new java.math.BigInteger(1, exponentBytes));
-
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            PublicKey publicKey = keyFactory.generatePublic(rsaPublicKeySpec);
-            System.out.println("crianca" + cpfCrianca);
-            // salvar chave publica no primeiro tutor
-            Matricula criancaMatri = matriculaRepository.findMatriculaByPessoa(pessoaService.obterPeloId(cpfCrianca));
-            System.out.println("deubugtutor" +matriculaRepository.findMatriculaByPessoa(pessoaService.obterPeloId(cpfCrianca)));
-            MatriculaDTO matriculaDTO = matriculaMapper.toDTO(criancaMatri);
-            List<ResponsavelDTO> responsaveis = matriculaDTO.getResponsaveis();
-            System.out.println("tutores" + responsaveis.get(0));
-            System.out.println("criancamatri" + criancaMatri);
-            ResponsavelDTO responsavelDTO = responsaveis.get(0);
-
-            responsavelDTO.setChavePub(publicKey);
-
-            PkResponsavel pkResponsavel = new PkResponsavel();
-
-            pkResponsavel.setMatricula(1L);
-            pkResponsavel.setPessoa("12345678911");
-
-            responsavelController.alterar(responsavelDTO, pkResponsavel);
-
-            System.out.println("Chave pública: " + publicKey);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new BusinessException(ERRO_CHAVE_PUBLICA_NAO_EXISTE);
-        }
 
     }
 }
