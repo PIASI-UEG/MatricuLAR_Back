@@ -5,11 +5,11 @@ import br.ueg.piasi.MatricuLAR.enums.converter.TurnoConverter;
 import br.ueg.prog.webi.api.model.BaseEntidade;
 import br.ueg.prog.webi.api.model.annotation.Searchable;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldNameConstants;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
@@ -63,6 +63,11 @@ public class Turma extends BaseEntidade<Long> {
 
     @Column(name = "telefone_professora", nullable = false, length = 11)
     private String telefoneProfessor;
+
+    @OneToMany(mappedBy = "turma")
+    @EqualsAndHashCode.Exclude
+    @Builder.Default
+    private Set<Matricula> alunos = new HashSet<>();
 
     @Transient
     private Long quantidadeAlunos;

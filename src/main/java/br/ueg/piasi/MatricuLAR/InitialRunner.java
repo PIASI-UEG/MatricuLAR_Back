@@ -44,11 +44,8 @@ public class InitialRunner implements ApplicationRunner {
     @Autowired
     private MatriculaServiceImpl matriculaService;
 
-    @Autowired
-    private DocumentoMatriculaServiceImpl documentoMatriculaService;
-
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         try {
             insereDadosParaTestes();
         } catch (Exception e) {
@@ -141,7 +138,7 @@ public class InitialRunner implements ApplicationRunner {
                 .horaFim("1130")
                 .telefoneProfessor("62991922192")
                 .build();
-        turmaService.incluir(turma);
+        turma= turmaService.incluir(turma);
 
         Pessoa pessoaMatricula = Pessoa.builder()
                 .cpf("12345678922")
@@ -155,13 +152,14 @@ public class InitialRunner implements ApplicationRunner {
                 .nascimento(LocalDate.now())
                 .endereco(endereco)
                 .necessidades(new HashSet<>())
+
                 .build();
 
         matriculaService.incluir(matricula);
 
         System.out.println("\n*** Fim da Inserção de dados para testes ***\n");
 
-        matriculaService.geraTermo(1l, "12345678911");
+        matriculaService.geraTermo(1L, "12345678911");
     }
 
 }
