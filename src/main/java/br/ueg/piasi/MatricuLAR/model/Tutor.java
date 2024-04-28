@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 
+import java.security.PublicKey;
+
 import static br.ueg.piasi.MatricuLAR.model.Tutor.NOME_TABELA;
 
 @Builder
@@ -51,4 +53,7 @@ public class Tutor extends BaseEntidade<String> {
 
     @Transient
     private Vinculo vinculo;
+
+    @Column(name = "chavePub")
+    private PublicKey chavePublica;
 }

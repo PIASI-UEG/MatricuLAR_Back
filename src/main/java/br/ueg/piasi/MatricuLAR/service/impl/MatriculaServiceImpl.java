@@ -15,6 +15,7 @@ import br.ueg.piasi.MatricuLAR.util.DestinatarioAssiDig;
 import br.ueg.piasi.MatricuLAR.util.RemetenteAssiDig;
 import br.ueg.prog.webi.api.exception.BusinessException;
 import br.ueg.prog.webi.api.service.BaseCrudService;
+import io.swagger.v3.core.util.Json;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.*;
+import java.security.spec.InvalidKeySpecException;
 import java.util.*;
 
 import static br.ueg.piasi.MatricuLAR.util.TermoDeResponsabilidade.JASPER_TERMO;
@@ -233,7 +235,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
 
 
-    public Matricula uploadTermo(String cpfCrianca, MultipartFile termoAssinado, PublicKey chavePub) throws JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
+    public Matricula uploadTermo(String cpfCrianca, MultipartFile termoAssinado, String chavePub) throws JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, InvalidKeySpecException {
         try {
             documentoMatriculaService.uploadTermo(cpfCrianca, termoAssinado, chavePub);
         } catch (Exception e) {

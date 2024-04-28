@@ -8,6 +8,10 @@ import br.ueg.piasi.MatricuLAR.model.Matricula;
 import br.ueg.piasi.MatricuLAR.service.impl.MatriculaServiceImpl;
 import br.ueg.piasi.MatricuLAR.util.TermoDeResponsabilidade;
 import br.ueg.prog.webi.api.controller.CrudController;
+import com.auth0.jwt.JWT;
+import com.fasterxml.jackson.annotation.JsonKey;
+import com.fasterxml.jackson.core.JsonGenerator;
+import io.swagger.v3.core.util.Json;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -23,6 +27,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
 
 @RestController
 @RequestMapping(path = "/api/${app.api.version}/matricula")
@@ -38,8 +43,10 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/termo")
-    public ResponseEntity<MatriculaDTO> uploadTermo(@RequestParam String cpfCrianca,@RequestParam PublicKey chavePub,@RequestBody MultipartFile multipartFile) throws IOException, JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
+    public ResponseEntity<MatriculaDTO> uploadTermo(@RequestParam String cpfCrianca, @RequestParam String chavePub, @RequestBody MultipartFile multipartFile) throws IOException, JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, InvalidKeySpecException {
 
+
+        System.out.println("chaves chave:" + chavePub);
         return ResponseEntity.ok(mapper.toDTO(service.uploadTermo(cpfCrianca, multipartFile, chavePub)));
     }
 

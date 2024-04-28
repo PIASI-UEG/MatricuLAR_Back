@@ -10,18 +10,23 @@ import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
 import br.ueg.piasi.MatricuLAR.model.DocumentoMatricula;
 import br.ueg.piasi.MatricuLAR.model.Endereco;
 import br.ueg.piasi.MatricuLAR.model.Matricula;
+import br.ueg.piasi.MatricuLAR.model.Tutor;
 import br.ueg.piasi.MatricuLAR.model.pkComposta.PkDocumentoMatricula;
 import br.ueg.piasi.MatricuLAR.repository.DocumentoMatriculaRepository;
 import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
 import br.ueg.piasi.MatricuLAR.repository.PessoaRepository;
+import br.ueg.piasi.MatricuLAR.repository.TutorRepository;
 import br.ueg.piasi.MatricuLAR.service.DocumentoMatriculaService;
 import br.ueg.piasi.MatricuLAR.service.MatriculaService;
 import br.ueg.piasi.MatricuLAR.util.DestinatarioAssiDig;
 import br.ueg.piasi.MatricuLAR.util.RemetenteAssiDig;
 import br.ueg.prog.webi.api.exception.BusinessException;
 import br.ueg.prog.webi.api.service.BaseCrudService;
+import io.swagger.v3.core.util.Json;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import netscape.javascript.JSObject;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -32,10 +37,15 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
 import java.time.LocalDate;
 import java.util.*;
 
+import static br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode.ERRO_CHAVE_PUBLICA_NAO_EXISTE;
 import static br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode.ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO;
 import static br.ueg.piasi.MatricuLAR.util.TermoDeResponsabilidade.JASPER_TERMO;
 
@@ -48,7 +58,7 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
     private DocumentoMatriculaRepository repository;
 
     @Autowired
-    private MatriculaServiceImpl matriculaService;
+    private TutorRepository tutorRepository;
 
     @Autowired
     private PessoaRepository pessoaRepository;
@@ -58,6 +68,9 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
 
     @Autowired
     private MatriculaMapper matriculaMapper;
+
+    @Autowired
+    private PessoaServiceImpl pessoaService;
 
     @Override
     protected void prepararParaIncluir(DocumentoMatricula entidade) {
@@ -174,27 +187,40 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
 
     }
 
-    public void uploadTermo(String cpfCrianca, MultipartFile documento, PublicKey chavePub) {
+    public void uploadTermo(String cpfCrianca, MultipartFile documento, String chavePub){
 
         try {
-            if (!Files.exists(root)) {
-                Files.createDirectories(root);
-            }
+            System.out.println("chavePubchegou" + chavePub);
+            JSONObject jwk = new JSONObject(chavePub);
 
+            String modulusBase64 = jwk.getString("n");
+            String exponentBase64 = jwk.getString("e");
 
-            MatriculaDTO crianca = this.matriculaMapper.toDTO(
-                    this.matriculaRepository.findMatriculaByPessoa(
-                            this.pessoaRepository.findById(cpfCrianca).get()));
+            byte[] modulusBytes = Base64.getUrlDecoder().decode(modulusBase64);
+            byte[] exponentBytes = Base64.getUrlDecoder().decode(exponentBase64);
 
-            crianca.getResponsaveis().get(0).setChavePub(chavePub);
-            String nomeArquivo = "Termo-Responsabilidade-Assinado-"+cpfCrianca+".pdf";
+            RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(new java.math.BigInteger(1, modulusBytes), new java.math.BigInteger(1, exponentBytes));
 
-            Path pathCaminhoDoc = this.root.resolve(nomeArquivo);
-            Files.copy(documento.getInputStream(), pathCaminhoDoc);
-
-
-        }catch (Exception e){
-            throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO, e);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            PublicKey publicKey = keyFactory.generatePublic(rsaPublicKeySpec);
+            System.out.println("crianca" + cpfCrianca);
+            // salvar chave publica no primeiro tutor
+            Matricula criancaMatri = matriculaRepository.findMatriculaByPessoa(pessoaService.obterPeloId(cpfCrianca));
+            System.out.println("deubugtutor" +matriculaRepository.findMatriculaByPessoa(pessoaService.obterPeloId(cpfCrianca)));
+            List<Tutor> tutores = criancaMatri.getTutorList();
+            System.out.println("utores" + tutores.get(0));
+            System.out.println("criancamatri" + criancaMatri);
+//            System.out.println("tutores" + tutores);
+//            Tutor tutorCrianca = tutores.get(0);
+//
+//            tutorCrianca.setChavePublica(publicKey);
+//
+//            tutorRepository.save(tutorCrianca);
+//
+//            System.out.println("Chave pública: " + publicKey);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new BusinessException(ERRO_CHAVE_PUBLICA_NAO_EXISTE);
         }
+
     }
 }
