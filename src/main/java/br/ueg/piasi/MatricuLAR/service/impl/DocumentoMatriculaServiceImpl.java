@@ -1,23 +1,24 @@
 package br.ueg.piasi.MatricuLAR.service.impl;
 
 
+import br.ueg.piasi.MatricuLAR.controller.ResponsavelController;
 import br.ueg.piasi.MatricuLAR.dto.AssinaturaDTO;
 import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
 import br.ueg.piasi.MatricuLAR.dto.ResponsavelDTO;
 import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
 import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
+import br.ueg.piasi.MatricuLAR.mapper.ResponsavelMapper;
 import br.ueg.piasi.MatricuLAR.model.DocumentoMatricula;
 import br.ueg.piasi.MatricuLAR.model.Endereco;
 import br.ueg.piasi.MatricuLAR.model.Matricula;
 import br.ueg.piasi.MatricuLAR.model.Tutor;
 import br.ueg.piasi.MatricuLAR.model.pkComposta.PkDocumentoMatricula;
-import br.ueg.piasi.MatricuLAR.repository.DocumentoMatriculaRepository;
-import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
-import br.ueg.piasi.MatricuLAR.repository.PessoaRepository;
-import br.ueg.piasi.MatricuLAR.repository.TutorRepository;
+import br.ueg.piasi.MatricuLAR.model.pkComposta.PkResponsavel;
+import br.ueg.piasi.MatricuLAR.repository.*;
 import br.ueg.piasi.MatricuLAR.service.DocumentoMatriculaService;
 import br.ueg.piasi.MatricuLAR.service.MatriculaService;
+import br.ueg.piasi.MatricuLAR.service.ResponsavelService;
 import br.ueg.piasi.MatricuLAR.util.DestinatarioAssiDig;
 import br.ueg.piasi.MatricuLAR.util.RemetenteAssiDig;
 import br.ueg.prog.webi.api.exception.BusinessException;
@@ -71,6 +72,15 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
 
     @Autowired
     private PessoaServiceImpl pessoaService;
+
+    @Autowired
+    private ResponsavelMapper responsavelMapper;
+
+    @Autowired
+    private ResponsavelService responsavelService;
+
+    @Autowired
+    private ResponsavelController responsavelController;
 
     @Override
     protected void prepararParaIncluir(DocumentoMatricula entidade) {
@@ -207,17 +217,22 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
             // salvar chave publica no primeiro tutor
             Matricula criancaMatri = matriculaRepository.findMatriculaByPessoa(pessoaService.obterPeloId(cpfCrianca));
             System.out.println("deubugtutor" +matriculaRepository.findMatriculaByPessoa(pessoaService.obterPeloId(cpfCrianca)));
-            List<Tutor> tutores = criancaMatri.getTutorList();
-            System.out.println("utores" + tutores.get(0));
+            MatriculaDTO matriculaDTO = matriculaMapper.toDTO(criancaMatri);
+            List<ResponsavelDTO> responsaveis = matriculaDTO.getResponsaveis();
+            System.out.println("tutores" + responsaveis.get(0));
             System.out.println("criancamatri" + criancaMatri);
-//            System.out.println("tutores" + tutores);
-//            Tutor tutorCrianca = tutores.get(0);
-//
-//            tutorCrianca.setChavePublica(publicKey);
-//
-//            tutorRepository.save(tutorCrianca);
-//
-//            System.out.println("Chave pública: " + publicKey);
+            ResponsavelDTO responsavelDTO = responsaveis.get(0);
+
+            responsavelDTO.setChavePub(publicKey);
+
+            PkResponsavel pkResponsavel = new PkResponsavel();
+
+            pkResponsavel.setMatricula(1L);
+            pkResponsavel.setPessoa("12345678911");
+
+            responsavelController.alterar(responsavelDTO, pkResponsavel);
+
+            System.out.println("Chave pública: " + publicKey);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new BusinessException(ERRO_CHAVE_PUBLICA_NAO_EXISTE);
         }
