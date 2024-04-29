@@ -17,6 +17,10 @@ import br.ueg.piasi.MatricuLAR.util.DestinatarioAssiDig;
 import br.ueg.piasi.MatricuLAR.util.RemetenteAssiDig;
 import br.ueg.prog.webi.api.exception.BusinessException;
 import br.ueg.prog.webi.api.service.BaseCrudService;
+import com.aspose.pdf.Document;
+import com.aspose.pdf.EmbeddedFileCollection;
+import com.aspose.pdf.FileSpecification;
+import com.aspose.pdf.facades.PdfFileSignature;
 import io.swagger.v3.core.util.Json;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -30,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -110,7 +115,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         return super.alterar(entidade, id);
     }
 
-    private void salvarResponsaveis(Set<Responsavel> responsavelSet, Matricula matricula){
+    private void salvarResponsaveis(Set<Responsavel> responsavelSet, Matricula matricula) {
 
         if (Objects.isNull(responsavelSet)) {
             throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_SEM_RESPONSAVEL);
@@ -127,10 +132,10 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     private Set<Responsavel> tratarMatriculaResponsaveis(Matricula matricula) {
 
-        if (Objects.nonNull(matricula.getTutorList()) && !matricula.getTutorList().isEmpty()){
+        if (Objects.nonNull(matricula.getTutorList()) && !matricula.getTutorList().isEmpty()) {
             Set<Responsavel> responsavelSet = new HashSet<>();
 
-            for (Tutor tutor : matricula.getTutorList()){
+            for (Tutor tutor : matricula.getTutorList()) {
 
                 responsavelSet.add(
                         Responsavel.builder()
@@ -138,19 +143,18 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
                                 .pessoa(tutor.getPessoa())
                                 .tutor(true)
                                 .vinculo(tutor.getVinculo())
-                        .build());
+                                .build());
             }
 
             matricula.setResponsaveis(new HashSet<>());
-            return  responsavelSet;
-        }
-        else
+            return responsavelSet;
+        } else
             throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_SEM_RESPONSAVEL);
     }
 
     public Matricula uploadDocumento(Long idMatricula, TipoDocumento tipoDocumento, MultipartFile multipartFile) {
 
-        if (Objects.nonNull(repository.findById(idMatricula).orElse(null))){
+        if (Objects.nonNull(repository.findById(idMatricula).orElse(null))) {
             documentoMatriculaService.uploadDocumentos(idMatricula, tipoDocumento, multipartFile);
             return repository.findById(idMatricula).get();
         }
@@ -177,15 +181,15 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         }
 
         //CAMINHO ONDE SERÁ SALVO O PDF (por enquanto deixando na pasta fotos)
-        Path caminhoTermo = this.root.resolve("Termo-Responsabilidade"+assinatura.get(0).getCpfCrianca()+".pdf");
+        Path caminhoTermo = this.root.resolve("Termo-Responsabilidade" + assinatura.get(0).getCpfCrianca() + ".pdf");
         JasperExportManager.exportReportToPdfFile(print, caminhoTermo.toString());
         System.out.println("Gerando pdf");
-        Path caminho = this.root.resolve("Termo-Responsabilidade"+assinatura.get(0).getCpfCrianca()+".pdf");
+        Path caminho = this.root.resolve("Termo-Responsabilidade" + assinatura.get(0).getCpfCrianca() + ".pdf");
         return new UrlResource(caminho.toUri());
     }
 
 
-    public Resource getDocumentoMatricula(String caminhoDoc){
+    public Resource getDocumentoMatricula(String caminhoDoc) {
         return documentoMatriculaService.getDocumentoMatricula(caminhoDoc);
     }
 
@@ -240,23 +244,154 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 //        }
 //    }
 
+    public Matricula uploadTermoValidar(String cpfCrianca, MultipartFile documento) {
+
+        try {
+            //Pegar chave publica
+            Matricula criancaMatri = obterPeloId(1l);
+            MatriculaDTO matriculaDTO = mapper.toDTO(criancaMatri);
+            List<ResponsavelDTO> responsaveis = matriculaDTO.getResponsaveis();
+            ResponsavelDTO responsavelDTO = responsaveis.get(0);
+            String chavePublica = responsavelDTO.getChavePub();
+            PublicKey pubKey = convertChave(chavePublica);
+
+            // pegar termo do back e gerar hash para comparar
+            File termo = new File(this.root.resolve("Termo-Responsabilidade" + cpfCrianca + ".pdf").toUri());
+            String hashArqAntigo = calcularHashSHA256(termo);
+            System.out.println("Document Hash " + hashArqAntigo);
+
+            //remover anexo do pdf onde esta assinatura
+
+            // Configure um novo arquivo para ser adicionado como anexo
 
 
-    public Matricula uploadTermo(String cpfCrianca, MultipartFile termoAssinado, String chavePub) throws JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, InvalidKeySpecException {
+            // Cria um arquivo temporario
+            File termoTemporario = File.createTempFile("temp", ".pdf");
+            documento.transferTo(termoTemporario);
+
+            // Carregar o arquivo e salva o anexo
+            Document document = new Document(termoTemporario.getAbsolutePath());
+            System.out.println("embed" + document.getEmbeddedFiles());
+            EmbeddedFileCollection attachments = document.getEmbeddedFiles();
+
+            // Verifique se há anexos
+            if (attachments.size() > 0) {
+                System.out.println("cheguei aqui");
+                Files.copy(attachments.get_Item(1).getContents(), this.root.resolve("assinatura.p7s"));
+            } else {
+                System.out.println("Não há anexos no PDF.");
+            }
+
+//            byte[] assinatura = new FileInputStream( new File(this.root.resolve("assinatura.p7s").toString())).readAllBytes();
+//
+//            // Assinatura do PDF (já temos essa informação)
+//
+//            // Verificar a assinatura usando a chave pública
+//            Signature signature = Signature.getInstance("SHA256withRSA");
+//            signature.initVerify(pubKey);
+//            signature.update(hashArqAntigo.getBytes());
+//            boolean assinaturaValida = signature.verify(assinatura);
+//
+
+
+            // Inicializando o objeto Signature para verificação
+            Signature signature = Signature.getInstance("SHA256withRSA");
+            signature.initVerify(pubKey);
+
+// Lendo o conteúdo do arquivo .p7s
+            FileInputStream fis = new FileInputStream(this.root.resolve("assinatura.p7s").toString());
+            byte[] buffer = new byte[8192];
+            int length;
+            while ((length = fis.read(buffer)) != -1) {
+                signature.update(buffer, 0, length);
+            }
+
+
+// Verificando a assinatura
+            boolean assinaturaValida = signature.verify(fis.readAllBytes());
+            if (assinaturaValida) {
+                System.out.println("A assinatura é válida.");
+            } else {
+                System.out.println("A assinatura é inválida.");
+            }
+            fis.close();
+
+            // Excluir o arquivo temporário
+            termoTemporario.delete();
+
+
+
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new BusinessException(SistemaMessageCode.ERRO_CHAVE_PUBLICA_NAO_EXISTE);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return repository.findById(1L).get();
+
+
+    }
+
+    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
+    public static String calcularHashSHA256(File arquivo) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+
+        FileInputStream fis = new FileInputStream(arquivo);
+        DigestInputStream dis = new DigestInputStream(fis, digest);
+
+        byte[] buffer = new byte[8192];
+        int bytesRead;
+        while ((bytesRead = dis.read(buffer)) != -1) {
+
+        }
+
+        byte[] hashBytes = digest.digest();
+
+
+        StringBuilder hexString = new StringBuilder();
+        for (byte hashByte : hashBytes) {
+            String hex = Integer.toHexString(0xff & hashByte);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+
+
+        dis.close();
+
+        return hexString.toString();
+    }
+
+    private PublicKey convertChave(String chavePublica) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        JSONObject jwk = new JSONObject(chavePublica);
+
+        String modulusBase64 = jwk.getString("n");
+        String exponentBase64 = jwk.getString("e");
+
+        byte[] modulusBytes = Base64.getUrlDecoder().decode(modulusBase64);
+        byte[] exponentBytes = Base64.getUrlDecoder().decode(exponentBase64);
+
+        RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(new java.math.BigInteger(1, modulusBytes), new java.math.BigInteger(1, exponentBytes));
+
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        return keyFactory.generatePublic(rsaPublicKeySpec);
+    }
+
+
+    public Matricula uploadTermo(String cpfCrianca, String chavePub) throws JRException, NoSuchAlgorithmException, InvalidKeySpecException {
         try {
             System.out.println("chavePubchegou" + chavePub);
-            JSONObject jwk = new JSONObject(chavePub);
 
-            String modulusBase64 = jwk.getString("n");
-            String exponentBase64 = jwk.getString("e");
-
-            byte[] modulusBytes = Base64.getUrlDecoder().decode(modulusBase64);
-            byte[] exponentBytes = Base64.getUrlDecoder().decode(exponentBase64);
-
-            RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(new java.math.BigInteger(1, modulusBytes), new java.math.BigInteger(1, exponentBytes));
-
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            PublicKey publicKey = keyFactory.generatePublic(rsaPublicKeySpec);
 
             // salvar chave publica no primeiro tutor
             Matricula criancaMatri = obterPeloId(1l);
@@ -273,7 +408,6 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
             responsavelController.alterar(responsavelDTO, pkResponsavel);
 
-            System.out.println("Chave pública: " + publicKey);
         } catch (Exception e) {
             System.out.println(e);
             throw e;
@@ -281,14 +415,14 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         return repository.findMatriculaByPessoa(pessoaService.obterPeloId(cpfCrianca));
     }
 
-    private List<AssinaturaDTO> preencheDTO(Long idMatricula){
+    private List<AssinaturaDTO> preencheDTO(Long idMatricula) {
         List<AssinaturaDTO> assinatura = new ArrayList<>();
         Matricula matricula = this.obterPeloId(idMatricula);
         MatriculaDTO matriculaDTO = this.mapper.toDTO(matricula);
         Endereco endereco = matricula.getEndereco();
         ResponsavelDTO responsavel = matriculaDTO.getResponsaveis().get(0);
         assinatura.add(AssinaturaDTO.builder()
-                .endereco(endereco.getLogradouro()+", "+endereco.getComplemento()+", "+endereco.getBairro())
+                .endereco(endereco.getLogradouro() + ", " + endereco.getComplemento() + ", " + endereco.getBairro())
                 .nomeResponsavel(responsavel.getNomeResponsavel())
                 .cpfCrianca(matricula.getPessoa().getCpf())
                 .cpfResponsavel(responsavel.getCpfResponsavel())
@@ -298,9 +432,9 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     public Matricula validaMatricula(Matricula matricula) {
 
-        for (DocumentoMatricula documento : matricula.getDocumentoMatricula()){
+        for (DocumentoMatricula documento : matricula.getDocumentoMatricula()) {
 
-            if (!documento.getAceito()){
+            if (!documento.getAceito()) {
                 throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_NAO_ACEITO, documento.getCaminhoDocumento());
             }
 
@@ -315,13 +449,13 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     public Matricula atualizaContraChequeMatricula(Long idMatricula, TipoDocumento tipoDocumento, MultipartFile multipartFile) {
 
         try {
-            if (Objects.nonNull(repository.findById(idMatricula).orElse(null))){
+            if (Objects.nonNull(repository.findById(idMatricula).orElse(null))) {
                 documentoMatriculaService.atualizaContraChequeMatricula(idMatricula, tipoDocumento, multipartFile);
                 return repository.findById(idMatricula).get();
             }
             throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO_MATRICULA_NAO_ENCONTRADA);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO_MATRICULA_NAO_ENCONTRADA);
         }
 

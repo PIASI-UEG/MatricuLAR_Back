@@ -12,6 +12,10 @@ import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.annotation.JsonKey;
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -42,14 +46,28 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                 mapper.toDTO(service.uploadDocumento(idMatricula, tipoDocumento, multipartFile)));
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/termo")
-    public ResponseEntity<MatriculaDTO> uploadTermo(@RequestParam String cpfCrianca, @RequestParam String chavePub, @RequestBody MultipartFile multipartFile) throws IOException, JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, InvalidKeySpecException {
-
+    @PostMapping(path = "/termo")
+    @Operation(
+            description = "Listagem Geral",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "PDF",
+                    content = {@Content(
+                            mediaType = "application/pdf",
+                            array = @ArraySchema
+                    )}
+            )})
+    public ResponseEntity<MatriculaDTO> uploadTermo(@RequestParam String cpfCrianca, @RequestParam String chavePub) throws IOException, JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, InvalidKeySpecException {
 
         System.out.println("chaves chave:" + chavePub);
-        return ResponseEntity.ok(mapper.toDTO(service.uploadTermo(cpfCrianca, multipartFile, chavePub)));
+        return ResponseEntity.ok(mapper.toDTO(service.uploadTermo(cpfCrianca, chavePub)));
     }
 
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/validarTermo")
+    public ResponseEntity<MatriculaDTO> uploadTermoValidar(@RequestParam String cpfCrianca, @RequestBody MultipartFile multipartFile) throws IOException, JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, InvalidKeySpecException {
+
+        return ResponseEntity.ok(mapper.toDTO(service.uploadTermoValidar(cpfCrianca, multipartFile)));
+    }
 
     @GetMapping(path = "/documento/{caminhodoc}")
     public ResponseEntity<Resource> getDocumentoMatricula(@PathVariable(name = "caminhodoc") String caminhodoc){
