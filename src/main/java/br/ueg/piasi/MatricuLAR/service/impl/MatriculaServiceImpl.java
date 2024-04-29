@@ -256,9 +256,8 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             ass.close();
 
             // Excluir o arquivo temporário
-            if (termoTemporario.delete() && assinaturaArq.delete()){
-                System.out.println("Arquivos apagados");
-            }
+            termoTemporario.delete();
+            assinaturaArq.delete();
 
 
             return criancaMatri;
