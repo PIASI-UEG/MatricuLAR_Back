@@ -47,16 +47,6 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
     }
 
     @PostMapping(path = "/termo")
-    @Operation(
-            description = "Listagem Geral",
-            responses = {@ApiResponse(
-                    responseCode = "200",
-                    description = "PDF",
-                    content = {@Content(
-                            mediaType = "application/pdf",
-                            array = @ArraySchema
-                    )}
-            )})
     public ResponseEntity<MatriculaDTO> uploadTermo(@RequestParam String cpfCrianca, @RequestParam String chavePub) throws IOException, JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, InvalidKeySpecException {
 
         System.out.println("chaves chave:" + chavePub);

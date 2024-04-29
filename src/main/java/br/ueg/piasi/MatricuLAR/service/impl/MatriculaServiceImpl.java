@@ -24,6 +24,9 @@ import com.aspose.pdf.facades.PdfFileSignature;
 import io.swagger.v3.core.util.Json;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.apache.bcel.verifier.VerificationResult;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.interactive.digitalsignature.PDSignature;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -35,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -193,61 +197,11 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         return documentoMatriculaService.getDocumentoMatricula(caminhoDoc);
     }
 
-//    public String uploadTermoAssinadoFront(MultipartFile multipartFile, PublicKey publicKey) throws NoSuchAlgorithmException, SignatureException, InvalidKeyException {
-//
-//        // TODO implementar o salvamento do arquivo assinado e da chave publica
-//        // TODO apos isso implemenar algo para receber um pdf e validar ele de acordo com o pdf gerado no back
-////        try {
-////            if (!Files.exists(root)) {
-////                Files.createDirectories(root);
-////            }
-////
-////            Path pathCaminhoDoc = this.root.resolve(nomeArquivo);
-////            Files.copy(documento.getInputStream(), pathCaminhoDoc);
-////
-////            this.repository.saveAndFlush(
-////                    DocumentoMatricula.builder()
-////                            .matricula(Matricula.builder().id(idMatricula).build())
-////                            .idTipoDocumento(tipoDocumento.getId())
-////                            .caminhoDocumento(nomeArquivo)
-////                            .aceito(false)
-////                            .build()
-////            );
-////
-////        }catch (Exception e){
-////            throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO, e);
-////        }
-////        if (Objects.nonNull(multipartFile)){
-////            if(validarAssinatura(publicKey, multipartFile)) {
-////                return "Documento verificado, satatus ok";
-////            }else {
-////                return "Documento nao aceito, satatus invalido";
-////            }
-////        }
-////        return "Documento in";
-//
-//    }
-
-//    private boolean validarAssinatura(PublicKey pubKey, MultipartFile multipartFile) throws
-//            NoSuchAlgorithmException, InvalidKeyException, SignatureException {
-//        Signature clientSig = Signature.getInstance("DSA");
-//        clientSig.initVerify(pubKey);
-//        clientSig.update(termo.toString().getBytes());
-//
-//        //verifica assinatura
-//        if (clientSig.verify(assinatura)) {
-//            //Mensagem corretamente assinada
-//            System.out.println("A Mensagem recebida foi assinada corretamente.");
-//        } else {
-//            //Mensagem não pode ser validada
-//            System.out.println("A Mensagem recebida NÃO pode ser validada.");
-//        }
-//    }
 
     public Matricula uploadTermoValidar(String cpfCrianca, MultipartFile documento) {
 
         try {
-            //Pegar chave publica
+            //Pegar chave publica do responsavel pelo cpf da crianca
             Matricula criancaMatri = obterPeloId(1l);
             MatriculaDTO matriculaDTO = mapper.toDTO(criancaMatri);
             List<ResponsavelDTO> responsaveis = matriculaDTO.getResponsaveis();
@@ -258,88 +212,59 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             // pegar termo do back e gerar hash para comparar
             File termo = new File(this.root.resolve("Termo-Responsabilidade" + cpfCrianca + ".pdf").toUri());
             String hashArqAntigo = calcularHashSHA256(termo);
-            System.out.println("Document Hash " + hashArqAntigo);
 
-            //remover anexo do pdf onde esta assinatura
-
-            // Configure um novo arquivo para ser adicionado como anexo
-
-
-            // Cria um arquivo temporario
+            // Cria um arquivo temporario do termo assinado
             File termoTemporario = File.createTempFile("temp", ".pdf");
             documento.transferTo(termoTemporario);
 
-            // Carregar o arquivo e salva o anexo
+            // Carrega o termo assinado e pega os anexos
             Document document = new Document(termoTemporario.getAbsolutePath());
-            System.out.println("embed" + document.getEmbeddedFiles());
             EmbeddedFileCollection attachments = document.getEmbeddedFiles();
 
-            // Verifique se há anexos
+            // Verifique se há anexos se tiver pega o anexo da assinatura
             if (attachments.size() > 0) {
-                System.out.println("cheguei aqui");
                 Files.copy(attachments.get_Item(1).getContents(), this.root.resolve("assinatura.p7s"));
             } else {
                 System.out.println("Não há anexos no PDF.");
             }
 
-//            byte[] assinatura = new FileInputStream( new File(this.root.resolve("assinatura.p7s").toString())).readAllBytes();
-//
-//            // Assinatura do PDF (já temos essa informação)
-//
-//            // Verificar a assinatura usando a chave pública
-//            Signature signature = Signature.getInstance("SHA256withRSA");
-//            signature.initVerify(pubKey);
-//            signature.update(hashArqAntigo.getBytes());
-//            boolean assinaturaValida = signature.verify(assinatura);
-//
+            File assinaturaArq = new File(this.root.resolve("assinatura.p7s").toString());
 
 
-            // Inicializando o objeto Signature para verificação
-            Signature signature = Signature.getInstance("SHA256withRSA");
+            // Inicializando o objeto Signature com o algoritmo utilizado
+            Signature signature = Signature.getInstance("SHA256WithRSA");
             signature.initVerify(pubKey);
 
-// Lendo o conteúdo do arquivo .p7s
-            FileInputStream fis = new FileInputStream(this.root.resolve("assinatura.p7s").toString());
-            byte[] buffer = new byte[8192];
-            int length;
-            while ((length = fis.read(buffer)) != -1) {
-                signature.update(buffer, 0, length);
-            }
+            // Lendo o conteúdo do arquivo da assinatura.p7s
+            FileInputStream ass = new FileInputStream(this.root.resolve("assinatura.p7s").toString());
+            byte[] assinaturaBytes = ass.readAllBytes();
 
 
-// Verificando a assinatura
-            boolean assinaturaValida = signature.verify(fis.readAllBytes());
-            if (assinaturaValida) {
+            //verifica o hash
+            signature.update(hashArqAntigo.getBytes());
+
+
+            // Verificando a assinatura
+            if (signature.verify(assinaturaBytes)) {
                 System.out.println("A assinatura é válida.");
             } else {
                 System.out.println("A assinatura é inválida.");
             }
-            fis.close();
+            ass.close();
 
             // Excluir o arquivo temporário
             termoTemporario.delete();
+            assinaturaArq.delete();
 
 
-
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new BusinessException(SistemaMessageCode.ERRO_CHAVE_PUBLICA_NAO_EXISTE);
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return repository.findById(1L).get();
 
 
-    }
-
-    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
-    public static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
-            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
-        }
-        return new String(hexChars);
     }
 
     public static String calcularHashSHA256(File arquivo) throws Exception {

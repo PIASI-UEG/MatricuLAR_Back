@@ -29,11 +29,11 @@ public class RemetenteAssiDig {
 
     public byte[] geraAssinatura(File termo, AssinaturaDTO assinaturaDTO) throws NoSuchAlgorithmException,
             InvalidKeyException, SignatureException {
-        Signature sig = Signature.getInstance("DSA");
+        Signature sig = Signature.getInstance("RSA");
         String seed = assinaturaDTO.getImagemAss().concat(assinaturaDTO.getCpfResponsavel());
 
         //Geração das chaves públicas e privadas
-        KeyPairGenerator kpg = KeyPairGenerator.getInstance("DSA");
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
         SecureRandom secRan = new SecureRandom(seed.getBytes());
         kpg.initialize(512, secRan);
         KeyPair keyP = kpg.generateKeyPair();
