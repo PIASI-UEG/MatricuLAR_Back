@@ -224,7 +224,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             Document document = new Document(termoTemporario.getAbsolutePath());
             EmbeddedFileCollection attachments = document.getEmbeddedFiles();
 
-            // Verifique se há anexos se tiver pega o anexo da assinatura
+            // Verifique se há anexos, se tiver pega o anexo da assinatura
             if (attachments.size() > 0) {
                 Files.copy(attachments.get_Item(1).getContents(), this.root.resolve("assinatura.p7s"));
             } else {
@@ -256,18 +256,18 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             ass.close();
 
             // Excluir o arquivo temporário
-            termoTemporario.delete();
-            assinaturaArq.delete();
+            if (termoTemporario.delete() && assinaturaArq.delete()){
+                System.out.println("Arquivos apagados");
+            }
 
 
+            return criancaMatri;
         } catch (NoSuchAlgorithmException e) {
             System.out.println(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return repository.findById(1L).get();
-
-
+        throw new BusinessException(SistemaMessageCode.ERRO_CHAVE_PUBLICA_NAO_EXISTE);
     }
 
     public static String calcularHashSHA256(File arquivo) throws Exception {
