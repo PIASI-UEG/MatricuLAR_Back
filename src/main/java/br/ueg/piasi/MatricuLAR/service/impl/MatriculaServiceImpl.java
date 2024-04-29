@@ -70,6 +70,9 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     private MatriculaMapper mapper;
 
     @Autowired
+    private MatriculaRepository matriculaRepository;
+
+    @Autowired
     private ResponsavelController responsavelController;
 
 
@@ -202,7 +205,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
         try {
             //Pegar chave publica do responsavel pelo cpf da crianca
-            Matricula criancaMatri = obterPeloId(1l);
+            Matricula criancaMatri = matriculaRepository.findMatriculaByPessoa(pessoaService.obterPeloId(cpfCrianca));
             MatriculaDTO matriculaDTO = mapper.toDTO(criancaMatri);
             List<ResponsavelDTO> responsaveis = matriculaDTO.getResponsaveis();
             ResponsavelDTO responsavelDTO = responsaveis.get(0);
