@@ -3,6 +3,7 @@ package br.ueg.piasi.MatricuLAR.controller;
 
 import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
 import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
+import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
 import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
 import br.ueg.piasi.MatricuLAR.model.Matricula;
 import br.ueg.piasi.MatricuLAR.service.impl.MatriculaServiceImpl;
@@ -71,7 +72,7 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                     content = {@Content(
                             mediaType = "application/json",
                             schema = @Schema(
-                                    implementation = MessageResponse.class
+                                    implementation = SistemaMessageCode.class
                             )
                     )}
             ), @ApiResponse(
@@ -80,10 +81,20 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                     content = {@Content(
                             mediaType = "application/json",
                             schema = @Schema(
-                                    implementation = MessageResponse.class
+                                    implementation = SistemaMessageCode.class
                             )
                     )}
-            )}
+            ), @ApiResponse(
+                    responseCode = "500",
+                    description = "O usuário não possui chave pública",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = SistemaMessageCode.class
+                            )
+                    )}
+            )
+            }
     )
 
     public ResponseEntity<MatriculaDTO> uploadTermoValidar(@RequestParam String cpfCrianca, @RequestBody MultipartFile multipartFile) throws IOException, JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, InvalidKeySpecException {
