@@ -23,8 +23,11 @@ public enum SistemaMessageCode implements MessageCode {
 
     ERRO_MATRICULA_SEM_RESPONSAVEL("MSG-201", 404),
 
-    ERRO_CHAVE_PUBLICA_NAO_EXISTE("MSG-105", 400)
-    ;
+    ERRO_CHAVE_PUBLICA_NAO_EXISTE("MSG-105", 400),
+
+    ERRO_DOCUMENTO_SEM_ASSINATURA("MSG-301",400),
+
+    ERRO_ASSINATURA_INVALIDA("MSG-302",401);
 
     private final String code;
     private final Integer status;

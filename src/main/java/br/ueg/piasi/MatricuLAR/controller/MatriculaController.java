@@ -8,6 +8,7 @@ import br.ueg.piasi.MatricuLAR.model.Matricula;
 import br.ueg.piasi.MatricuLAR.service.impl.MatriculaServiceImpl;
 import br.ueg.piasi.MatricuLAR.util.TermoDeResponsabilidade;
 import br.ueg.prog.webi.api.controller.CrudController;
+import br.ueg.prog.webi.api.exception.MessageResponse;
 import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.annotation.JsonKey;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -15,6 +16,7 @@ import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +56,36 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/validarTermo")
+    @Operation(
+            description = "Busca a quantidade de registros",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Assinatura válida",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = MatriculaDTO.class)
+                    )}
+            ), @ApiResponse(
+                    responseCode = "400",
+                    description = "Documento sem assinatura",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            ), @ApiResponse(
+                    responseCode = "401",
+                    description = "Assinatura inválida",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            )}
+    )
+
     public ResponseEntity<MatriculaDTO> uploadTermoValidar(@RequestParam String cpfCrianca, @RequestBody MultipartFile multipartFile) throws IOException, JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, InvalidKeySpecException {
 
         return ResponseEntity.ok(mapper.toDTO(service.uploadTermoValidar(cpfCrianca, multipartFile)));

@@ -9,6 +9,7 @@ import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
 import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
+import br.ueg.piasi.MatricuLAR.mapper.ResponsavelMapper;
 import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.model.pkComposta.PkResponsavel;
 import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
@@ -25,8 +26,6 @@ import io.swagger.v3.core.util.Json;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.apache.bcel.verifier.VerificationResult;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.interactive.digitalsignature.PDSignature;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -228,7 +227,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             if (attachments.size() > 0) {
                 Files.copy(attachments.get_Item(1).getContents(), this.root.resolve("assinatura.p7s"));
             } else {
-                System.out.println("Não há anexos no PDF.");
+                throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_SEM_ASSINATURA);
             }
 
             File assinaturaArq = new File(this.root.resolve("assinatura.p7s").toString());
@@ -250,17 +249,17 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             // Verificando a assinatura
             if (signature.verify(assinaturaBytes)) {
                 System.out.println("A assinatura é válida.");
-            } else {
-                System.out.println("A assinatura é inválida.");
+                ass.close();
+                termoTemporario.delete();
+                assinaturaArq.delete();
+                return criancaMatri;
             }
-            ass.close();
+//              Excluir arquivo temporário
+                ass.close();
+                termoTemporario.delete();
+                assinaturaArq.delete();
+                throw new BusinessException(SistemaMessageCode.ERRO_ASSINATURA_INVALIDA);
 
-            // Excluir o arquivo temporário
-            termoTemporario.delete();
-            assinaturaArq.delete();
-
-
-            return criancaMatri;
         } catch (NoSuchAlgorithmException e) {
             System.out.println(e);
         } catch (Exception e) {
