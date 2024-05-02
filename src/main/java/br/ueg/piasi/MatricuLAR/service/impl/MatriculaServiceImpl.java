@@ -48,6 +48,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.*;
 
+import static br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode.*;
 import static br.ueg.piasi.MatricuLAR.util.TermoDeResponsabilidade.JASPER_TERMO;
 import static br.ueg.piasi.MatricuLAR.util.TermoDeResponsabilidade.JASPER_TERMO_ASSINADO;
 
@@ -201,14 +202,11 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
 
     public Matricula uploadTermoValidar(String cpfCrianca, MultipartFile documento) {
-
         try {
             //Pegar chave publica do responsavel pelo cpf da crianca
             Matricula criancaMatri = matriculaRepository.findMatriculaByPessoa(pessoaService.obterPeloId(cpfCrianca));
-            MatriculaDTO matriculaDTO = mapper.toDTO(criancaMatri);
-            List<ResponsavelDTO> responsaveis = matriculaDTO.getResponsaveis();
-            ResponsavelDTO responsavelDTO = responsaveis.get(0);
-            String chavePublica = responsavelDTO.getChavePub();
+
+            String chavePublica = getChavePublica(criancaMatri);
             PublicKey pubKey = convertChave(chavePublica);
 
             // pegar termo do back e gerar hash para comparar
@@ -255,62 +253,76 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
                 return criancaMatri;
             }
 //              Excluir arquivo temporário
-                ass.close();
                 termoTemporario.delete();
                 assinaturaArq.delete();
-                throw new BusinessException(SistemaMessageCode.ERRO_ASSINATURA_INVALIDA);
+                ass.close();
+            } catch (Exception e) {
+                throw new BusinessException(ERRO_VALIDAR_ASSINATURA);
+            }
+        throw new BusinessException(ERRO_ASSINATURA_INVALIDA);
+    }
 
+    private String getChavePublica(Matricula criancaMatri) {
+        MatriculaDTO matriculaDTO = mapper.toDTO(criancaMatri);
+        List<ResponsavelDTO> responsaveis = matriculaDTO.getResponsaveis();
+        ResponsavelDTO responsavelDTO = responsaveis.get(0);
+        String chavePublica = responsavelDTO.getChavePub();
+        return chavePublica;
+    }
+
+    public static String calcularHashSHA256(File arquivo)  {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+
+            FileInputStream fis = new FileInputStream(arquivo);
+            DigestInputStream dis = new DigestInputStream(fis, digest);
+
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = dis.read(buffer)) != -1) {
+
+            }
+
+            byte[] hashBytes = digest.digest();
+
+
+            StringBuilder hexString = new StringBuilder();
+            for (byte hashByte : hashBytes) {
+                String hex = Integer.toHexString(0xff & hashByte);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+
+
+            dis.close();
+
+            return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
-            System.out.println(e);
-        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        throw new BusinessException(SistemaMessageCode.ERRO_CHAVE_PUBLICA_NAO_EXISTE);
     }
 
-    public static String calcularHashSHA256(File arquivo) throws Exception {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+    private PublicKey convertChave(String chavePublica) {
+        try {
+            JSONObject jwk = new JSONObject(chavePublica);
 
-        FileInputStream fis = new FileInputStream(arquivo);
-        DigestInputStream dis = new DigestInputStream(fis, digest);
+            String modulusBase64 = jwk.getString("n");
+            String exponentBase64 = jwk.getString("e");
 
-        byte[] buffer = new byte[8192];
-        int bytesRead;
-        while ((bytesRead = dis.read(buffer)) != -1) {
+            byte[] modulusBytes = Base64.getUrlDecoder().decode(modulusBase64);
+            byte[] exponentBytes = Base64.getUrlDecoder().decode(exponentBase64);
 
+            RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(new java.math.BigInteger(1, modulusBytes), new java.math.BigInteger(1, exponentBytes));
+
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            return keyFactory.generatePublic(rsaPublicKeySpec);
+        } catch (Exception e){
+            throw new BusinessException(ERRO_USUARIO_SEM_CHAVE);
         }
-
-        byte[] hashBytes = digest.digest();
-
-
-        StringBuilder hexString = new StringBuilder();
-        for (byte hashByte : hashBytes) {
-            String hex = Integer.toHexString(0xff & hashByte);
-            if (hex.length() == 1) {
-                hexString.append('0');
-            }
-            hexString.append(hex);
-        }
-
-
-        dis.close();
-
-        return hexString.toString();
-    }
-
-    private PublicKey convertChave(String chavePublica) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        JSONObject jwk = new JSONObject(chavePublica);
-
-        String modulusBase64 = jwk.getString("n");
-        String exponentBase64 = jwk.getString("e");
-
-        byte[] modulusBytes = Base64.getUrlDecoder().decode(modulusBase64);
-        byte[] exponentBytes = Base64.getUrlDecoder().decode(exponentBase64);
-
-        RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(new java.math.BigInteger(1, modulusBytes), new java.math.BigInteger(1, exponentBytes));
-
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        return keyFactory.generatePublic(rsaPublicKeySpec);
     }
 
 

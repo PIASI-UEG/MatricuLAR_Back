@@ -1,6 +1,8 @@
 package br.ueg.piasi.MatricuLAR.exception;
 
 import br.ueg.prog.webi.api.exception.MessageCode;
+import lombok.Getter;
+
 
 public enum SistemaMessageCode implements MessageCode {
 
@@ -27,15 +29,21 @@ public enum SistemaMessageCode implements MessageCode {
 
     ERRO_DOCUMENTO_SEM_ASSINATURA("MSG-301",400),
 
-    ERRO_ASSINATURA_INVALIDA("MSG-302",401);
+    ERRO_ASSINATURA_INVALIDA("MSG-302",400),
 
-    private final String code;
-    private final Integer status;
+    ERRO_USUARIO_SEM_CHAVE("MSG-303",400),
+
+    ERRO_VALIDAR_ASSINATURA("MSG-304",400);
+
+    public final String code;
+    public final Integer status;
     SistemaMessageCode(final String code, final Integer status) {
         this.code = code;
         this.status = status;
     }
+    @Override
     public String getCode() { return code; }
+    @Override
     public Integer getStatus() { return status; }
     @Override
     public String toString() { return code; }

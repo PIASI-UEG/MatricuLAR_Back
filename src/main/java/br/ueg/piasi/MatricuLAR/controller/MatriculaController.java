@@ -9,6 +9,7 @@ import br.ueg.piasi.MatricuLAR.model.Matricula;
 import br.ueg.piasi.MatricuLAR.service.impl.MatriculaServiceImpl;
 import br.ueg.piasi.MatricuLAR.util.TermoDeResponsabilidade;
 import br.ueg.prog.webi.api.controller.CrudController;
+import br.ueg.prog.webi.api.exception.MessageCode;
 import br.ueg.prog.webi.api.exception.MessageResponse;
 import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.annotation.JsonKey;
@@ -62,42 +63,39 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
             responses = {@ApiResponse(
                     responseCode = "200",
                     description = "Assinatura válida",
-                    content = {@Content(
-                            mediaType = "application/json",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = MatriculaDTO.class)
-                    )}
+                    )
             ), @ApiResponse(
                     responseCode = "400",
                     description = "Documento sem assinatura",
-                    content = {@Content(
-                            mediaType = "application/json",
-                            schema = @Schema(
-                                    implementation = SistemaMessageCode.class
-                            )
-                    )}
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = MessageResponse.class)
+                    )
             ), @ApiResponse(
                     responseCode = "401",
                     description = "Assinatura inválida",
-                    content = {@Content(
-                            mediaType = "application/json",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(
-                                    implementation = SistemaMessageCode.class
+                                    implementation = MessageResponse.class
                             )
-                    )}
+                    )
             ), @ApiResponse(
                     responseCode = "500",
-                    description = "O usuário não possui chave pública",
-                    content = {@Content(
+                    description = MediaType.APPLICATION_JSON_VALUE,
+                    content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(
-                                    implementation = SistemaMessageCode.class
+                                    implementation = MessageResponse.class
                             )
-                    )}
+                    )
             )
             }
     )
-
-    public ResponseEntity<MatriculaDTO> uploadTermoValidar(@RequestParam String cpfCrianca, @RequestBody MultipartFile multipartFile) throws IOException, JRException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, InvalidKeySpecException {
+    public ResponseEntity<MatriculaDTO> uploadTermoValidar(@RequestParam String cpfCrianca, @RequestBody MultipartFile multipartFile){
 
         return ResponseEntity.ok(mapper.toDTO(service.uploadTermoValidar(cpfCrianca, multipartFile)));
     }
