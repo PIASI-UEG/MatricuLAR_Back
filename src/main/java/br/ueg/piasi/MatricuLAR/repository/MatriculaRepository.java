@@ -15,6 +15,7 @@ import java.util.Optional;
 
 @Repository
 public interface MatriculaRepository extends JpaRepository<Matricula, Long>, JpaSpecificationExecutor<Matricula> {
+    Optional<List<Matricula>> findByTurma_Id(@NonNull Long id);
 
     @Query("select matricula from Matricula matricula left join fetch Turma turma on matricula.turma.id = turma.id where matricula.status = :status")
     Optional<List<Matricula>> findByStatusFetchTurma(@NonNull @Param("status") StatusMatricula status);

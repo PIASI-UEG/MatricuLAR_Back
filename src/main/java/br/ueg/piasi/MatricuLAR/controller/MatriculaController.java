@@ -33,12 +33,20 @@ import java.util.List;
 public class MatriculaController extends CrudController<Matricula, MatriculaDTO, Long, MatriculaMapper, MatriculaServiceImpl> {
 
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path = "/documentos")
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path = "/documento")
     public ResponseEntity<MatriculaDTO> uploadDocumento(@RequestParam Long idMatricula, @RequestParam TipoDocumento tipoDocumento,
                                            @RequestBody MultipartFile multipartFile) throws IOException {
 
         return ResponseEntity.ok(
                 mapper.toDTO(service.uploadDocumento(idMatricula, tipoDocumento, multipartFile)));
+    }
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path = "/documentos")
+    public ResponseEntity<MatriculaDTO> uploadDocumentos(@RequestParam Long idMatricula,
+                                                         @RequestBody MultipartFile[] multipartFile) throws IOException {
+
+        return ResponseEntity.ok(
+                mapper.toDTO(service.uploadDocumentos(idMatricula, multipartFile)));
     }
 
 
@@ -50,6 +58,7 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""
                         + arquivo.getFilename() + "\"").body(arquivo);
     }
+
 
     @GetMapping(path = "/termo/{caminhodoc}")
     public ResponseEntity<Resource> getTermo(@PathVariable(name = "caminhodoc") String caminhodoc){
@@ -319,5 +328,47 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
     public ResponseEntity<MatriculaDTO> gerarTermo(@PathVariable(name = "id") Long id, @RequestParam(name = "cpfTutor")String cpfTutor) throws JRException, IOException {
         return ResponseEntity.ok(
                 mapper.toDTO(service.geraTermo(id, cpfTutor)));
+    }
+
+
+
+    @GetMapping("/listar-por-turma")
+    @Operation(
+            description = "Busca a quantidade de registros",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Listagem do resultado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(
+                                    schema = @Schema(implementation = MatriculaListagemDTO.class)
+                            )
+                    )}
+            ), @ApiResponse(
+                    responseCode = "400",
+                    description = "falha ao realizar a busca",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            ), @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            )}
+    )
+    private ResponseEntity<List<MatriculaListagemDTO>> listarAlunosPorTurma(@RequestParam("idTurma") Long idTurma){
+
+        return ResponseEntity.ok(mapper.toMatriculaListagemDTO(
+                service.listarAlunosPorTurma(idTurma)
+                )
+        );
     }
 }

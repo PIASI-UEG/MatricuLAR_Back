@@ -3,6 +3,8 @@ package br.ueg.piasi.MatricuLAR.dto;
 import br.ueg.piasi.MatricuLAR.enums.Turno;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class TurmaDTO {
 
@@ -24,5 +26,7 @@ public class TurmaDTO {
     private String telefoneProfessor;
 
     private Long quantidadeAlunos;
+
+    private List<MatriculaListagemDTO> alunos;
 
 }

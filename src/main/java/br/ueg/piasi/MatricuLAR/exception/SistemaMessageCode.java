@@ -25,12 +25,18 @@ public enum SistemaMessageCode implements MessageCode {
     ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO("MSG-103", 404),
     ERRO_DOCUMENTO_NAO_ACEITO("MSG-104", 400 ),
 
+    //TURMA
+    ERRO_SEM_ALUNOS_TURMA("MSG-151", 404),
+    ERRO_TURMA_NAO_ENCONTRADA("MSG-152", 404),
+
     //MATRICULA
     ERRO_MATRICULA_SEM_RESPONSAVEL("MSG-201", 404),
     ERRO_LISTAR_MATRICULA_STATUS("MSG-202", 404 ),
+    ERRO_MATRICULA_NAO_ENCONTRADA("MSG-203", 404),
 
-    ERRO_GERAR_TERMO("MSG-301", 404);
-
+    //TERMO
+    ERRO_GERAR_TERMO("MSG-301", 404),
+    ;
     private final String code;
     private final Integer status;
     SistemaMessageCode(final String code, final Integer status) {
