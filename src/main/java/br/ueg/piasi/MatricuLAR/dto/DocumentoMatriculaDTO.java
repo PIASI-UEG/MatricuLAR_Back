@@ -20,6 +20,4 @@ public class DocumentoMatriculaDTO {
     private Boolean aceito;
 
     private String caminhoDocumento;
-
-    private MultipartFile arquivo;
 }

@@ -27,35 +27,49 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED)
 public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, MatriculaRepository>
         implements MatriculaService {
 
-    @Autowired
-    private DocumentoMatriculaServiceImpl documentoMatriculaService;
-    @Autowired
-    private InformacoesMatriculaService informacoesMatriculaService;
-    @Autowired
-    private ResponsavelServiceImpl responsavelService;
-    @Autowired
-    private PessoaServiceImpl pessoaService;
-    @Autowired
-    private TutorServiceImpl tutorService;
-    @Autowired
-    private MatriculaMapper mapper;
-    @Autowired
-    private EnderecoServiceImpl enderecoService;
+    public MatriculaServiceImpl(DocumentoMatriculaServiceImpl documentoMatriculaService,
+                                InformacoesMatriculaService informacoesMatriculaService,
+                                ResponsavelServiceImpl responsavelService,
+                                PessoaServiceImpl pessoaService,
+                                TutorServiceImpl tutorService,
+                                MatriculaMapper mapper,
+                                EnderecoServiceImpl enderecoService,
+                                MatriculaRepository matriculaRepository,
+                                NecessidadeEspecialServiceImpl necessidadeEspecialServiceImpl) {
+        this.documentoMatriculaService = documentoMatriculaService;
+        this.informacoesMatriculaService = informacoesMatriculaService;
+        this.responsavelService = responsavelService;
+        this.pessoaService = pessoaService;
+        this.tutorService = tutorService;
+        this.mapper = mapper;
+        this.enderecoService = enderecoService;
+        this.matriculaRepository = matriculaRepository;
+        this.necessidadeEspecialServiceImpl = necessidadeEspecialServiceImpl;
+    }
+
+    private final DocumentoMatriculaServiceImpl documentoMatriculaService;
+    private final InformacoesMatriculaService informacoesMatriculaService;
+    private final ResponsavelServiceImpl responsavelService;
+    private final PessoaServiceImpl pessoaService;
+    private final TutorServiceImpl tutorService;
+    private final MatriculaMapper mapper;
+    private final MatriculaRepository matriculaRepository;
+    private final NecessidadeEspecialServiceImpl necessidadeEspecialServiceImpl;
+    private final EnderecoServiceImpl enderecoService;
+
     private static String JASPER_TERMO = ".\\src\\main\\resources\\termo.jrxml";
-
     private final Path root = Paths.get("docs");
+    private InformacoesMatricula informacoesMatricula;
+    private  Set<Responsavel> responsavelSet;
 
-    @Autowired
-    private MatriculaRepository matriculaRepository;
-    @Autowired
-    private NecessidadeEspecialServiceImpl necessidadeEspecialServiceImpl;
+
+
 
     @Override
     protected void prepararParaIncluir(Matricula matricula) {
@@ -82,22 +96,44 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     @Override
     public Matricula incluir(Matricula matricula) {
+        tratarAntesDeSalvar(matricula);
+
+        matricula = super.incluir(matricula);
+
+        tratarDepoisDeSalvar(matricula);
+
+        return matricula;
+    }
+
+    private void tratarDepoisDeSalvar(Matricula matricula) {
+
+        if(this.informacoesMatricula != null){
+            this.informacoesMatricula.setMatricula(matricula);
+            this.informacoesMatricula = informacoesMatriculaService.incluir(informacoesMatricula);
+        }
+
+        matricula.setResponsaveis(salvarResponsaveis(this.responsavelSet, matricula));
+
+        matricula.setInformacoesMatricula(informacoesMatricula);
+    }
+
+    private void tratarAntesDeSalvar(Matricula matricula) {
 
         matricula.setDocumentoMatricula(new HashSet<>());
         matricula.setAdvertencias(new HashSet<>());
 
-        //TODO tratar info matriculas, setar como null, e dps salvar
-        InformacoesMatricula informacoesMatricula = matricula.getInformacoesMatricula();
-        matricula.setInformacoesMatricula(null);
-        Set<Responsavel> responsavelSet = tratarMatriculaResponsaveis(matricula);
-
-        //TODO tratar endereco
-        if(Objects.isNull(matricula.getEndereco().getId())){
-            Endereco endereco = enderecoService.incluir(matricula.getEndereco());
-             matricula.setEndereco(endereco);
+        if(Objects.nonNull(matricula.getInformacoesMatricula())){
+            this.informacoesMatricula = matricula.getInformacoesMatricula();
+            matricula.setInformacoesMatricula(null);
         }
 
-        //TODO tratar necessidade{
+        this.responsavelSet = tratarMatriculaResponsaveis(matricula);
+
+        if(Objects.isNull(matricula.getEndereco().getId())){
+            Endereco endereco = enderecoService.incluir(matricula.getEndereco());
+            matricula.setEndereco(endereco);
+        }
+
         if(Objects.nonNull(matricula.getNecessidades())){
             List<NecessidadeEspecial> necessidadeEspecials = new ArrayList<>();
             for(NecessidadeEspecial especial : matricula.getNecessidades()){
@@ -106,16 +142,6 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             matricula.setNecessidades(new HashSet<>(necessidadeEspecials));
         }
 
-        matricula = super.incluir(matricula);
-
-        if(informacoesMatricula != null){
-            informacoesMatricula.setMatricula(matricula);
-            informacoesMatricula = informacoesMatriculaService.incluir(informacoesMatricula);
-        }
-
-        salvarResponsaveis(responsavelSet, matricula);
-        matricula.setInformacoesMatricula(informacoesMatricula);
-        return matricula;
     }
 
     @Override
@@ -124,7 +150,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         return super.alterar(entidade, id);
     }
 
-    private void salvarResponsaveis(Set<Responsavel> responsavelSet, Matricula matricula){
+    private Set<Responsavel> salvarResponsaveis(Set<Responsavel> responsavelSet, Matricula matricula){
 
         if (Objects.isNull(responsavelSet)) {
             throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_SEM_RESPONSAVEL);
@@ -136,7 +162,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             responsavelSetSalvos.add(responsavelService.incluir(responsavel));
         }
 
-        matricula.setResponsaveis(responsavelSetSalvos);
+        return  responsavelSetSalvos;
     }
 
     private Set<Responsavel> tratarMatriculaResponsaveis(Matricula matricula) {
