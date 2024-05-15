@@ -16,15 +16,15 @@ import java.time.LocalDate;
 public class TutorDTO {
 
     private String cpf;
-    private String empresaTelefone;
+    private String telefoneFixoEmpresarial;
+    private String telefoneCelularEmpresarial;
     private String empresaCnpj;
     private String empresaNome;
     private String profissao;
-    private boolean telefoneWhatsapp;
     private String nomeTutor;
     private String pessoaTelefone;
     private LocalDate dataNascimento;
     private Vinculo vinculo;
-    private Boolean paisCasados;
+    private Boolean casado;
     private Boolean moraComConjuge;
 }

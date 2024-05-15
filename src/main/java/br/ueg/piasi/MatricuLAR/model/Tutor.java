@@ -51,9 +51,6 @@ public class Tutor extends BaseEntidade<String> {
     @Column(name = "profissao", nullable = false, length = 50)
     private String profissao;
 
-    @Column(name = "whatsapp", nullable = false)
-    private Boolean telefoneWhatsapp;
-
     @Column(name="casado", nullable = false)
     private Boolean casado;
 
