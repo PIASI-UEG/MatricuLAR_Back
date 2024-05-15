@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -63,7 +64,8 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     private final NecessidadeEspecialServiceImpl necessidadeEspecialServiceImpl;
     private final EnderecoServiceImpl enderecoService;
 
-    private static String JASPER_TERMO = ".\\src\\main\\resources\\termo.jrxml";
+    private String JASPER_TERMO = "termo.jrxml";
+    
     private final Path root = Paths.get("docs");
     private InformacoesMatricula informacoesMatricula;
     private  Set<Responsavel> responsavelSet;
@@ -273,7 +275,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     }
 
     public Matricula geraTermo(Long idMatricula, String cpfTutor) throws JRException, IOException {
-        try {
+        try (InputStream termo = this.getClass().getClassLoader().getResourceAsStream(JASPER_TERMO)) {
             if (!Files.exists(root)) {
                 Files.createDirectories(root);
             }
@@ -286,7 +288,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
             Path caminhoTermo = this.root.resolve("Termo-Responsabilidade-"+listDadosTermo.get(0).getCpfCrianca()+".pdf");
 
-            JasperReport report = JasperCompileManager.compileReport(JASPER_TERMO);
+            JasperReport report = JasperCompileManager.compileReport(termo);
 
             JasperPrint print = JasperFillManager.fillReport(report, parametros, dataSource);
 
