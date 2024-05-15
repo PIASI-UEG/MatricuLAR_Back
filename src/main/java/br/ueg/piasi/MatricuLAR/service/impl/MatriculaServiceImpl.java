@@ -3,13 +3,13 @@ package br.ueg.piasi.MatricuLAR.service.impl;
 
 import br.ueg.piasi.MatricuLAR.dto.DadosTermoDTO;
 import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
-import br.ueg.piasi.MatricuLAR.dto.ResponsavelDTO;
 import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
 import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
 import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
+import br.ueg.piasi.MatricuLAR.service.InformacoesMatriculaService;
 import br.ueg.piasi.MatricuLAR.service.MatriculaService;
 import br.ueg.prog.webi.api.exception.BusinessException;
 import br.ueg.prog.webi.api.service.BaseCrudService;
@@ -22,12 +22,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED)
@@ -36,24 +36,26 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     @Autowired
     private DocumentoMatriculaServiceImpl documentoMatriculaService;
-
+    @Autowired
+    private InformacoesMatriculaService informacoesMatriculaService;
     @Autowired
     private ResponsavelServiceImpl responsavelService;
-
     @Autowired
     private PessoaServiceImpl pessoaService;
-
     @Autowired
     private TutorServiceImpl tutorService;
-
     @Autowired
     private MatriculaMapper mapper;
-
+    @Autowired
+    private EnderecoServiceImpl enderecoService;
     private static String JASPER_TERMO = ".\\src\\main\\resources\\termo.jrxml";
 
     private final Path root = Paths.get("docs");
+
     @Autowired
     private MatriculaRepository matriculaRepository;
+    @Autowired
+    private NecessidadeEspecialServiceImpl necessidadeEspecialServiceImpl;
 
     @Override
     protected void prepararParaIncluir(Matricula matricula) {
@@ -83,12 +85,36 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
         matricula.setDocumentoMatricula(new HashSet<>());
         matricula.setAdvertencias(new HashSet<>());
+
+        //TODO tratar info matriculas, setar como null, e dps salvar
+        InformacoesMatricula informacoesMatricula = matricula.getInformacoesMatricula();
+        matricula.setInformacoesMatricula(null);
         Set<Responsavel> responsavelSet = tratarMatriculaResponsaveis(matricula);
+
+        //TODO tratar endereco
+        if(Objects.isNull(matricula.getEndereco().getId())){
+            Endereco endereco = enderecoService.incluir(matricula.getEndereco());
+             matricula.setEndereco(endereco);
+        }
+
+        //TODO tratar necessidade{
+        if(Objects.nonNull(matricula.getNecessidades())){
+            List<NecessidadeEspecial> necessidadeEspecials = new ArrayList<>();
+            for(NecessidadeEspecial especial : matricula.getNecessidades()){
+                necessidadeEspecials.add(necessidadeEspecialServiceImpl.incluir(especial));
+            }
+            matricula.setNecessidades(new HashSet<>(necessidadeEspecials));
+        }
 
         matricula = super.incluir(matricula);
 
-        salvarResponsaveis(responsavelSet, matricula);
+        if(informacoesMatricula != null){
+            informacoesMatricula.setMatricula(matricula);
+            informacoesMatricula = informacoesMatriculaService.incluir(informacoesMatricula);
+        }
 
+        salvarResponsaveis(responsavelSet, matricula);
+        matricula.setInformacoesMatricula(informacoesMatricula);
         return matricula;
     }
 
@@ -130,6 +156,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             }
 
             matricula.setResponsaveis(new HashSet<>());
+            matricula.setTutorList(new ArrayList<>());
             return  responsavelSet;
         }
         else
@@ -259,7 +286,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             matriculaDTO.getTutorDTOList().forEach(tutorDTO -> {
                 if(tutorDTO.getCpf().equals(cpfTutor)){
                     dados.setCpfResponsavel(tutorDTO.getCpf());
-                    dados.setNomeResponsavel(tutorDTO.getPessoaNome());
+                    dados.setNomeResponsavel(tutorDTO.getNomeTutor());
                 }
             });
         } else{

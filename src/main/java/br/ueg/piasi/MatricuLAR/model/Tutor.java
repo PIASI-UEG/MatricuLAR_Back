@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 
+import java.time.LocalDate;
+
 import static br.ueg.piasi.MatricuLAR.model.Tutor.NOME_TABELA;
 
 @Builder
@@ -34,8 +36,11 @@ public class Tutor extends BaseEntidade<String> {
             foreignKey = @ForeignKey(name = "fk_tutor_pessoa"))
     private Pessoa pessoa;
 
-    @Column(name = "empresa_telefone", nullable = false, length = 11)
-    private String empresaTelefone;
+    @Column(name = "empresa_telefone_celular", length = 11)
+    private String telefoneCelularEmpresarial;
+
+    @Column(name = "empresa_telefone_fixo", length = 11)
+    private String telefoneFixoEmpresarial;
 
     @Column(name = "empresa_cnpj", nullable = false, length = 14)
     private String empresaCnpj;
@@ -48,6 +53,16 @@ public class Tutor extends BaseEntidade<String> {
 
     @Column(name = "whatsapp", nullable = false)
     private Boolean telefoneWhatsapp;
+
+    @Column(name="casado", nullable = false)
+    private Boolean casado;
+
+    @Column(name = "mora_com_conjuge", nullable = false)
+    private Boolean moraComConjuge;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "nascimento", nullable = false)
+    private LocalDate dataNascimento;
 
     @Transient
     private Vinculo vinculo;

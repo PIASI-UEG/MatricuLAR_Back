@@ -33,5 +33,4 @@ public class Pessoa extends BaseEntidade<String> {
 
     @Column(name = "telefone", length = 11)
     private String telefone;
-
 }

@@ -39,7 +39,4 @@ public class NecessidadeEspecial extends BaseEntidade<Long> {
     @Column(name = "titulo", length = 50, nullable = false)
     @Searchable
     private String titulo;
-
-    @Column(name = "observacoes", length = 300, nullable = false)
-    private String observacoes;
 }

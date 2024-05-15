@@ -34,31 +34,25 @@ public class InformacoesMatricula extends BaseEntidade<Long> {
     private Matricula matricula;
 
     @Column(name = "esteve_em_outra_creche", nullable = false)
-    private Boolean esteveOutraCreche;
+    private Boolean frequentouOutraCreche;
 
     @Column(name = "razao_saida_creche", length = 200)
-    private String razaoSaidaCreche;
+    private String razaoSaida;
 
     @Column(name = "tipo_residencia", nullable = false)
-    private TipoResidencia tipoResidencia;
+    private String tipoResidencia;
 
     @Column(name = "valor_aluguel")
     private Long valorAluguel;
 
     @Column(name = "beneficiario", nullable = false)
-    private Boolean beneficiarioGoverno;
+    private Boolean possuiBeneficiosDoGoverno;
 
     @Column(name = "valor_beneficio")
     private Long valorBeneficio;
 
     @Column(name = "renda_familiar", nullable = false)
     private BigDecimal rendaFamiliar;
-
-    @Column(name = "pais_casados", nullable = false)
-    private Boolean paisCasados;
-
-    @Column(name = "pais_moram_juntos", nullable = false)
-    private Boolean moramJuntos;
 
     @Column(name = "observacao", length = 200)
     private String observacao;

@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -19,9 +21,10 @@ public class TutorDTO {
     private String empresaNome;
     private String profissao;
     private boolean telefoneWhatsapp;
-    private String pessoaNome;
+    private String nomeTutor;
     private String pessoaTelefone;
-
+    private LocalDate dataNascimento;
     private Vinculo vinculo;
-
+    private Boolean paisCasados;
+    private Boolean moraComConjuge;
 }
