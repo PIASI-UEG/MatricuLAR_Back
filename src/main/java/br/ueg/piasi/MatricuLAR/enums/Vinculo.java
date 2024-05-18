@@ -6,9 +6,11 @@ public enum Vinculo {
 
     PAI ("P", "pai"),
     MAE ("M", "mãe"),
-    TIO ("T", "tio/tia"),
+    TIO ("TO", "tio"),
     VIZINHO ("VZ", "vizinho/vizinha"),
-    AVO ("AV", "avô/avó");
+    AVO ("AV", "avô/avó"),
+    TIA("TA", "tia"),
+    BISAVO("BIS", "bisavô/bisavó");
 
 
     private final String id;

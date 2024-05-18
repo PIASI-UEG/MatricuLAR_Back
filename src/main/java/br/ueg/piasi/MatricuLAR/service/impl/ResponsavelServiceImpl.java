@@ -7,8 +7,13 @@ import br.ueg.piasi.MatricuLAR.repository.ResponsavelRepository;
 import br.ueg.piasi.MatricuLAR.service.ResponsavelService;
 import br.ueg.prog.webi.api.service.BaseCrudService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRED)
 public class ResponsavelServiceImpl extends BaseCrudService<Responsavel, PkResponsavel, ResponsavelRepository>
         implements ResponsavelService {
 
@@ -19,14 +24,14 @@ public class ResponsavelServiceImpl extends BaseCrudService<Responsavel, PkRespo
     }
 
     @Override
-    public Responsavel incluir(Responsavel modelo) {
-        Pessoa pessoaResponsavel = modelo.getPessoa();
-        modelo.setPessoa(pessoaServiceImpl.incluir(pessoaResponsavel));
-        return super.incluir(modelo);
-    }
-
-    @Override
-    protected void prepararParaIncluir(Responsavel entidade) {
+    protected void prepararParaIncluir(Responsavel responsavel) {
+        Pessoa pessoa = pessoaServiceImpl.obterPeloId(responsavel.getPessoa().getCpf());
+        if (Objects.nonNull(pessoa)) {
+            responsavel.setPessoa(pessoa);
+        }else{
+            pessoa = pessoaServiceImpl.incluir(responsavel.getPessoa());
+            responsavel.setPessoa(pessoa);
+        }
     }
 
     @Override

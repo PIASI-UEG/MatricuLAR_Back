@@ -27,4 +27,5 @@ public class TutorDTO {
     private Vinculo vinculo;
     private Boolean casado;
     private Boolean moraComConjuge;
+    private String telefoneReserva;
 }

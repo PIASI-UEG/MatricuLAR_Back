@@ -15,7 +15,6 @@ import br.ueg.prog.webi.api.exception.BusinessException;
 import br.ueg.prog.webi.api.service.BaseCrudService;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -27,6 +26,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
 
 @Service
@@ -121,6 +122,11 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     private void tratarAntesDeSalvar(Matricula matricula) {
 
+        matricula.setTutorList(salvarTutores(matricula.getTutorList()));
+        validarIdadeResponsaveis(matricula);
+        this.responsavelSet = tratarMatriculaResponsaveis(matricula);
+        validarTodosCpf(matricula);
+        validarIdadeCrianca(matricula);
         matricula.setDocumentoMatricula(new HashSet<>());
         matricula.setAdvertencias(new HashSet<>());
 
@@ -128,8 +134,6 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             this.informacoesMatricula = matricula.getInformacoesMatricula();
             matricula.setInformacoesMatricula(null);
         }
-
-        this.responsavelSet = tratarMatriculaResponsaveis(matricula);
 
         if(Objects.isNull(matricula.getEndereco().getId())){
             Endereco endereco = enderecoService.incluir(matricula.getEndereco());
@@ -143,6 +147,65 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             }
             matricula.setNecessidades(new HashSet<>(necessidadeEspecials));
         }
+
+    }
+
+    private List<Tutor> salvarTutores(List<Tutor> tutorList) {
+
+        if (Objects.isNull(tutorList) || tutorList.isEmpty()) {
+            throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_SEM_RESPONSAVEL);
+        }
+        List<Tutor> tutoresSalvos = new ArrayList<>();
+        for (Tutor tutor : tutorList) {
+            Tutor tutorSalvo = tutorService.incluir(tutor);
+            tutoresSalvos.add(tutorSalvo);
+        }
+        return tutoresSalvos;
+    }
+
+    private void validarIdadeResponsaveis(Matricula matricula) {
+        List<LocalDate> nascimentoTutores = matricula.getTutorList()
+                .stream()
+                .map(Tutor :: getDataNascimento)
+                .toList();
+        for (LocalDate nascimento : nascimentoTutores) {
+            if (Objects.isNull(nascimento)) {
+                throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_RESPONSAVEL_NASCIMENTO_NAO_INFORMADO);
+            }
+            if (Period.between(nascimento, LocalDate.now()).getYears() < 18) {
+                throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_RESPONSAVEL_MENOR_IDADE);
+            }
+        }
+    }
+
+    private void validarIdadeCrianca(Matricula matricula) {
+        LocalDate matriculaNascimento = matricula.getNascimento();
+        if(Objects.isNull(matriculaNascimento)){
+            throw new BusinessException(SistemaMessageCode.ERRO_DATA_NASCIMENTO_ALUNO_DEVE_SER_INFORMADA);
+        }
+        if(Period.between(matriculaNascimento, LocalDate.now()).getYears() >= 8 ){
+            throw new BusinessException(SistemaMessageCode.ERRO_IDADE_ALUNO_ACIMA_DO_PERMITIDO);
+        }
+    }
+
+    private void validarTodosCpf(Matricula matricula) {
+        List<String> cpfs = new ArrayList<>(this.responsavelSet
+                .stream()
+                .map(Responsavel::getPessoa)
+                .map(Pessoa::getCpf)
+                .toList());
+        cpfs.add(matricula.getPessoa().getCpf());
+
+        List<String> valida = new ArrayList<>();
+        for(String cpf : cpfs){
+            if (!valida.contains(cpf)) {
+                valida.add(cpf);
+            }else{
+                throw new BusinessException(SistemaMessageCode.ERRO_CPF_REPETIDO_TUTORES_CRIANCA,
+                        cpf, matricula.getPessoa().getNome());
+            }
+        }
+
 
     }
 

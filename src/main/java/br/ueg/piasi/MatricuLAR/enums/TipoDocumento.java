@@ -24,8 +24,7 @@ public enum TipoDocumento {
     CONTRA_CHEQUE3T2("CC3T2","Contra-cheque 3 do tutor2"),
     COMPROVANTE_TRABALHO_T2("CTR2", "Carteira de trablho / Comprovante de trabalho do tutor 2"),
     DECLARACAO_ESCOLART1("DCT1", "Declaração escolar do tutor 1"),
-    DECLARACAO_ESCOLART2("DCT2", "Declaração escolar do tutor 2"),
-    CERTIDAO_ESTADO_CIVIL2("CEC2", "Certidão de estado civil para tutores solteiros")
+    DECLARACAO_ESCOLART2("DCT2", "Declaração escolar do tutor 2")
     ;
 
     private final String id;

@@ -42,7 +42,7 @@ public class Tutor extends BaseEntidade<String> {
     @Column(name = "empresa_telefone_fixo", length = 11)
     private String telefoneFixoEmpresarial;
 
-    @Column(name = "empresa_cnpj", nullable = false, length = 14)
+    @Column(name = "empresa_cnpj", nullable = true, length = 14)
     private String empresaCnpj;
 
     @Column(name = "empresa_nome", nullable = false, length = 100)
@@ -56,6 +56,9 @@ public class Tutor extends BaseEntidade<String> {
 
     @Column(name = "mora_com_conjuge", nullable = false)
     private Boolean moraComConjuge;
+
+    @Column(name = "telefone_reserva", nullable = false, length = 11)
+    private String telefoneReserva;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "nascimento", nullable = false)

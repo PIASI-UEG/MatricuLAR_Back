@@ -87,14 +87,14 @@ public class InitialRunner implements ApplicationRunner {
                 .nome("Teste Tutor")
                 .telefone("62999999999")
                 .build();
-        pessoaTutor = pessoaService.incluir(pessoaTutor);
+
 
         Pessoa pessoaTutor2 = Pessoa.builder()
                 .cpf("12345678912")
                 .nome("Teste Tutor2")
                 .telefone("62999999999")
                 .build();
-        pessoaTutor2 = pessoaService.incluir(pessoaTutor2);
+
 
         //Insere tutor de teste
         Tutor tutor = Tutor.builder()
@@ -108,8 +108,8 @@ public class InitialRunner implements ApplicationRunner {
                 .casado(false)
                 .moraComConjuge(false)
                 .dataNascimento(LocalDate.of(1980, 1, 1))
+                .telefoneReserva("62999219901")
                 .build();
-        tutor = tutorService.incluir(tutor);
 
         Tutor tutor2 = Tutor.builder()
                 .pessoa(pessoaTutor2)
@@ -122,8 +122,8 @@ public class InitialRunner implements ApplicationRunner {
                 .moraComConjuge(false)
                 .dataNascimento(LocalDate.of(2000, 1, 1))
                 .vinculo(Vinculo.PAI)
+                .telefoneReserva("62999219901")
                 .build();
-        tutor2 = tutorService.incluir(tutor2);
 
         //Insere endereço de teste
         Endereco endereco = Endereco.builder()
@@ -151,7 +151,7 @@ public class InitialRunner implements ApplicationRunner {
                 .horaFim("1130")
                 .telefoneProfessor("62991922192")
                 .build();
-        turma= turmaService.incluir(turma);
+        turma = turmaService.incluir(turma);
 
         Pessoa pessoaMatricula = Pessoa.builder()
                 .cpf("12345678922")
@@ -165,7 +165,6 @@ public class InitialRunner implements ApplicationRunner {
                 .nascimento(LocalDate.now())
                 .endereco(endereco)
                 .necessidades(new HashSet<>())
-
                 .build();
 
         matriculaService.incluir(matricula);

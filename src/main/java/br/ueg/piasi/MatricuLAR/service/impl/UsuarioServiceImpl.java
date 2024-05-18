@@ -32,6 +32,8 @@ public class UsuarioServiceImpl extends BaseCrudService<Usuario, Long, UsuarioRe
 
     @Autowired
     private PessoaServiceImpl pessoaService;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @Override
     protected void prepararParaIncluir(Usuario usuario) {
@@ -48,7 +50,11 @@ public class UsuarioServiceImpl extends BaseCrudService<Usuario, Long, UsuarioRe
 
     @Override
     protected void validarDados(Usuario usuario) {
-
+        if(usuario.getCargo().equals(Cargo.ADMIN)){
+            Usuario usuarioAdmin = usuarioRepository.findByCargo(Cargo.ADMIN);
+            if (Objects.nonNull(usuarioAdmin) && !Objects.equals(usuarioAdmin.getId(), usuario.getId()))
+                throw new BusinessException(ERRO_JA_EXISTE_USUARIO_ADMIN);
+        }
     }
 
     @Override
@@ -89,17 +95,24 @@ public class UsuarioServiceImpl extends BaseCrudService<Usuario, Long, UsuarioRe
     }
 
 
+    private boolean validaSenhaAntiga(String senhaAntiga, String senhaAntigaAValidar){
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        return bCryptPasswordEncoder.matches(senhaAntigaAValidar, senhaAntiga);
+    }
 
-    public Usuario alterar(Usuario entidade, Long id, Long idUsuarioRequisicao) {
+    public Usuario alterar(Usuario entidade, Long id, Long idUsuarioRequisicao, String senhaAntigaAValidar) {
 
         if (id.equals(idUsuarioRequisicao) || editorEhAdmin(idUsuarioRequisicao)) {
+            Usuario usuario = repository.findById(id).orElse(null);
+            if (Objects.isNull(usuario)) {
+                throw new BusinessException(ERRO_USUARIO_NAO_EXISTE);
+            }
             if (entidade.getSenha() == null || entidade.getSenha().isEmpty()) {
-                Usuario usuario = repository.findById(id).orElse(null);
-                if (Objects.isNull(usuario)) {
-                    throw new BusinessException(ERRO_USUARIO_NAO_EXISTE);
-                }
                 entidade.setSenha(usuario.getSenha());
             } else {
+                if (!validaSenhaAntiga(usuario.getSenha(), senhaAntigaAValidar)){
+                    throw new BusinessException(SENHA_ANTIGA_INCORRETA);
+                }
                 criptografarSenha(entidade);
             }
 

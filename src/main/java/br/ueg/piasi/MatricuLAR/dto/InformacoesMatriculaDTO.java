@@ -1,6 +1,5 @@
 package br.ueg.piasi.MatricuLAR.dto;
 
-import br.ueg.piasi.MatricuLAR.enums.TipoResidencia;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

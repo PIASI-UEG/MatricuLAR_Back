@@ -1,12 +1,8 @@
 package br.ueg.piasi.MatricuLAR.model;
 
-import br.ueg.piasi.MatricuLAR.enums.TipoResidencia;
 import br.ueg.prog.webi.api.model.BaseEntidade;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldNameConstants;
 
 import java.math.BigDecimal;
@@ -26,6 +22,8 @@ public class InformacoesMatricula extends BaseEntidade<Long> {
     @Id
     private Long id;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @MapsId
     @OneToOne(optional = false)
     @JoinColumn(name = Fields.id,
