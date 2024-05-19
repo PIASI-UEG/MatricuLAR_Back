@@ -393,11 +393,43 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     public Matricula uploadDocumentos(Long idMatricula, MultipartFile[] documentos) {
 
-        for(MultipartFile documento : documentos){
+        Matricula matricula = obterPeloId(idMatricula);
+        if (Objects.nonNull(matricula)) {
+            List<Tutor> turores = matricula.getTutorList();
+            boolean tutoresCasados = turores.get(0).getCasado();
 
-            uploadDocumento(idMatricula, TipoDocumento.CPF_CRIANCA, documento);
+            List<TipoDocumento> documentosNaoObrigatoriosGeral = TipoDocumento.getDocumentosNaoObrigatoriosGerais();
+            List<TipoDocumento> documentosNaoObrigatoriosCasados = TipoDocumento.getDocumentosNaoObrigatoriosCasados();
+
+            for(int i = 0 ; i < documentos.length; i++){
+                TipoDocumento tipoDocumento = tipoDocumentoPelaPosicao(i);
+                if(Objects.nonNull(documentos[i])){
+                    uploadDocumento(idMatricula, tipoDocumento, documentos[i]);
+                }else validaDocObrigatorio(tipoDocumento, tutoresCasados, documentosNaoObrigatoriosGeral, documentosNaoObrigatoriosCasados);
+            }
+            return matricula;
         }
-        return null;
+        throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_NAO_ENCONTRADA, idMatricula);
+    }
+
+    private void validaDocObrigatorio(TipoDocumento tipoDocumento, boolean tutoresCasados,
+                                      List<TipoDocumento> documentosNaoObrigatoriosGeral,
+                                      List<TipoDocumento> documentosNaoObrigatoriosCasados) {
+        if(tutoresCasados){
+            if (!documentosNaoObrigatoriosCasados.contains(tipoDocumento)) {
+                throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
+            }
+        }
+
+        if (!documentosNaoObrigatoriosGeral.contains(tipoDocumento)) {
+            throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
+        }
+
+    }
+
+
+    private TipoDocumento tipoDocumentoPelaPosicao(int i) {
+        return TipoDocumento.getByPosicaoArray(i);
     }
 
     public List<Matricula> listarAlunosPorTurma(Long idTurma) {
