@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -23,26 +24,35 @@ import java.util.List;
 @Transactional(propagation = Propagation.REQUIRED)
 public class InitialRunner implements ApplicationRunner {
 
-    @Autowired
-    private UsuarioServiceImpl usuarioService;
+    private final UsuarioServiceImpl usuarioService;
 
-    @Autowired
-    private PessoaServiceImpl pessoaService;
+    private final PessoaServiceImpl pessoaService;
 
-    @Autowired
-    private EnderecoServiceImpl enderecoService;
+    private final EnderecoServiceImpl enderecoService;
 
-    @Autowired
-    private NecessidadeEspecialServiceImpl necessidadeEspecialService;
+    private final NecessidadeEspecialServiceImpl necessidadeEspecialService;
 
-    @Autowired
-    private TurmaServiceImpl turmaService;
+    private final TurmaServiceImpl turmaService;
 
-    @Autowired
-    private TutorServiceImpl tutorService;
+    private final TutorServiceImpl tutorService;
 
-    @Autowired
-    private MatriculaServiceImpl matriculaService;
+    private final MatriculaServiceImpl matriculaService;
+
+    public InitialRunner(UsuarioServiceImpl usuarioService,
+                         PessoaServiceImpl pessoaService,
+                         EnderecoServiceImpl enderecoService,
+                         NecessidadeEspecialServiceImpl necessidadeEspecialService,
+                         TurmaServiceImpl turmaService,
+                         TutorServiceImpl tutorService,
+                         MatriculaServiceImpl matriculaService) {
+        this.usuarioService = usuarioService;
+        this.pessoaService = pessoaService;
+        this.enderecoService = enderecoService;
+        this.necessidadeEspecialService = necessidadeEspecialService;
+        this.turmaService = turmaService;
+        this.tutorService = tutorService;
+        this.matriculaService = matriculaService;
+    }
 
     @Override
     public void run(ApplicationArguments args) {
@@ -77,39 +87,43 @@ public class InitialRunner implements ApplicationRunner {
                 .nome("Teste Tutor")
                 .telefone("62999999999")
                 .build();
-        pessoaTutor = pessoaService.incluir(pessoaTutor);
+
 
         Pessoa pessoaTutor2 = Pessoa.builder()
                 .cpf("12345678912")
                 .nome("Teste Tutor2")
                 .telefone("62999999999")
                 .build();
-        pessoaTutor2 = pessoaService.incluir(pessoaTutor2);
+
 
         //Insere tutor de teste
         Tutor tutor = Tutor.builder()
                 .pessoa(pessoaTutor)
                 .cpf(pessoaTutor.getCpf())
-                .telefoneWhatsapp(true)
                 .empresaCnpj("11222333444455")
                 .empresaNome("Empresa Teste")
-                .empresaTelefone("6233339999")
+                .telefoneFixoEmpresarial("6233339999")
                 .profissao("Profissão de teste")
                 .vinculo(Vinculo.AVO)
+                .casado(false)
+                .moraComConjuge(false)
+                .dataNascimento(LocalDate.of(1980, 1, 1))
+                .telefoneReserva("62999219901")
                 .build();
-        tutor = tutorService.incluir(tutor);
 
         Tutor tutor2 = Tutor.builder()
                 .pessoa(pessoaTutor2)
                 .cpf(pessoaTutor2.getCpf())
-                .telefoneWhatsapp(true)
                 .empresaCnpj("11222333444455")
                 .empresaNome("Empresa Teste")
-                .empresaTelefone("6233339999")
+                .telefoneFixoEmpresarial("6233339999")
                 .profissao("Profissão de teste")
+                .casado(false)
+                .moraComConjuge(false)
+                .dataNascimento(LocalDate.of(2000, 1, 1))
                 .vinculo(Vinculo.PAI)
+                .telefoneReserva("62999219901")
                 .build();
-        tutor2 = tutorService.incluir(tutor2);
 
         //Insere endereço de teste
         Endereco endereco = Endereco.builder()
@@ -124,7 +138,6 @@ public class InitialRunner implements ApplicationRunner {
         //Insere necessidade especial de teste
         NecessidadeEspecial necessidadeEspecial = NecessidadeEspecial.builder()
                 .titulo("Necessidade Teste")
-                .observacoes("Observações da necessidade especial de teste")
                 .build();
         necessidadeEspecialService.incluir(necessidadeEspecial);
 
@@ -138,7 +151,7 @@ public class InitialRunner implements ApplicationRunner {
                 .horaFim("1130")
                 .telefoneProfessor("62991922192")
                 .build();
-        turma= turmaService.incluir(turma);
+        turma = turmaService.incluir(turma);
 
         Pessoa pessoaMatricula = Pessoa.builder()
                 .cpf("12345678922")
@@ -152,14 +165,11 @@ public class InitialRunner implements ApplicationRunner {
                 .nascimento(LocalDate.now())
                 .endereco(endereco)
                 .necessidades(new HashSet<>())
-
                 .build();
 
         matriculaService.incluir(matricula);
 
         System.out.println("\n*** Fim da Inserção de dados para testes ***\n");
-
-        matriculaService.geraTermo(1L, "12345678911");
     }
 
 }

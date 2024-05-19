@@ -2,6 +2,7 @@ package br.ueg.piasi.MatricuLAR.controller;
 
 
 import br.ueg.piasi.MatricuLAR.dto.RedefinirSenhaDTO;
+import br.ueg.piasi.MatricuLAR.dto.UsuarioAlterarDTO;
 import br.ueg.piasi.MatricuLAR.dto.UsuarioDTO;
 import br.ueg.piasi.MatricuLAR.mapper.UsuarioMapperImpl;
 import br.ueg.piasi.MatricuLAR.model.Usuario;
@@ -33,8 +34,7 @@ public class UsuarioController extends CrudController<Usuario, UsuarioDTO, Long,
 
     }
 
-    @Override
-    @PutMapping(path = "/{id}")
+    @PutMapping(path = "/alterar/{id}")
     @Operation(description = "Método utilizado para altlerar os dados de uma entidiade", responses = {
             @ApiResponse(responseCode = "200", description = "Listagem geral",
                     content = @Content(
@@ -50,9 +50,10 @@ public class UsuarioController extends CrudController<Usuario, UsuarioDTO, Long,
                             schema = @Schema(implementation = MessageResponse.class)))
     }
     )
-    public ResponseEntity<UsuarioDTO> alterar(@RequestBody() UsuarioDTO modeloDTO, @PathVariable Long id) {
-        Usuario pModelo = mapper.toModelo(modeloDTO);
-        Usuario alterar = service.alterar(pModelo, id, modeloDTO.getIdUsuarioRequisicao());
+    public ResponseEntity<UsuarioDTO> novoAlterar(@RequestBody() UsuarioAlterarDTO usuarioDTO, @PathVariable Long id) {
+        String senhaAntiga = usuarioDTO.getSenhaAntiga();
+        Usuario usuario = mapper.toUsuario(usuarioDTO);
+        Usuario alterar = service.alterar(usuario, id, usuarioDTO.getIdUsuarioRequisicao(), senhaAntiga);
         return ResponseEntity.ok(mapper.toDTO(alterar));
     }
 

@@ -1,5 +1,6 @@
 package br.ueg.piasi.MatricuLAR.mapper;
 
+import br.ueg.piasi.MatricuLAR.dto.UsuarioAlterarDTO;
 import br.ueg.piasi.MatricuLAR.dto.UsuarioDTO;
 import br.ueg.piasi.MatricuLAR.model.Usuario;
 import br.ueg.prog.webi.api.mapper.BaseMapper;
@@ -22,4 +23,9 @@ public interface UsuarioMapper extends BaseMapper<Usuario, UsuarioDTO> {
     @Mapping(source = "pessoa.telefone", target = "pessoaTelefone")
     @Mapping(source = "senha", target = "senha", ignore = true)
     UsuarioDTO toDTO(Usuario modelo);
+
+    @Mapping(source = "pessoaCpf", target = "pessoa.cpf")
+    @Mapping(source = "pessoaNome", target = "pessoa.nome")
+    @Mapping(source = "pessoaTelefone", target = "pessoa.telefone")
+    Usuario toUsuario(UsuarioAlterarDTO usuarioAlterarDTO);
 }

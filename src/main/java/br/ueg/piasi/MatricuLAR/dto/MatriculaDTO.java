@@ -28,7 +28,7 @@ public class MatriculaDTO {
     @Temporal(TemporalType.DATE)
     private LocalDate nascimento;
 
-    private Long enderecoId;
+    private EnderecoDTO endereco;
 
     private List<TutorDTO> tutorDTOList;
 

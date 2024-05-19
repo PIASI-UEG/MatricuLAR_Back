@@ -1,6 +1,5 @@
 package br.ueg.piasi.MatricuLAR.dto;
 
-import br.ueg.piasi.MatricuLAR.enums.TipoResidencia;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,23 +15,19 @@ public class InformacoesMatriculaDTO {
 
     private Long id;
 
-    private Boolean esteveOutraCreche;
+    private Boolean frequentouOutraCreche;
 
-    private String razaoSaidaCreche;
+    private String razaoSaida;
 
-    private TipoResidencia tipoResidencia;
+    private String tipoResidencia;
 
     private Long valorAluguel;
 
-    private Boolean beneficiarioGoverno;
+    private Boolean possuiBeneficiosDoGoverno;
 
     private Long valorBeneficio;
 
     private BigDecimal rendaFamiliar;
-
-    private Boolean paisCasados;
-
-    private Boolean moramJuntos;
 
     private String observacao;
 }

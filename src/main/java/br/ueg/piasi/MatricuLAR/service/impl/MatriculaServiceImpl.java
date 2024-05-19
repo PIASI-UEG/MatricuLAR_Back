@@ -3,30 +3,31 @@ package br.ueg.piasi.MatricuLAR.service.impl;
 
 import br.ueg.piasi.MatricuLAR.dto.DadosTermoDTO;
 import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
-import br.ueg.piasi.MatricuLAR.dto.ResponsavelDTO;
 import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
 import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
 import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
+import br.ueg.piasi.MatricuLAR.service.InformacoesMatriculaService;
 import br.ueg.piasi.MatricuLAR.service.MatriculaService;
 import br.ueg.prog.webi.api.exception.BusinessException;
 import br.ueg.prog.webi.api.service.BaseCrudService;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
 
 @Service
@@ -34,26 +35,44 @@ import java.util.*;
 public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, MatriculaRepository>
         implements MatriculaService {
 
-    @Autowired
-    private DocumentoMatriculaServiceImpl documentoMatriculaService;
+    public MatriculaServiceImpl(DocumentoMatriculaServiceImpl documentoMatriculaService,
+                                InformacoesMatriculaService informacoesMatriculaService,
+                                ResponsavelServiceImpl responsavelService,
+                                PessoaServiceImpl pessoaService,
+                                TutorServiceImpl tutorService,
+                                MatriculaMapper mapper,
+                                EnderecoServiceImpl enderecoService,
+                                MatriculaRepository matriculaRepository,
+                                NecessidadeEspecialServiceImpl necessidadeEspecialServiceImpl) {
+        this.documentoMatriculaService = documentoMatriculaService;
+        this.informacoesMatriculaService = informacoesMatriculaService;
+        this.responsavelService = responsavelService;
+        this.pessoaService = pessoaService;
+        this.tutorService = tutorService;
+        this.mapper = mapper;
+        this.enderecoService = enderecoService;
+        this.matriculaRepository = matriculaRepository;
+        this.necessidadeEspecialServiceImpl = necessidadeEspecialServiceImpl;
+    }
 
-    @Autowired
-    private ResponsavelServiceImpl responsavelService;
+    private final DocumentoMatriculaServiceImpl documentoMatriculaService;
+    private final InformacoesMatriculaService informacoesMatriculaService;
+    private final ResponsavelServiceImpl responsavelService;
+    private final PessoaServiceImpl pessoaService;
+    private final TutorServiceImpl tutorService;
+    private final MatriculaMapper mapper;
+    private final MatriculaRepository matriculaRepository;
+    private final NecessidadeEspecialServiceImpl necessidadeEspecialServiceImpl;
+    private final EnderecoServiceImpl enderecoService;
 
-    @Autowired
-    private PessoaServiceImpl pessoaService;
-
-    @Autowired
-    private TutorServiceImpl tutorService;
-
-    @Autowired
-    private MatriculaMapper mapper;
-
-    private static String JASPER_TERMO = ".\\src\\main\\resources\\termo.jrxml";
-
+    private String JASPER_TERMO = "termo.jrxml";
+    
     private final Path root = Paths.get("docs");
-    @Autowired
-    private MatriculaRepository matriculaRepository;
+    private InformacoesMatricula informacoesMatricula;
+    private  Set<Responsavel> responsavelSet;
+
+
+
 
     @Override
     protected void prepararParaIncluir(Matricula matricula) {
@@ -80,16 +99,114 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     @Override
     public Matricula incluir(Matricula matricula) {
-
-        matricula.setDocumentoMatricula(new HashSet<>());
-        matricula.setAdvertencias(new HashSet<>());
-        Set<Responsavel> responsavelSet = tratarMatriculaResponsaveis(matricula);
+        tratarAntesDeSalvar(matricula);
 
         matricula = super.incluir(matricula);
 
-        salvarResponsaveis(responsavelSet, matricula);
+        tratarDepoisDeSalvar(matricula);
 
         return matricula;
+    }
+
+    private void tratarDepoisDeSalvar(Matricula matricula) {
+
+        if(this.informacoesMatricula != null){
+            this.informacoesMatricula.setMatricula(matricula);
+            this.informacoesMatricula = informacoesMatriculaService.incluir(informacoesMatricula);
+        }
+
+        matricula.setResponsaveis(salvarResponsaveis(this.responsavelSet, matricula));
+
+        matricula.setInformacoesMatricula(informacoesMatricula);
+    }
+
+    private void tratarAntesDeSalvar(Matricula matricula) {
+
+        matricula.setTutorList(salvarTutores(matricula.getTutorList()));
+        validarIdadeResponsaveis(matricula);
+        this.responsavelSet = tratarMatriculaResponsaveis(matricula);
+        validarTodosCpf(matricula);
+        validarIdadeCrianca(matricula);
+        matricula.setDocumentoMatricula(new HashSet<>());
+        matricula.setAdvertencias(new HashSet<>());
+
+        if(Objects.nonNull(matricula.getInformacoesMatricula())){
+            this.informacoesMatricula = matricula.getInformacoesMatricula();
+            matricula.setInformacoesMatricula(null);
+        }
+
+        if(Objects.isNull(matricula.getEndereco().getId())){
+            Endereco endereco = enderecoService.incluir(matricula.getEndereco());
+            matricula.setEndereco(endereco);
+        }
+
+        if(Objects.nonNull(matricula.getNecessidades())){
+            List<NecessidadeEspecial> necessidadeEspecials = new ArrayList<>();
+            for(NecessidadeEspecial especial : matricula.getNecessidades()){
+                necessidadeEspecials.add(necessidadeEspecialServiceImpl.incluir(especial));
+            }
+            matricula.setNecessidades(new HashSet<>(necessidadeEspecials));
+        }
+
+    }
+
+    private List<Tutor> salvarTutores(List<Tutor> tutorList) {
+
+        if (Objects.isNull(tutorList) || tutorList.isEmpty()) {
+            throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_SEM_RESPONSAVEL);
+        }
+        List<Tutor> tutoresSalvos = new ArrayList<>();
+        for (Tutor tutor : tutorList) {
+            Tutor tutorSalvo = tutorService.incluir(tutor);
+            tutoresSalvos.add(tutorSalvo);
+        }
+        return tutoresSalvos;
+    }
+
+    private void validarIdadeResponsaveis(Matricula matricula) {
+        List<LocalDate> nascimentoTutores = matricula.getTutorList()
+                .stream()
+                .map(Tutor :: getDataNascimento)
+                .toList();
+        for (LocalDate nascimento : nascimentoTutores) {
+            if (Objects.isNull(nascimento)) {
+                throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_RESPONSAVEL_NASCIMENTO_NAO_INFORMADO);
+            }
+            if (Period.between(nascimento, LocalDate.now()).getYears() < 18) {
+                throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_RESPONSAVEL_MENOR_IDADE);
+            }
+        }
+    }
+
+    private void validarIdadeCrianca(Matricula matricula) {
+        LocalDate matriculaNascimento = matricula.getNascimento();
+        if(Objects.isNull(matriculaNascimento)){
+            throw new BusinessException(SistemaMessageCode.ERRO_DATA_NASCIMENTO_ALUNO_DEVE_SER_INFORMADA);
+        }
+        if(Period.between(matriculaNascimento, LocalDate.now()).getYears() >= 8 ){
+            throw new BusinessException(SistemaMessageCode.ERRO_IDADE_ALUNO_ACIMA_DO_PERMITIDO);
+        }
+    }
+
+    private void validarTodosCpf(Matricula matricula) {
+        List<String> cpfs = new ArrayList<>(this.responsavelSet
+                .stream()
+                .map(Responsavel::getPessoa)
+                .map(Pessoa::getCpf)
+                .toList());
+        cpfs.add(matricula.getPessoa().getCpf());
+
+        List<String> valida = new ArrayList<>();
+        for(String cpf : cpfs){
+            if (!valida.contains(cpf)) {
+                valida.add(cpf);
+            }else{
+                throw new BusinessException(SistemaMessageCode.ERRO_CPF_REPETIDO_TUTORES_CRIANCA,
+                        cpf, matricula.getPessoa().getNome());
+            }
+        }
+
+
     }
 
     @Override
@@ -98,7 +215,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         return super.alterar(entidade, id);
     }
 
-    private void salvarResponsaveis(Set<Responsavel> responsavelSet, Matricula matricula){
+    private Set<Responsavel> salvarResponsaveis(Set<Responsavel> responsavelSet, Matricula matricula){
 
         if (Objects.isNull(responsavelSet)) {
             throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_SEM_RESPONSAVEL);
@@ -110,7 +227,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             responsavelSetSalvos.add(responsavelService.incluir(responsavel));
         }
 
-        matricula.setResponsaveis(responsavelSetSalvos);
+        return  responsavelSetSalvos;
     }
 
     private Set<Responsavel> tratarMatriculaResponsaveis(Matricula matricula) {
@@ -130,6 +247,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             }
 
             matricula.setResponsaveis(new HashSet<>());
+            matricula.setTutorList(new ArrayList<>());
             return  responsavelSet;
         }
         else
@@ -220,7 +338,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     }
 
     public Matricula geraTermo(Long idMatricula, String cpfTutor) throws JRException, IOException {
-        try {
+        try (InputStream termo = this.getClass().getClassLoader().getResourceAsStream(JASPER_TERMO)) {
             if (!Files.exists(root)) {
                 Files.createDirectories(root);
             }
@@ -233,7 +351,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
             Path caminhoTermo = this.root.resolve("Termo-Responsabilidade-"+listDadosTermo.get(0).getCpfCrianca()+".pdf");
 
-            JasperReport report = JasperCompileManager.compileReport(JASPER_TERMO);
+            JasperReport report = JasperCompileManager.compileReport(termo);
 
             JasperPrint print = JasperFillManager.fillReport(report, parametros, dataSource);
 
@@ -259,7 +377,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             matriculaDTO.getTutorDTOList().forEach(tutorDTO -> {
                 if(tutorDTO.getCpf().equals(cpfTutor)){
                     dados.setCpfResponsavel(tutorDTO.getCpf());
-                    dados.setNomeResponsavel(tutorDTO.getPessoaNome());
+                    dados.setNomeResponsavel(tutorDTO.getNomeTutor());
                 }
             });
         } else{
@@ -275,11 +393,43 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     public Matricula uploadDocumentos(Long idMatricula, MultipartFile[] documentos) {
 
-        for(MultipartFile documento : documentos){
+        Matricula matricula = obterPeloId(idMatricula);
+        if (Objects.nonNull(matricula)) {
+            List<Tutor> turores = matricula.getTutorList();
+            boolean tutoresCasados = turores.get(0).getCasado();
 
-            uploadDocumento(idMatricula, TipoDocumento.CPF_CRIANCA, documento);
+            List<TipoDocumento> documentosNaoObrigatoriosGeral = TipoDocumento.getDocumentosNaoObrigatoriosGerais();
+            List<TipoDocumento> documentosNaoObrigatoriosCasados = TipoDocumento.getDocumentosNaoObrigatoriosCasados();
+
+            for(int i = 0 ; i < documentos.length; i++){
+                TipoDocumento tipoDocumento = tipoDocumentoPelaPosicao(i);
+                if(Objects.nonNull(documentos[i])){
+                    uploadDocumento(idMatricula, tipoDocumento, documentos[i]);
+                }else validaDocObrigatorio(tipoDocumento, tutoresCasados, documentosNaoObrigatoriosGeral, documentosNaoObrigatoriosCasados);
+            }
+            return matricula;
         }
-        return null;
+        throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_NAO_ENCONTRADA, idMatricula);
+    }
+
+    private void validaDocObrigatorio(TipoDocumento tipoDocumento, boolean tutoresCasados,
+                                      List<TipoDocumento> documentosNaoObrigatoriosGeral,
+                                      List<TipoDocumento> documentosNaoObrigatoriosCasados) {
+        if(tutoresCasados){
+            if (!documentosNaoObrigatoriosCasados.contains(tipoDocumento)) {
+                throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
+            }
+        }
+
+        if (!documentosNaoObrigatoriosGeral.contains(tipoDocumento)) {
+            throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
+        }
+
+    }
+
+
+    private TipoDocumento tipoDocumentoPelaPosicao(int i) {
+        return TipoDocumento.getByPosicaoArray(i);
     }
 
     public List<Matricula> listarAlunosPorTurma(Long idTurma) {

@@ -17,17 +17,17 @@ import java.util.Objects;
 import java.util.Set;
 
 @Mapper(componentModel = "spring", uses = {ResponsavelMapperImpl.class, NecessidadeEspecialMapperImpl.class,
-        TutorMapperImpl.class, DocumentoMatriculaMapperImpl.class})
+        TutorMapperImpl.class, DocumentoMatriculaMapperImpl.class, EnderecoMapperImpl.class})
 public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
 
-    @Mapping(source = "endereco.id", target = "enderecoId")
+    @Mapping(source = "endereco", target = "endereco")
     @Mapping(source = "pessoa.nome", target = "nome")
     @Mapping(source = "pessoa.cpf", target = "cpf")
     @Mapping(source = "turma", target = "turma")
     @Mapping(source = "tutorList", target = "tutorDTOList")
     MatriculaDTO toDTO(Matricula modelo);
 
-    @Mapping(source = "enderecoId", target = "endereco.id")
+    @Mapping(source = "endereco", target = "endereco")
     @Mapping(source = "nome", target = "pessoa.nome")
     @Mapping(source = "cpf", target = "pessoa.cpf")
     @Mapping(source = "turma", target = "turma")

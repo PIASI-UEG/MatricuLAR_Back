@@ -11,13 +11,13 @@ public interface TutorMapper extends BaseMapper<Tutor, TutorDTO> {
 
     @Override
     @Mapping(source = "cpf", target = "pessoa.cpf")
-    @Mapping(source = "pessoaNome", target = "pessoa.nome")
+    @Mapping(source = "nomeTutor", target = "pessoa.nome")
     @Mapping(source = "pessoaTelefone", target = "pessoa.telefone")
     @Mapping(source = "cpf", target = "cpf")
     Tutor toModelo(TutorDTO tutorDTO);
 
     @Override
-    @Mapping(source = "pessoa.nome", target = "pessoaNome")
+    @Mapping(source = "pessoa.nome", target = "nomeTutor")
     @Mapping(source = "pessoa.telefone", target = "pessoaTelefone")
     @Mapping(source = "cpf", target = "cpf")
     TutorDTO toDTO(Tutor modelo);

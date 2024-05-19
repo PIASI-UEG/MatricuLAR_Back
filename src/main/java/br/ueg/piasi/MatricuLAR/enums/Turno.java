@@ -6,7 +6,7 @@ public enum Turno {
 
    MATUTINO("M", "Matutino"),
    VESPERTINO("V", "Vespertino"),
-   NOTURNO("N", "Noturno");
+   INTEGRAL("I", "Integral");
 
     private final String id;
 

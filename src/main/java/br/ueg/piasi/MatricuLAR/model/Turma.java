@@ -66,7 +66,6 @@ public class Turma extends BaseEntidade<Long> {
 
     @OneToMany(mappedBy = "turma")
     @EqualsAndHashCode.Exclude
-    @Builder.Default
     private Set<Matricula> alunos = new HashSet<>();
 
     @Transient
