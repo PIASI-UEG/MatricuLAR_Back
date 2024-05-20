@@ -54,10 +54,15 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
             if (!Files.exists(root)) {
                 Files.createDirectories(root);
             }
+            String pastaMatricula = montaPastaMatricula(idMatricula);
+            Path pathPastaMatricula = Paths.get("docs/"+pastaMatricula);
 
+            if(!Files.exists(pathPastaMatricula)) {
+                Files.createDirectories(pathPastaMatricula);
+            }
             String nomeArquivo = montaNomeArquivo(idMatricula, tipoDocumento, documento);
 
-            Path pathCaminhoDoc = this.root.resolve(nomeArquivo);
+            Path pathCaminhoDoc = pathPastaMatricula.resolve(nomeArquivo);
             Files.copy(documento.getInputStream(), pathCaminhoDoc);
 
             this.repository.saveAndFlush(
@@ -74,12 +79,16 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
         }
     }
 
+    private String montaPastaMatricula(Long idMatricula) {
+        return "MAT_" + idMatricula;
+    }
+
     private String montaNomeArquivo(Long idMatricula, TipoDocumento tipoDocumento, MultipartFile documento) {
 
         StringBuilder sbCaminhoDoc = new StringBuilder();
-        sbCaminhoDoc.append(tipoDocumento.getId())
+        sbCaminhoDoc.append(idMatricula)
                 .append("_")
-                .append(idMatricula);
+                .append(tipoDocumento.getId());
 
         if (ehContraCheque(tipoDocumento)){
             adicionaMesAnoCaminho(sbCaminhoDoc);
@@ -113,7 +122,8 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
     public Resource getDocumentoMatricula(String caminhdoDoc){
 
         try {
-            Path arquivo = root.resolve(caminhdoDoc);
+            String caminhoDocComPasta = "MAT_"+caminhdoDoc.charAt(0)+"/"+caminhdoDoc;
+            Path arquivo = root.resolve(caminhoDocComPasta);
 
             Resource resource = new UrlResource(arquivo.toUri());
 
