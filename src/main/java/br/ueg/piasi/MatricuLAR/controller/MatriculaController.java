@@ -24,7 +24,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -35,16 +34,14 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path = "/documento")
     public ResponseEntity<MatriculaDTO> uploadDocumento(@RequestParam Long idMatricula, @RequestParam TipoDocumento tipoDocumento,
-                                           @RequestBody MultipartFile multipartFile) throws IOException {
-
+                                           @RequestBody MultipartFile multipartFile){
         return ResponseEntity.ok(
                 mapper.toDTO(service.uploadDocumento(idMatricula, tipoDocumento, multipartFile)));
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path = "/documentos")
     public ResponseEntity<MatriculaDTO> uploadDocumentos(@RequestParam Long idMatricula,
-                                                         @RequestBody MultipartFile[] multipartFile) throws IOException {
-
+                                                         @RequestBody MultipartFile[] multipartFile){
         return ResponseEntity.ok(
                 mapper.toDTO(service.uploadDocumentos(idMatricula, multipartFile)));
     }
@@ -52,7 +49,6 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
 
     @GetMapping(path = "/documento/{caminhodoc}")
     public ResponseEntity<Resource> getDocumentoMatricula(@PathVariable(name = "caminhodoc") String caminhodoc){
-
         Resource arquivo = service.getDocumentoMatricula(caminhodoc);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""
@@ -62,7 +58,6 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
 
     @GetMapping(path = "/termo/{caminhodoc}")
     public ResponseEntity<Resource> getTermo(@PathVariable(name = "caminhodoc") String caminhodoc){
-
         Resource arquivo = service.getDocumentoMatricula(caminhodoc);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + arquivo.getFilename() + "\"").body(arquivo);
@@ -107,7 +102,7 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
 
 
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/documento/atualiza-contra-cheque")
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/documento/atualiza-documento")
     @Operation(
             description = "Busca a quantidade de registros",
             responses = {@ApiResponse(
@@ -137,10 +132,10 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                     )}
             )}
     )
-    public ResponseEntity<MatriculaDTO> atualizaContraChequeMatricula(@RequestParam Long idMatricula, @RequestParam TipoDocumento tipoDocumento,
-                                                                      @RequestBody MultipartFile multipartFile){
+    public ResponseEntity<MatriculaDTO> atualizaDocumentoMatricula(@RequestParam Long idMatricula, @RequestParam TipoDocumento tipoDocumento,
+                                                                   @RequestBody MultipartFile multipartFile){
         return ResponseEntity.ok(
-                mapper.toDTO(service.atualizaContraChequeMatricula(idMatricula, tipoDocumento, multipartFile)));
+                mapper.toDTO(service.atualizaDocumentoMatricula(idMatricula, tipoDocumento, multipartFile)));
     }
 
     @GetMapping("/listar-matriculas-status")
@@ -218,7 +213,7 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                                                                                       @RequestParam (name="statusMatricula") StatusMatricula statusMatricula) {
         return ResponseEntity.ok(
                 this.mapper.toMatriculaListagemDTO(
-                        this.service.listarMatriculaListaemPage(offset, pageSize, statusMatricula)
+                        this.service.listarMatriculaListagemPage(offset, pageSize, statusMatricula)
                 )
         );
     }

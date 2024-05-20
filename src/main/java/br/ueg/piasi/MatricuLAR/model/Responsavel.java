@@ -37,7 +37,7 @@ public class Responsavel extends BaseEntidade<PkResponsavel> {
             foreignKey = @ForeignKey(name = "fk_responsavel_pessoa"))
     private Pessoa pessoa;
 
-    @Column(name = "vinculo", length = 2, nullable = false)
+    @Column(name = "vinculo", length = 3, nullable = false)
     private Vinculo vinculo;
 
     @Column(name = "tutor", nullable = false)

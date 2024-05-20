@@ -57,7 +57,7 @@ public class Tutor extends BaseEntidade<String> {
     @Column(name = "mora_com_conjuge", nullable = false)
     private Boolean moraComConjuge;
 
-    @Column(name = "telefone_reserva", nullable = false, length = 11)
+    @Column(name = "telefone_reserva", length = 11)
     private String telefoneReserva;
 
     @Temporal(TemporalType.DATE)
