@@ -284,7 +284,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     }
 
-    public Matricula atualizaContraChequeMatricula(Long idMatricula, TipoDocumento tipoDocumento, MultipartFile multipartFile) {
+    public Matricula atualizaDocumentoMatricula(Long idMatricula, TipoDocumento tipoDocumento, MultipartFile multipartFile) {
 
         try {
             if (Objects.nonNull(repository.findById(idMatricula).orElse(null))){
@@ -325,7 +325,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
                         (SistemaMessageCode.ERRO_LISTAR_MATRICULA_STATUS, statusMatricula.getDescricao()));
     }
 
-    public List<Matricula> listarMatriculaListaemPage(int offset, int pageSize, StatusMatricula statusMatricula) {
+    public List<Matricula> listarMatriculaListagemPage(int offset, int pageSize, StatusMatricula statusMatricula) {
         return repository.findByStatusFetchTurmaPage(offset, pageSize, statusMatricula.getId())
                 .orElseThrow(() -> new BusinessException
                         (SistemaMessageCode.ERRO_LISTAR_MATRICULA_STATUS, statusMatricula.getDescricao()
