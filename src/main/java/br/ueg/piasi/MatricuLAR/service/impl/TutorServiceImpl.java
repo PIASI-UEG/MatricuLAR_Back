@@ -3,6 +3,7 @@ package br.ueg.piasi.MatricuLAR.service.impl;
 
 import br.ueg.piasi.MatricuLAR.model.Pessoa;
 import br.ueg.piasi.MatricuLAR.model.Tutor;
+import br.ueg.piasi.MatricuLAR.repository.PessoaRepository;
 import br.ueg.piasi.MatricuLAR.repository.TutorRepository;
 import br.ueg.piasi.MatricuLAR.service.TutorService;
 import br.ueg.prog.webi.api.service.BaseCrudService;
@@ -16,9 +17,11 @@ public class TutorServiceImpl extends BaseCrudService<Tutor, String, TutorReposi
         implements TutorService {
 
     private final PessoaServiceImpl pessoaServiceImpl;
+    private final PessoaRepository pessoaRepository;
 
-    public TutorServiceImpl(PessoaServiceImpl pessoaServiceImpl) {
+    public TutorServiceImpl(PessoaServiceImpl pessoaServiceImpl, PessoaRepository pessoaRepository) {
         this.pessoaServiceImpl = pessoaServiceImpl;
+        this.pessoaRepository = pessoaRepository;
     }
 
     @Override
@@ -41,5 +44,9 @@ public class TutorServiceImpl extends BaseCrudService<Tutor, String, TutorReposi
     @Override
     protected void validarCamposObrigatorios(Tutor entidade) {
 
+    }
+
+    protected boolean tutorExists(Tutor tutor) {
+        return pessoaRepository.findById(tutor.getCpf()).isPresent();
     }
 }

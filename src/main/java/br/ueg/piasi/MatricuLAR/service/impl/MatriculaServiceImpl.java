@@ -157,8 +157,12 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         }
         List<Tutor> tutoresSalvos = new ArrayList<>();
         for (Tutor tutor : tutorList) {
-            Tutor tutorSalvo = tutorService.incluir(tutor);
-            tutoresSalvos.add(tutorSalvo);
+            if(tutorService.tutorExists(tutor)){
+                tutoresSalvos.add(tutor);
+            } else{
+                Tutor tutorSalvo = tutorService.incluir(tutor);
+                tutoresSalvos.add(tutorSalvo);
+            }
         }
         return tutoresSalvos;
     }
