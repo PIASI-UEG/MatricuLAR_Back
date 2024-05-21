@@ -2,6 +2,7 @@ package br.ueg.piasi.MatricuLAR.service.impl;
 
 
 import br.ueg.piasi.MatricuLAR.dto.DadosTermoDTO;
+import br.ueg.piasi.MatricuLAR.dto.DocumentoMatriculaDTO;
 import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
 import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
@@ -268,8 +269,14 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO_MATRICULA_NAO_ENCONTRADA);
     }
 
-    public Resource getDocumentoMatricula(String caminhoDoc){
+    public Resource getDocumentoMatricula(DocumentoMatriculaDTO documentoMatriculaDTO){
+        String caminhoDoc = documentoMatriculaService.obterPorIdMatriculaETipoDocumento
+                (documentoMatriculaDTO.getIdMatricula(), documentoMatriculaDTO.getTipoDocumento());
         return documentoMatriculaService.getDocumentoMatricula(caminhoDoc);
+    }
+
+    public Resource getTermo(String caminhoDocumento){
+        return documentoMatriculaService.getTermo(caminhoDocumento);
     }
 
     public Matricula validaMatricula(Matricula matricula) {
@@ -402,6 +409,15 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             List<Tutor> turores = matricula.getTutorList();
             boolean tutoresCasados = turores.get(0).getCasado();
 
+            if (tutoresCasados && documentos.length < 18){
+                    excluir(idMatricula);
+                    throw new BusinessException(SistemaMessageCode.ERRO_QUANTIDADE_DOCUMENTO_OBRIGATORIO);
+            }
+            if (!tutoresCasados && documentos.length < 11){
+                excluir(idMatricula);
+                throw new BusinessException(SistemaMessageCode.ERRO_QUANTIDADE_DOCUMENTO_OBRIGATORIO);
+            }
+
             List<TipoDocumento> documentosNaoObrigatoriosGeral = TipoDocumento.getDocumentosNaoObrigatoriosGerais();
             List<TipoDocumento> documentosNaoObrigatoriosCasados = TipoDocumento.getDocumentosNaoObrigatoriosCasados();
 
@@ -409,23 +425,26 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
                 TipoDocumento tipoDocumento = tipoDocumentoPelaPosicao(i);
                 if(Objects.nonNull(documentos[i])){
                     uploadDocumento(idMatricula, tipoDocumento, documentos[i]);
-                }else validaDocObrigatorio(tipoDocumento, tutoresCasados, documentosNaoObrigatoriosGeral, documentosNaoObrigatoriosCasados);
+                }else validaDocObrigatorio(idMatricula,tipoDocumento, tutoresCasados, documentosNaoObrigatoriosGeral, documentosNaoObrigatoriosCasados);
             }
             return matricula;
         }
+        excluir(idMatricula);
         throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_NAO_ENCONTRADA, idMatricula);
     }
 
-    private void validaDocObrigatorio(TipoDocumento tipoDocumento, boolean tutoresCasados,
+    private void validaDocObrigatorio(Long idMatricula, TipoDocumento tipoDocumento, boolean tutoresCasados,
                                       List<TipoDocumento> documentosNaoObrigatoriosGeral,
                                       List<TipoDocumento> documentosNaoObrigatoriosCasados) {
         if(tutoresCasados){
             if (!documentosNaoObrigatoriosCasados.contains(tipoDocumento)) {
+                excluir(idMatricula);
                 throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
             }
         }
 
         if (!documentosNaoObrigatoriosGeral.contains(tipoDocumento)) {
+            excluir(idMatricula);
             throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
         }
 

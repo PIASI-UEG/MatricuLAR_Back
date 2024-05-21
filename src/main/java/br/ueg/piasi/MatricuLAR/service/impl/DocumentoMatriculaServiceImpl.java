@@ -1,6 +1,7 @@
 package br.ueg.piasi.MatricuLAR.service.impl;
 
 
+import br.ueg.piasi.MatricuLAR.dto.DocumentoMatriculaDTO;
 import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
 import br.ueg.piasi.MatricuLAR.model.DocumentoMatricula;
@@ -120,7 +121,6 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
     }
 
     public Resource getDocumentoMatricula(String caminhdoDoc){
-
         try {
             String caminhoDocComPasta = "MAT_"+caminhdoDoc.charAt(0)+"/"+caminhdoDoc;
             Path arquivo = root.resolve(caminhoDocComPasta);
@@ -135,7 +135,20 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
             throw new BusinessException(ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO);
         }
     }
+    public Resource getTermo(String caminhdoDoc){
+        try {
+            Path arquivo = root.resolve(caminhdoDoc);
 
+            Resource resource = new UrlResource(arquivo.toUri());
+
+            if (resource.exists() || resource.isReadable()){
+                return resource;
+            }
+            throw new BusinessException(ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO);
+        }catch (Exception e ){
+            throw new BusinessException(ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO);
+        }
+    }
     public void atualizaContraChequeMatricula(Long idMatricula, TipoDocumento tipoDocumento, MultipartFile multipartFile) {
 
         DocumentoMatricula documentoMatricula =
@@ -156,5 +169,14 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
         }
 
 
+    }
+
+    public String obterPorIdMatriculaETipoDocumento(Long idMatricula, TipoDocumento tipoDocumento) {
+       DocumentoMatricula documentoMatricula  = repository
+               .findByMatricula_IdAndIdTipoDocumento(idMatricula, tipoDocumento.getId()).orElse(null);
+       if (Objects.isNull(documentoMatricula)){
+           throw new BusinessException(ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO);
+       }
+       return documentoMatricula.getCaminhoDocumento();
     }
 }

@@ -1,6 +1,7 @@
 package br.ueg.piasi.MatricuLAR.controller;
 
 
+import br.ueg.piasi.MatricuLAR.dto.DocumentoMatriculaDTO;
 import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
 import br.ueg.piasi.MatricuLAR.dto.MatriculaListagemDTO;
 import br.ueg.piasi.MatricuLAR.dto.MatriculaVisualizarDTO;
@@ -32,14 +33,78 @@ import java.util.List;
 public class MatriculaController extends CrudController<Matricula, MatriculaDTO, Long, MatriculaMapper, MatriculaServiceImpl> {
 
 
+    @PostMapping(path = "/incusa", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<MatriculaDTO> incluir2(@RequestPart("dto") MatriculaDTO dto,
+                                                 @RequestPart("files") List<MultipartFile> files) {
+        return super.incluir(dto);
+    }
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path = "/documento")
+    @Operation(
+            description = "Busca a quantidade de registros",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Listagem do resultado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = MatriculaDTO.class)
+                    )}
+            ), @ApiResponse(
+                    responseCode = "400",
+                    description = "falha ao realizar a busca",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            ), @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            )}
+    )
     public ResponseEntity<MatriculaDTO> uploadDocumento(@RequestParam Long idMatricula, @RequestParam TipoDocumento tipoDocumento,
                                            @RequestBody MultipartFile multipartFile){
         return ResponseEntity.ok(
                 mapper.toDTO(service.uploadDocumento(idMatricula, tipoDocumento, multipartFile)));
     }
 
+
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path = "/documentos")
+    @Operation(
+            description = "Busca a quantidade de registros",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = MatriculaDTO.class)
+                    )}
+            ), @ApiResponse(
+                    responseCode = "400",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            ), @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            )}
+    )
     public ResponseEntity<MatriculaDTO> uploadDocumentos(@RequestParam Long idMatricula,
                                                          @RequestBody MultipartFile[] multipartFile){
         return ResponseEntity.ok(
@@ -47,9 +112,31 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
     }
 
 
-    @GetMapping(path = "/documento/{caminhodoc}")
-    public ResponseEntity<Resource> getDocumentoMatricula(@PathVariable(name = "caminhodoc") String caminhodoc){
-        Resource arquivo = service.getDocumentoMatricula(caminhodoc);
+    @GetMapping(path = "/obter-documento")
+    @Operation(
+            description = "Busca a quantidade de registros",
+            responses = {@ApiResponse(
+                    responseCode = "400",
+                    description = "falha ao realizar a busca",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            ), @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            )}
+    )
+    public ResponseEntity<Resource> getDocumentoMatricula(@RequestBody DocumentoMatriculaDTO documentoMatriculaDTO){
+        Resource arquivo = service.getDocumentoMatricula(documentoMatriculaDTO);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""
                         + arquivo.getFilename() + "\"").body(arquivo);
@@ -58,7 +145,7 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
 
     @GetMapping(path = "/termo/{caminhodoc}")
     public ResponseEntity<Resource> getTermo(@PathVariable(name = "caminhodoc") String caminhodoc){
-        Resource arquivo = service.getDocumentoMatricula(caminhodoc);
+        Resource arquivo = service.getTermo(caminhodoc);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + arquivo.getFilename() + "\"").body(arquivo);
     }
