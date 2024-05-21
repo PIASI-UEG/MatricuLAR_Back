@@ -109,6 +109,16 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         return matricula;
     }
 
+    public Matricula incluirComDocumentos(Matricula matricula,List<MultipartFile> documentos) {
+        tratarAntesDeSalvar(matricula);
+
+        matricula = super.incluir(matricula);
+
+        tratarDepoisDeSalvar(matricula);
+        uploadDocumentos(matricula.getId(), documentos.toArray(new MultipartFile[documentos.size()]));
+        return repository.findById(matricula.getId()).get();
+    }
+
     private void tratarDepoisDeSalvar(Matricula matricula) {
 
         if(this.informacoesMatricula != null){
@@ -410,11 +420,9 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             boolean tutoresCasados = turores.get(0).getCasado();
 
             if (tutoresCasados && documentos.length < 18){
-                    excluir(idMatricula);
                     throw new BusinessException(SistemaMessageCode.ERRO_QUANTIDADE_DOCUMENTO_OBRIGATORIO);
             }
             if (!tutoresCasados && documentos.length < 11){
-                excluir(idMatricula);
                 throw new BusinessException(SistemaMessageCode.ERRO_QUANTIDADE_DOCUMENTO_OBRIGATORIO);
             }
 

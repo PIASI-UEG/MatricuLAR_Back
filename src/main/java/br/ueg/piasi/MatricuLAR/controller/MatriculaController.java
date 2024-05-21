@@ -33,10 +33,43 @@ import java.util.List;
 public class MatriculaController extends CrudController<Matricula, MatriculaDTO, Long, MatriculaMapper, MatriculaServiceImpl> {
 
 
-    @PostMapping(path = "/incusa", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<MatriculaDTO> incluir2(@RequestPart("dto") MatriculaDTO dto,
+    @Operation(
+            description = "Busca a quantidade de registros",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = MatriculaDTO.class)
+                    )}
+            ), @ApiResponse(
+                    responseCode = "400",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            ), @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            )}
+    )
+    @PostMapping(path = "/inclusao-com-docs",
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<MatriculaDTO> incluirComDocumentos(@RequestPart("dto") MatriculaDTO dto,
                                                  @RequestPart("files") List<MultipartFile> files) {
-        return super.incluir(dto);
+        Matricula matricula = mapper.toModelo(dto);
+        return ResponseEntity.ok(
+                mapper.toDTO(
+                        service.incluirComDocumentos(matricula, files)
+                )
+        );
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,path = "/documento")
