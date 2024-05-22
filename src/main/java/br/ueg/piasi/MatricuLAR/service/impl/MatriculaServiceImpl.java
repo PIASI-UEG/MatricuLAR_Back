@@ -67,6 +67,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     private final EnderecoServiceImpl enderecoService;
 
     private String JASPER_TERMO = "termo.jrxml";
+    private String JASPER_TERMO_AUTORIZACAO = "uso_de_imagem.jrxml";
     
     private final Path root = Paths.get("docs");
     private InformacoesMatricula informacoesMatricula;
@@ -380,7 +381,37 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             JasperExportManager.exportReportToPdfFile(print, caminhoTermo.toString());
             System.out.println("Gerando pdf");
 
+            geraTermoAutorizacao(idMatricula, cpfTutor);
+
             return obterPeloId(idMatricula);
+
+        } catch (Exception e) {
+            System.out.println(e);
+            throw e;
+        }
+    }
+
+    public void geraTermoAutorizacao(Long idMatricula, String cpfTutor) throws JRException, IOException {
+        try (InputStream termo = this.getClass().getClassLoader().getResourceAsStream(JASPER_TERMO_AUTORIZACAO)) {
+            if (!Files.exists(root)) {
+                Files.createDirectories(root);
+            }
+            System.out.println("gerando termo");
+            List<DadosTermoDTO> listDadosTermo = preencheDTO(idMatricula, cpfTutor);
+
+            Map<String, Object> parametros = new HashMap<String, Object>();
+
+            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(listDadosTermo);
+
+            Path caminhoTermo = this.root.resolve("Termo-Autorizacao_Imagem-"+listDadosTermo.get(0).getCpfCrianca()+".pdf");
+
+            JasperReport report = JasperCompileManager.compileReport(termo);
+
+            JasperPrint print = JasperFillManager.fillReport(report, parametros, dataSource);
+
+            //CAMINHO ONDE SERÁ SALVO O PDF (por enquanto deixando na pasta fotos)
+            JasperExportManager.exportReportToPdfFile(print, caminhoTermo.toString());
+            System.out.println("Gerando pdf");
 
         } catch (Exception e) {
             System.out.println(e);
@@ -393,22 +424,19 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         DadosTermoDTO dados = new DadosTermoDTO();
         Matricula matricula = obterPeloId(idMatricula);
         MatriculaDTO matriculaDTO = mapper.toDTO(matricula);
-        Endereco endereco = matricula.getEndereco();
         if(!matriculaDTO.getTutorDTOList().isEmpty()){
             matriculaDTO.getTutorDTOList().forEach(tutorDTO -> {
                 if(tutorDTO.getCpf().equals(cpfTutor)){
-                    dados.setCpfResponsavel(tutorDTO.getCpf());
-                    dados.setNomeResponsavel(tutorDTO.getNomeTutor());
+                    dados.setNomeTutor(tutorDTO.getNomeTutor());
+                    dados.setTelefoneTutor(tutorDTO.getPessoaTelefone());
                 }
             });
         } else{
             throw new BusinessException(SistemaMessageCode.ERRO_GERAR_TERMO);
         }
         dados.setNomeCrianca(matriculaDTO.getNome());
-        dados.setEndereco(endereco.getLogradouro()+", "+endereco.getComplemento()+", "+endereco.getBairro());
         dados.setCpfCrianca(matriculaDTO.getCpf());
         dadosTermo.add(dados);
-        System.out.println(dados);
         return dadosTermo;
     }
 

@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 public class DadosTermoDTO {
     private String nomeCrianca;
     private String cpfCrianca;
-    private String cpfResponsavel;
-    private String nomeResponsavel;
-    private String endereco;
+    private String telefoneTutor;
+    private String nomeTutor;
 }
