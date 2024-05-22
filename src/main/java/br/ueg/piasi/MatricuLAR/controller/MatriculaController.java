@@ -141,7 +141,7 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
     public ResponseEntity<MatriculaDTO> uploadDocumentos(@RequestParam Long idMatricula,
                                                          @RequestBody MultipartFile[] multipartFile){
         return ResponseEntity.ok(
-                mapper.toDTO(service.uploadDocumentos(idMatricula, multipartFile)));
+                mapper.toDTO(service.uploadDocumentos(idMatricula, multipartFile, null)));
     }
 
 

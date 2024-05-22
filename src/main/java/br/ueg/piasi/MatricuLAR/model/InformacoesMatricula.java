@@ -55,5 +55,9 @@ public class InformacoesMatricula extends BaseEntidade<Long> {
     @Column(name = "observacao", length = 200)
     private String observacao;
 
+    @Column(name = "veiculo_proprio", nullable = false)
+    private Boolean possuiVeiculoProprio;
 
+    @Column(name = "encaminhamento_CRAS", nullable = false)
+    private Boolean possuiEcaminhamentoCRAS;
 }

@@ -30,4 +30,8 @@ public class InformacoesMatriculaDTO {
     private BigDecimal rendaFamiliar;
 
     private String observacao;
+
+    private Boolean possuiVeiculoProprio;
+
+    private Boolean possuiEcaminhamentoCRAS;
 }

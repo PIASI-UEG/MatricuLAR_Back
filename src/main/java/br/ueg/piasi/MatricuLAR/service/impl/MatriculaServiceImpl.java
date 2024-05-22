@@ -120,7 +120,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         matricula = super.incluir(matricula);
 
         tratarDepoisDeSalvar(matricula);
-        uploadDocumentos(matricula.getId(), documentos.toArray(new MultipartFile[documentos.size()]));
+        uploadDocumentos(matricula.getId(), documentos.toArray(new MultipartFile[documentos.size()]), matricula.getInformacoesMatricula());
         return repository.findById(matricula.getId()).get();
     }
 
@@ -296,19 +296,55 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     public Matricula validaMatricula(Matricula matricula) {
 
-        for (DocumentoMatricula documento : matricula.getDocumentoMatricula()){
-
-            if (!documento.getAceito()){
-                throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_NAO_ACEITO, documento.getCaminhoDocumento());
-            }
-
-        }
+        validaDocumentosTutores(matricula.getDocumentoMatricula().stream().toList(), matricula.getTutorList().get(0).getCasado());
+        validaDocumentosNaoObrigatorios(matricula.getInformacoesMatricula(), matricula.getDocumentoMatricula().stream().toList());
 
         matricula.setStatus(StatusMatricula.ATIVO);
 
         return alterar(matricula, matricula.getId());
 
     }
+
+    private void validaDocumentosNaoObrigatorios(InformacoesMatricula informacoesMatricula, List<DocumentoMatricula> list) {
+        for(DocumentoMatricula documento : list) {
+                if (informacoesMatricula.getPossuiEcaminhamentoCRAS() &&
+                        TipoDocumento.ENCAMINHAMENTO_CRAS.getId().equals(documento.getIdTipoDocumento()) &&
+                        !documento.getAceito()) {
+                    throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_NAO_ACEITO,
+                            TipoDocumento.ENCAMINHAMENTO_CRAS.getDescricao());
+                }
+                if (informacoesMatricula.getPossuiVeiculoProprio() &&
+                        TipoDocumento.DOCUMENTO_VEICULO.getId().equals(documento.getIdTipoDocumento()) &&
+                        !documento.getAceito()) {
+                    throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_NAO_ACEITO,
+                            TipoDocumento.DOCUMENTO_VEICULO.getDescricao());
+                }
+                if (informacoesMatricula.getPossuiBeneficiosDoGoverno() &&
+                        TipoDocumento.COMPROVANTE_BOLSA_FAMILIA.getId().equals(documento.getIdTipoDocumento()) &&
+                        !documento.getAceito()) {
+                    throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_NAO_ACEITO,
+                            TipoDocumento.COMPROVANTE_BOLSA_FAMILIA.getDescricao());
+                }
+        }
+    }
+
+    public void validaDocumentosTutores(List<DocumentoMatricula> documentosCasados, boolean casado) {
+
+        List<TipoDocumento> documentosObrigatorios = Arrays.asList(TipoDocumento.values());
+        if(!casado){
+            documentosObrigatorios.removeAll(TipoDocumento.getDocumentosNaoObrigatoriosNaoCasados());
+        }
+        List<String> idDocumentosObrigatorios = documentosObrigatorios.stream().map(TipoDocumento::getId).toList();
+        for (DocumentoMatricula documentoMatricula : documentosCasados ){
+
+            if (idDocumentosObrigatorios.contains(documentoMatricula.getIdTipoDocumento()) && !documentoMatricula.getAceito()){
+                throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_NAO_ACEITO,
+                        TipoDocumento.getById(documentoMatricula.getIdTipoDocumento()).getDescricao());
+            }
+        }
+
+    }
+
 
     public Matricula atualizaDocumentoMatricula(Long idMatricula, TipoDocumento tipoDocumento, MultipartFile multipartFile) {
 
@@ -463,7 +499,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         return dadosTermo;
     }
 
-    public Matricula uploadDocumentos(Long idMatricula, MultipartFile[] documentos) {
+    public Matricula uploadDocumentos(Long idMatricula, MultipartFile[] documentos, InformacoesMatricula informacoesMatricula) {
 
         Matricula matricula = obterPeloId(idMatricula);
         if (Objects.nonNull(matricula)) {
@@ -477,14 +513,13 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
                 throw new BusinessException(SistemaMessageCode.ERRO_QUANTIDADE_DOCUMENTO_OBRIGATORIO);
             }
 
-            List<TipoDocumento> documentosNaoObrigatoriosGeral = TipoDocumento.getDocumentosNaoObrigatoriosGerais();
-            List<TipoDocumento> documentosNaoObrigatoriosCasados = TipoDocumento.getDocumentosNaoObrigatoriosCasados();
+            List<TipoDocumento> documentosNaoObrigatoriosNaoCasados = TipoDocumento.getDocumentosNaoObrigatoriosNaoCasados();
 
             for(int i = 0 ; i < documentos.length; i++){
                 TipoDocumento tipoDocumento = tipoDocumentoPelaPosicao(i);
-                if(Objects.nonNull(documentos[i])){
+                if(!documentos[i].getContentType().equals("txt")){
                     uploadDocumento(idMatricula, tipoDocumento, documentos[i]);
-                }else validaDocObrigatorio(idMatricula,tipoDocumento, tutoresCasados, documentosNaoObrigatoriosGeral, documentosNaoObrigatoriosCasados);
+                }else validaDocObrigatorio(idMatricula,tipoDocumento, tutoresCasados, documentosNaoObrigatoriosNaoCasados, informacoesMatricula);
             }
             return matricula;
         }
@@ -493,20 +528,31 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     }
 
     private void validaDocObrigatorio(Long idMatricula, TipoDocumento tipoDocumento, boolean tutoresCasados,
-                                      List<TipoDocumento> documentosNaoObrigatoriosGeral,
-                                      List<TipoDocumento> documentosNaoObrigatoriosCasados) {
-        if(tutoresCasados){
-            if (!documentosNaoObrigatoriosCasados.contains(tipoDocumento)) {
+                                      List<TipoDocumento> documentosNaoObrigatoriosNaoCasados,
+                                      InformacoesMatricula informacoesMatricula) {
+        if (!tutoresCasados) {
+            if (!tipoDocumento.equals(TipoDocumento.COMPROVANTE_BOLSA_FAMILIA) &&
+                    !tipoDocumento.equals(TipoDocumento.DOCUMENTO_VEICULO) &&
+                    !tipoDocumento.equals(TipoDocumento.ENCAMINHAMENTO_CRAS) &&
+                    !documentosNaoObrigatoriosNaoCasados.contains(tipoDocumento)
+            ) {
                 excluir(idMatricula);
                 throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
             }
         }
 
-        if (!documentosNaoObrigatoriosGeral.contains(tipoDocumento)) {
-            excluir(idMatricula);
-            throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
-        }
+        if(Objects.nonNull(informacoesMatricula)){
 
+            if(tipoDocumento.equals(TipoDocumento.DOCUMENTO_VEICULO) && informacoesMatricula.getPossuiVeiculoProprio()){
+                throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
+            }
+            if (tipoDocumento.equals(TipoDocumento.COMPROVANTE_BOLSA_FAMILIA) && informacoesMatricula.getPossuiBeneficiosDoGoverno()){
+                throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
+            }
+            if (tipoDocumento.equals(TipoDocumento.ENCAMINHAMENTO_CRAS) && informacoesMatricula.getPossuiEcaminhamentoCRAS()){
+                throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
+            }
+        }else throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO_MATRICULA_NAO_ENCONTRADA);
     }
 
 

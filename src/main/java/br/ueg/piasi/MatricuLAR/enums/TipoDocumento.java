@@ -64,8 +64,8 @@ public enum TipoDocumento {
          documentos.add(TipoDocumento.ENCAMINHAMENTO_CRAS);
          return documentos;
     }
-    public static List<TipoDocumento> getDocumentosNaoObrigatoriosGerais(){
-        List<TipoDocumento> documentos = getDocumentosNaoObrigatoriosCasados();
+    public static List<TipoDocumento> getDocumentosNaoObrigatoriosNaoCasados(){
+        List<TipoDocumento> documentos = new ArrayList<>();
         documentos.add(TipoDocumento.CONTRA_CHEQUE1T2);
         documentos.add(TipoDocumento.CONTRA_CHEQUE2T2);
         documentos.add(TipoDocumento.CONTRA_CHEQUE3T2);
