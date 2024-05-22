@@ -29,11 +29,11 @@
 ASSINATURA DO PAI/MÃE/RESPONSÁVEL]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="20" y="743" width="146" height="20" uuid="159333df-f8b0-47be-b1da-df5ef2d3d2de"/>
+				<reportElement x="20" y="743" width="180" height="20" uuid="159333df-f8b0-47be-b1da-df5ef2d3d2de"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new SimpleDateFormat("dd MMMM yyyy").format(new java.util.Date())]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Anápolis, "+new SimpleDateFormat("dd MMMM yyyy").format(new java.util.Date())]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="20" y="263" width="524" height="30" forecolor="#FF0905" uuid="4adb01b4-d311-4127-b31d-45ab3ca8ebca"/>

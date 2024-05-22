@@ -14,6 +14,8 @@ import br.ueg.piasi.MatricuLAR.service.InformacoesMatriculaService;
 import br.ueg.piasi.MatricuLAR.service.MatriculaService;
 import br.ueg.prog.webi.api.exception.BusinessException;
 import br.ueg.prog.webi.api.service.BaseCrudService;
+import com.lowagie.text.pdf.PdfCopyFields;
+import com.lowagie.text.pdf.PdfReader;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.core.io.Resource;
@@ -22,6 +24,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -371,7 +375,8 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
             JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(listDadosTermo);
 
-            Path caminhoTermo = this.root.resolve("Termo-Responsabilidade-"+listDadosTermo.get(0).getCpfCrianca()+".pdf");
+            String cpfCrianca = listDadosTermo.get(0).getCpfCrianca();
+            Path caminhoTermo = this.root.resolve("Termo-Responsabilidade-"+ cpfCrianca +".pdf");
 
             JasperReport report = JasperCompileManager.compileReport(termo);
 
@@ -381,8 +386,14 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             JasperExportManager.exportReportToPdfFile(print, caminhoTermo.toString());
             System.out.println("Gerando pdf");
 
-            geraTermoAutorizacao(idMatricula, cpfTutor);
+            String caminhoT2 = geraTermoAutorizacao(idMatricula, cpfTutor);
+            concatenaTermos(caminhoTermo.toString(), caminhoT2, cpfCrianca);
 
+            File deleteTermo1 = new File(caminhoTermo.toString());
+            deleteTermo1.delete();
+
+            File deleteTermo2 = new File(caminhoT2);
+            deleteTermo2.delete();
             return obterPeloId(idMatricula);
 
         } catch (Exception e) {
@@ -391,7 +402,18 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         }
     }
 
-    public void geraTermoAutorizacao(Long idMatricula, String cpfTutor) throws JRException, IOException {
+    public void concatenaTermos(String caminhoTermo1, String caminhoTermo2, String cpfCrianca) throws IOException {
+        PdfReader termo1 = new PdfReader(caminhoTermo1);
+        PdfReader termo2 = new PdfReader(caminhoTermo2);
+
+        PdfCopyFields copy = new PdfCopyFields(new FileOutputStream(this.root.resolve("Termos-"+cpfCrianca+".pdf").toString()));
+
+        copy.addDocument(termo1);
+        copy.addDocument(termo2);
+        copy.close();
+    }
+
+    public String geraTermoAutorizacao(Long idMatricula, String cpfTutor) throws JRException, IOException {
         try (InputStream termo = this.getClass().getClassLoader().getResourceAsStream(JASPER_TERMO_AUTORIZACAO)) {
             if (!Files.exists(root)) {
                 Files.createDirectories(root);
@@ -413,6 +435,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             JasperExportManager.exportReportToPdfFile(print, caminhoTermo.toString());
             System.out.println("Gerando pdf");
 
+            return caminhoTermo.toString();
         } catch (Exception e) {
             System.out.println(e);
             throw e;
