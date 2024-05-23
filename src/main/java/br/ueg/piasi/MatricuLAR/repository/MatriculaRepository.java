@@ -28,4 +28,6 @@ public interface MatriculaRepository extends JpaRepository<Matricula, Long>, Jpa
 
     @Query(value = "select count(*) from matricula where matricula.status = :status", nativeQuery = true)
     Integer countAllWithStatus(@NonNull @Param("status") String status);
+
+    long countByStatus(StatusMatricula status);
 }

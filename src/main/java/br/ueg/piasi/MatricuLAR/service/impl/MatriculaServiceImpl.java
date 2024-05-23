@@ -577,4 +577,12 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         matricula.setTurma(turma);
         matriculaRepository.save(matricula);
     }
+
+    public Long quantidadeMatriculasPorStatus(StatusMatricula statusMatricula) {
+        return matriculaRepository.countByStatus(statusMatricula);
+    }
+
+    public Long quantidadeTotalMatriculas() {
+        return repository.count();
+    }
 }

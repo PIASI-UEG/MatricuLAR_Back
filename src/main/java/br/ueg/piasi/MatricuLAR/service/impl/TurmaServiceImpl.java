@@ -47,4 +47,8 @@ public class TurmaServiceImpl extends BaseCrudService<Turma, Long, TurmaReposito
         }
         return repository.findById(idTurma).get();
     }
+
+    public Long quantidadeTotal() {
+        return repository.count();
+    }
 }

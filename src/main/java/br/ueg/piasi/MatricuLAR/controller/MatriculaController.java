@@ -486,4 +486,73 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                 )
         );
     }
+
+
+    @Operation(
+            description = "Busca a quantidade de registros",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Listagem do resultado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Long.class))}
+            ), @ApiResponse(
+                    responseCode = "400",
+                    description = "falha ao realizar a busca",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            ), @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            )}
+    )
+    @GetMapping(path = "quantidade-total")
+    private ResponseEntity<Long> quantidadeTotalMatriculas(){
+        return ResponseEntity.ok(service.quantidadeTotalMatriculas());
+    }
+
+
+    @Operation(
+            description = "Busca a quantidade de registros",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Listagem do resultado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Long.class)
+                    )}
+            ), @ApiResponse(
+                    responseCode = "400",
+                    description = "falha ao realizar a busca",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            ), @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            )}
+    )
+    @GetMapping(path = "/quantidade-status")
+    private ResponseEntity<Long> quantidadeMatriculasPorStatus(@RequestParam StatusMatricula statusMatricula){
+        return ResponseEntity.ok(service.quantidadeMatriculasPorStatus(statusMatricula));
+    }
 }
