@@ -64,7 +64,7 @@ public class Turma extends BaseEntidade<Long> {
     @Column(name = "telefone_professora", nullable = false, length = 11)
     private String telefoneProfessor;
 
-    @OneToMany(mappedBy = "turma")
+    @OneToMany(mappedBy = "turma", fetch = FetchType.EAGER)
     @EqualsAndHashCode.Exclude
     private Set<Matricula> alunos = new HashSet<>();
 

@@ -574,6 +574,10 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         Matricula matricula = repository.findById(idAluno)
                 .orElseThrow(() ->
                         new BusinessException(SistemaMessageCode.ERRO_MATRICULA_NAO_ENCONTRADA, idAluno));
+//        if(Objects.nonNull(matricula.getTurma()) && matricula.getTurma().getId().equals(turma.getId())){
+//            throw new BusinessException(SistemaMessageCode.ERRO_ALUNO_JA_ESTA_NA_TURMA,
+//                    matricula.getPessoa().getNome(), turma.getTitulo());
+//        }
         matricula.setTurma(turma);
         matriculaRepository.save(matricula);
     }

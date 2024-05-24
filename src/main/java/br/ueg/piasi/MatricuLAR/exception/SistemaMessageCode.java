@@ -32,6 +32,7 @@ public enum SistemaMessageCode implements MessageCode {
     //TURMA
     ERRO_SEM_ALUNOS_TURMA("MSG-151", 404),
     ERRO_TURMA_NAO_ENCONTRADA("MSG-152", 404),
+    ERRO_ALUNO_JA_ESTA_NA_TURMA("MSG-153",400),
 
     //MATRICULA
     ERRO_MATRICULA_SEM_RESPONSAVEL("MSG-201", 404),

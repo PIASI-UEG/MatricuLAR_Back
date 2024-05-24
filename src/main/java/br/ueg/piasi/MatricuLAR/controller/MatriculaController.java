@@ -145,19 +145,29 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
     }
 
 
-    @GetMapping(path = "/obter-documento")
+    @PostMapping(path = "/obter-documento")
     @Operation(
             description = "Busca a quantidade de registros",
-            responses = {@ApiResponse(
-                    responseCode = "400",
-                    description = "falha ao realizar a busca",
-                    content = {@Content(
-                            mediaType = "application/json",
-                            schema = @Schema(
-                                    implementation = MessageResponse.class
-                            )
-                    )}
-            ), @ApiResponse(
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Arquivo do documento",
+                            content = {@Content(
+                                    schema = @Schema(
+                                            implementation = Resource.class
+                                    )
+                            )}
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "falha ao realizar a busca",
+                            content = {@Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = MessageResponse.class
+                                    )
+                            )}
+                    ), @ApiResponse(
                     responseCode = "403",
                     description = "Acesso negado",
                     content = {@Content(
@@ -167,8 +177,9 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                             )
                     )}
             )}
+
     )
-    public ResponseEntity<Resource> getDocumentoMatricula(@RequestBody DocumentoMatriculaDTO documentoMatriculaDTO){
+    public ResponseEntity<Resource> obterDocumentoMatricula(@RequestBody DocumentoMatriculaDTO documentoMatriculaDTO){
         Resource arquivo = service.getDocumentoMatricula(documentoMatriculaDTO);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""
