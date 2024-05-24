@@ -67,6 +67,43 @@ public class TurmaController
                     description = "Listagem do resultado",
                     content = {@Content(
                             mediaType = "application/json",
+                            schema = @Schema(implementation = TurmaDTO.class)
+                    )}
+            ), @ApiResponse(
+                    responseCode = "400",
+                    description = "falha ao realizar a busca",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            ), @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            )}
+    )
+    @PostMapping("/adicionaUmAluno")
+    public ResponseEntity<TurmaDTO> adicionaUmAluno(@RequestParam("idTurma") Long idTurma, @RequestParam("idAluno") Long idAlunos) {
+
+        return ResponseEntity.ok(
+                mapper.toDTO(
+                        service.adicionarAlunoTurma(idTurma, idAlunos)));
+    }
+
+    @Operation(
+            description = "Busca a quantidade de registros",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Listagem do resultado",
+                    content = {@Content(
+                            mediaType = "application/json",
                             schema = @Schema(implementation = Long.class)
                     )}
             ), @ApiResponse(

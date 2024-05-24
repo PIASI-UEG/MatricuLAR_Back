@@ -566,4 +566,5 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
     private ResponseEntity<Long> quantidadeMatriculasPorStatus(@RequestParam StatusMatricula statusMatricula){
         return ResponseEntity.ok(service.quantidadeMatriculasPorStatus(statusMatricula));
     }
+
 }

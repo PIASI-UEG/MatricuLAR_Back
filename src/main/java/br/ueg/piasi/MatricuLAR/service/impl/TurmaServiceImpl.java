@@ -1,7 +1,9 @@
 package br.ueg.piasi.MatricuLAR.service.impl;
 
 
+import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
+import br.ueg.piasi.MatricuLAR.model.Matricula;
 import br.ueg.piasi.MatricuLAR.model.Turma;
 import br.ueg.piasi.MatricuLAR.repository.TurmaRepository;
 import br.ueg.piasi.MatricuLAR.service.TurmaService;
@@ -50,5 +52,23 @@ public class TurmaServiceImpl extends BaseCrudService<Turma, Long, TurmaReposito
 
     public Long quantidadeTotal() {
         return repository.count();
+    }
+
+    public Turma adicionarAlunoTurma(Long idTurma, Long idAluno) {
+        Matricula aluno = matriculaService.obterPeloId(idAluno);
+        Turma turma = repository.findById(idTurma).orElseThrow(() ->
+                new BusinessException(SistemaMessageCode.ERRO_TURMA_NAO_ENCONTRADA, idTurma));
+        if(aluno != null && aluno.getStatus().equals(StatusMatricula.ATIVO)){
+            if(turma.getAlunos().contains(aluno)){
+                matriculaService.addTurmaPorNroMatricula(idAluno, turma);
+            }
+            else {
+                throw new BusinessException(SistemaMessageCode.ERRO_ALUNO_JA_ESTA_NA_TURMA, idAluno);
+            }
+        }
+        else {
+            throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_STATUS_NAO_ATIVA, idAluno);
+        }
+        return repository.findById(idTurma).get();
     }
 }
