@@ -517,7 +517,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
             for(int i = 0 ; i < documentos.length; i++){
                 TipoDocumento tipoDocumento = tipoDocumentoPelaPosicao(i);
-                if(!documentos[i].getContentType().equals("txt")){
+                if(!documentos[i].getOriginalFilename().substring(documentos[i].getOriginalFilename().length()-3, documentos[i].getOriginalFilename().length()).equals("txt")){
                     uploadDocumento(idMatricula, tipoDocumento, documentos[i]);
                 }else validaDocObrigatorio(idMatricula,tipoDocumento, tutoresCasados, documentosNaoObrigatoriosNaoCasados, informacoesMatricula);
             }

@@ -121,7 +121,7 @@ public class InitialRunner implements ApplicationRunner {
                 .casado(false)
                 .moraComConjuge(false)
                 .dataNascimento(LocalDate.of(2000, 1, 1))
-                .vinculo(Vinculo.PAI)
+                .vinculo(Vinculo.AVO)
                 .telefoneReserva("62999219901")
                 .build();
 
