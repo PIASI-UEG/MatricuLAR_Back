@@ -1,6 +1,7 @@
 package br.ueg.piasi.MatricuLAR.repository;
 
 
+import br.ueg.piasi.MatricuLAR.enums.Cargo;
 import br.ueg.piasi.MatricuLAR.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -20,4 +21,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long>, JpaSpec
     @Query(value = "select count(*) from usuario ", nativeQuery = true)
     Integer countAll();
     Optional<Usuario> findUsuarioByPessoaCpf(String  pessoaCpf);
+
+    Optional<Usuario> findUsuarioByEmail(String email);
+
+    Usuario findByCargo(Cargo cargo);
 }

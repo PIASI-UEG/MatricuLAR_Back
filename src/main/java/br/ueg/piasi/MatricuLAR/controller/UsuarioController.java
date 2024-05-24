@@ -1,9 +1,10 @@
 package br.ueg.piasi.MatricuLAR.controller;
 
 
+import br.ueg.piasi.MatricuLAR.dto.RedefinirSenhaDTO;
+import br.ueg.piasi.MatricuLAR.dto.UsuarioAlterarDTO;
 import br.ueg.piasi.MatricuLAR.dto.UsuarioDTO;
 import br.ueg.piasi.MatricuLAR.mapper.UsuarioMapperImpl;
-import br.ueg.piasi.MatricuLAR.model.Pessoa;
 import br.ueg.piasi.MatricuLAR.model.Usuario;
 import br.ueg.piasi.MatricuLAR.service.impl.UsuarioServiceImpl;
 import br.ueg.prog.webi.api.controller.CrudController;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +26,7 @@ public class UsuarioController extends CrudController<Usuario, UsuarioDTO, Long,
 
     @Override
     @PostMapping("/singup")
-    public ResponseEntity<UsuarioDTO> incluir(UsuarioDTO usuarioDTO) {
+    public ResponseEntity<UsuarioDTO> incluir(@RequestBody() UsuarioDTO usuarioDTO) {
 
         Usuario usuarioParaIncluir = mapper.toModelo(usuarioDTO);
         UsuarioDTO novoUser = mapper.toDTO(service.incluir(usuarioParaIncluir));
@@ -32,7 +34,37 @@ public class UsuarioController extends CrudController<Usuario, UsuarioDTO, Long,
 
     }
 
-    @GetMapping("/sort/{field}")
+    @PutMapping(path = "/alterar/{id}")
+    @Operation(description = "Método utilizado para altlerar os dados de uma entidiade", responses = {
+            @ApiResponse(responseCode = "200", description = "Listagem geral",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE)),
+            @ApiResponse(responseCode = "404", description = "Registro não encontrado",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = MessageResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Acesso negado",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = MessageResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Erro de Negócio",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = MessageResponse.class)))
+    }
+    )
+    public ResponseEntity<UsuarioDTO> novoAlterar(@RequestBody() UsuarioAlterarDTO usuarioDTO, @PathVariable Long id) {
+        String senhaAntiga = usuarioDTO.getSenhaAntiga();
+        Usuario usuario = mapper.toUsuario(usuarioDTO);
+        Usuario alterar = service.alterar(usuario, id, usuarioDTO.getIdUsuarioRequisicao(), senhaAntiga);
+        return ResponseEntity.ok(mapper.toDTO(alterar));
+    }
+
+
+    @PostMapping(path = "/redefinir-senha")
+    public ResponseEntity redefinirSenha(@RequestBody RedefinirSenhaDTO dadosRefinirSenha){
+            service.redefinirSenha(dadosRefinirSenha);
+        return ResponseEntity.ok("Email com nova senha enviado com sucesso");
+    }
+
+    @GetMapping(value = "/sort/{field}")
     @Operation(
             description = "Reliza busca ordenada de acordo com o campo",
             responses = {@ApiResponse(
@@ -97,7 +129,9 @@ public class UsuarioController extends CrudController<Usuario, UsuarioDTO, Long,
             )}
     )
     public ResponseEntity<List<UsuarioDTO>> listUsuariosWithPagination(@PathVariable int offset, @PathVariable int pageSize) {
-        return ResponseEntity.ok(this.mapper.toDTO(this.service.findUsuarioWithPagination(offset, pageSize)));
+        return ResponseEntity.ok(
+                this.mapper.toDTO(
+                        this.service.findUsuarioWithPagination(offset, pageSize)));
     }
 
     @GetMapping("/pagination")
