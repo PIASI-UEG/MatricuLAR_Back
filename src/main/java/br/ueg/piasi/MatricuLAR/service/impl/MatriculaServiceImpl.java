@@ -517,7 +517,9 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
             for(int i = 0 ; i < documentos.length; i++){
                 TipoDocumento tipoDocumento = tipoDocumentoPelaPosicao(i);
-                if(!documentos[i].getContentType().equals("txt")){
+                String nomeDoc = documentos[i].getOriginalFilename()
+                        .substring(documentos[i].getOriginalFilename().length()-3);
+                if(!nomeDoc.equals("txt")){
                     uploadDocumento(idMatricula, tipoDocumento, documentos[i]);
                 }else validaDocObrigatorio(idMatricula,tipoDocumento, tutoresCasados, documentosNaoObrigatoriosNaoCasados, informacoesMatricula);
             }
@@ -536,7 +538,10 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
                     !tipoDocumento.equals(TipoDocumento.ENCAMINHAMENTO_CRAS) &&
                     !documentosNaoObrigatoriosNaoCasados.contains(tipoDocumento)
             ) {
-                excluir(idMatricula);
+                throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
+            }
+        }else{
+            if(!documentosNaoObrigatoriosNaoCasados.contains(tipoDocumento)){
                 throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
             }
         }
@@ -574,10 +579,14 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         Matricula matricula = repository.findById(idAluno)
                 .orElseThrow(() ->
                         new BusinessException(SistemaMessageCode.ERRO_MATRICULA_NAO_ENCONTRADA, idAluno));
-//        if(Objects.nonNull(matricula.getTurma()) && matricula.getTurma().getId().equals(turma.getId())){
-//            throw new BusinessException(SistemaMessageCode.ERRO_ALUNO_JA_ESTA_NA_TURMA,
-//                    matricula.getPessoa().getNome(), turma.getTitulo());
-//        }
+        if(Objects.nonNull(matricula.getTurma()) && matricula.getTurma().getId().equals(turma.getId())){
+            throw new BusinessException(SistemaMessageCode.ERRO_ALUNO_JA_ESTA_NA_TURMA,
+                    matricula.getPessoa().getNome(), turma.getTitulo());
+        }
+        if(Objects.nonNull(matricula.getStatus()) && !matricula.getStatus().equals(StatusMatricula.ATIVO)){
+            throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_NAO_ATIVA_PARA_TURMA,
+                    matricula.getPessoa().getNome());
+        }
         matricula.setTurma(turma);
         matriculaRepository.save(matricula);
     }
