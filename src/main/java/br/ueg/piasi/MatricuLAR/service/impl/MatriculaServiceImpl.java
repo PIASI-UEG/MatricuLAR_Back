@@ -348,16 +348,12 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     public Matricula atualizaDocumentoMatricula(Long idMatricula, TipoDocumento tipoDocumento, MultipartFile multipartFile) {
 
-        try {
-            if (Objects.nonNull(repository.findById(idMatricula).orElse(null))){
-                documentoMatriculaService.atualizaContraChequeMatricula(idMatricula, tipoDocumento, multipartFile);
-                return repository.findById(idMatricula).get();
-            }
-            throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO_MATRICULA_NAO_ENCONTRADA);
 
-        }catch (Exception e){
-            throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO_MATRICULA_NAO_ENCONTRADA);
+        if (Objects.nonNull(repository.findById(idMatricula).orElse(null))){
+            documentoMatriculaService.atualizaDocumentoMatricula(idMatricula, tipoDocumento, multipartFile);
+            return repository.findById(idMatricula).get();
         }
+        throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO_MATRICULA_NAO_ENCONTRADA);
 
     }
 
@@ -540,10 +536,6 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             ) {
                 throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
             }
-        }else{
-            if(!documentosNaoObrigatoriosNaoCasados.contains(tipoDocumento)){
-                throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
-            }
         }
 
         if(Objects.nonNull(informacoesMatricula)){
@@ -557,7 +549,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             if (tipoDocumento.equals(TipoDocumento.ENCAMINHAMENTO_CRAS) && informacoesMatricula.getPossuiEcaminhamentoCRAS()){
                 throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
             }
-        }else throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO_MATRICULA_NAO_ENCONTRADA);
+        }else throw new BusinessException(SistemaMessageCode.ERRO_INFORMACOES_MATRICULA_NAO_INFORMADA);
     }
 
 
