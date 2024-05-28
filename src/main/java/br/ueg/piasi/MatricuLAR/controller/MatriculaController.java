@@ -451,9 +451,9 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                     )}
             )}
     )
-    public ResponseEntity<MatriculaDTO> gerarTermo(@PathVariable(name = "id") Long id, @RequestParam(name = "cpfTutor")String cpfTutor) throws JRException, IOException {
+    public ResponseEntity<MatriculaDTO> gerarTermo(@PathVariable(name = "id") Long id, @RequestParam(name = "nomeTutor")String nomeTutor) throws JRException, IOException {
         return ResponseEntity.ok(
-                mapper.toDTO(service.geraTermo(id, cpfTutor)));
+                mapper.toDTO(service.geraTermo(id, nomeTutor)));
     }
 
 

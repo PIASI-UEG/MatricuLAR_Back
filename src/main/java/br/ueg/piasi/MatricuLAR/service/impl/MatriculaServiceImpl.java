@@ -478,15 +478,15 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         }
     }
 
-    private List<DadosTermoDTO> preencheDTO(Long idMatricula, String cpfTutor){
+    private List<DadosTermoDTO> preencheDTO(Long idMatricula, String nomeTutor){
         List<DadosTermoDTO> dadosTermo = new ArrayList<>();
         DadosTermoDTO dados = new DadosTermoDTO();
         Matricula matricula = obterPeloId(idMatricula);
         MatriculaDTO matriculaDTO = mapper.toDTO(matricula);
         if(!matriculaDTO.getTutorDTOList().isEmpty()){
             matriculaDTO.getTutorDTOList().forEach(tutorDTO -> {
-                if(tutorDTO.getCpf().equals(cpfTutor)){
-                    dados.setNomeTutor(tutorDTO.getNomeTutor());
+                if(tutorDTO.getNomeTutor().equals(nomeTutor)){
+                    dados.setNomeTutor(nomeTutor);
                     dados.setTelefoneTutor(tutorDTO.getPessoaTelefone());
                 }
             });
