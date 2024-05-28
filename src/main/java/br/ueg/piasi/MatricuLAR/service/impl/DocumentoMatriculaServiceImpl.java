@@ -1,7 +1,6 @@
 package br.ueg.piasi.MatricuLAR.service.impl;
 
 
-import br.ueg.piasi.MatricuLAR.dto.DocumentoMatriculaDTO;
 import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
 import br.ueg.piasi.MatricuLAR.model.DocumentoMatricula;
@@ -149,7 +148,7 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
             throw new BusinessException(ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO);
         }
     }
-    public void atualizaContraChequeMatricula(Long idMatricula, TipoDocumento tipoDocumento, MultipartFile multipartFile) {
+    public void atualizaDocumentoMatricula(Long idMatricula, TipoDocumento tipoDocumento, MultipartFile multipartFile) {
 
         DocumentoMatricula documentoMatricula =
                 repository.findByMatricula_IdAndIdTipoDocumento(idMatricula, tipoDocumento.getId())
@@ -160,7 +159,8 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
         }
 
         try{
-            Path arquivo = root.resolve(documentoMatricula.getCaminhoDocumento());
+            String pastaMatricula = montaPastaMatricula(idMatricula);
+            Path arquivo = root.resolve(pastaMatricula.concat("/"+documentoMatricula.getCaminhoDocumento()));
             Files.delete(arquivo);
             uploadDocumentos(idMatricula, tipoDocumento, multipartFile);
 
