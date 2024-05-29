@@ -40,6 +40,8 @@ import java.util.*;
 public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, MatriculaRepository>
         implements MatriculaService {
 
+    private final ControlePeriodoMatriculaServiceImpl controlePeriodoMatriculaServiceImpl;
+
     public MatriculaServiceImpl(DocumentoMatriculaServiceImpl documentoMatriculaService,
                                 InformacoesMatriculaService informacoesMatriculaService,
                                 ResponsavelServiceImpl responsavelService,
@@ -48,7 +50,8 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
                                 MatriculaMapper mapper,
                                 EnderecoServiceImpl enderecoService,
                                 MatriculaRepository matriculaRepository,
-                                NecessidadeEspecialServiceImpl necessidadeEspecialServiceImpl) {
+                                NecessidadeEspecialServiceImpl necessidadeEspecialServiceImpl,
+                                ControlePeriodoMatriculaServiceImpl controlePeriodoMatriculaServiceImpl) {
         this.documentoMatriculaService = documentoMatriculaService;
         this.informacoesMatriculaService = informacoesMatriculaService;
         this.responsavelService = responsavelService;
@@ -58,6 +61,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         this.enderecoService = enderecoService;
         this.matriculaRepository = matriculaRepository;
         this.necessidadeEspecialServiceImpl = necessidadeEspecialServiceImpl;
+        this.controlePeriodoMatriculaServiceImpl = controlePeriodoMatriculaServiceImpl;
     }
 
     private final DocumentoMatriculaServiceImpl documentoMatriculaService;
@@ -589,5 +593,12 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     public Long quantidadeTotalMatriculas() {
         return repository.count();
+    }
+
+    public void validaPeriodoMatricula() {
+        if (!controlePeriodoMatriculaServiceImpl.obterPeloId(1L)
+                .getAceitandoCadastroMatricula()){
+            throw  new BusinessException(SistemaMessageCode.ERRO_PERIODO_MATRICULA_NAO_ACEITANDO);
+        };
     }
 }

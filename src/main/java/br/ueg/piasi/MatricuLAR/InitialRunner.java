@@ -5,9 +5,9 @@ import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import br.ueg.piasi.MatricuLAR.enums.Turno;
 import br.ueg.piasi.MatricuLAR.enums.Vinculo;
 import br.ueg.piasi.MatricuLAR.model.*;
+import br.ueg.piasi.MatricuLAR.repository.ControlePeriodoMatriculaRepository;
 import br.ueg.piasi.MatricuLAR.service.impl.*;
 import net.sf.jasperreports.engine.JRException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -26,17 +25,15 @@ public class InitialRunner implements ApplicationRunner {
 
     private final UsuarioServiceImpl usuarioService;
 
-    private final PessoaServiceImpl pessoaService;
-
     private final EnderecoServiceImpl enderecoService;
 
     private final NecessidadeEspecialServiceImpl necessidadeEspecialService;
 
     private final TurmaServiceImpl turmaService;
 
-    private final TutorServiceImpl tutorService;
-
     private final MatriculaServiceImpl matriculaService;
+
+    private final ControlePeriodoMatriculaRepository controlePeriodoMatriculaRepository;
 
     public InitialRunner(UsuarioServiceImpl usuarioService,
                          PessoaServiceImpl pessoaService,
@@ -44,14 +41,14 @@ public class InitialRunner implements ApplicationRunner {
                          NecessidadeEspecialServiceImpl necessidadeEspecialService,
                          TurmaServiceImpl turmaService,
                          TutorServiceImpl tutorService,
-                         MatriculaServiceImpl matriculaService) {
+                         MatriculaServiceImpl matriculaService,
+                         ControlePeriodoMatriculaRepository controlePeriodoMatriculaService) {
         this.usuarioService = usuarioService;
-        this.pessoaService = pessoaService;
         this.enderecoService = enderecoService;
         this.necessidadeEspecialService = necessidadeEspecialService;
         this.turmaService = turmaService;
-        this.tutorService = tutorService;
         this.matriculaService = matriculaService;
+        this.controlePeriodoMatriculaRepository = controlePeriodoMatriculaService;
     }
 
     @Override
@@ -168,6 +165,15 @@ public class InitialRunner implements ApplicationRunner {
                 .build();
 
         matriculaService.incluir(matricula);
+
+        ControlePeriodoMatricula controle = ControlePeriodoMatricula.builder()
+                .id(1L)
+                .aceitandoCadastroMatricula(true)
+                .dataInicio(null)
+                .dataFim(null)
+                .atualizarPeriodoAutomatico(false)
+                .build();
+        controlePeriodoMatriculaRepository.save(controle);
 
         System.out.println("\n*** Fim da Inserção de dados para testes ***\n");
     }
