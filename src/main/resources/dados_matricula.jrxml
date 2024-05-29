@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sagradaFamiliaTermo_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5cb87eb5-5b29-4dac-9124-d117d98a545f">
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="nomeTutor" class="java.lang.String"/>
+	<field name="nomeCrianca" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="802" splitType="Stretch">
+			<staticText>
+				<reportElement x="20" y="762" width="524" height="40" uuid="4acb3077-cadd-4a8d-9146-68c9fddaf3b1"/>
+				<textElement textAlignment="Center">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[ ________________________________________
+ASSINATURA DO PAI/MÃE/RESPONSÁVEL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="20" y="743" width="180" height="20" uuid="159333df-f8b0-47be-b1da-df5ef2d3d2de"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Anápolis, "+new SimpleDateFormat("dd MMMM yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="20" y="263" width="524" height="30" forecolor="#FF0905" uuid="4adb01b4-d311-4127-b31d-45ab3ca8ebca"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[TOMO CONHECIMENTO DAS NORMAS ABAIXO ESTABELECIDAS:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="293" width="524" height="290" uuid="60b6db46-b02a-45d2-a543-9fb5f4ebafda"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[* HORÁRIO DA CHEGADA DAS CRIANÇAS SERÁ DAS 07:00 ÀS 7:30, NÃO SERÁ  PERMITIDA A ENTRADA APÓS ESSE HORÁRIO;
+
+* HORARIO DE SAÍDA DAS CRIANÇAS SERÁ DAS 16:30 ÀS 17:00 , PORTANTO, SEJA PONTUAL. CASO OCORRER ALGUM IMPREVISTO, AVISAR NA SECRETARIA 3099-6423; 
+
+* NÃO SERÁ PERMITIDA A ENTRADA DAS CRIANÇAS SEM AGENDA; 
+
+* A ENTREGA DA CRIANÇA A TERCEIROS SÓ SERÁ PERMITIDA MEDIANTE AUTORIZAÇÃO DOS PAIS OU 
+RESPONSÁVEIS;
+
+* É RESPONSABILIDADE DOS PAIS OU RESPONSÁVEIS, TRAZER A MOCHILA COM 3 (TRÊS) PECAS DE ROUPAS, SANDALIA TIPO HAVAIANAS, TOALHAS (DE BANHO) OU (DE MÃO) COM NOME BORDADO; 
+
+* A TOALHA SERÁ DEVOLVIDA SEMPRE QUE NECESSARIO, PARA TRAZER-LAS LIMPAS PARA USO DA ASSOCIAÇÃO; 
+
+* É DE RESPONSABILIDADE DOS PAIS OU RESPONSÁVEIS TRAZEREM SEUS FILHOS À INSTITUÇÃO, EM BOAS CONDIÇÕES DE HIGIENE E SAÚDE, UNHAS A PARADAS, ORELHAS LIMPAS, CABELOS LAVADOS, PENTEADOS E SEM PIOLHOS, EM BOM ESTADO DE SAÚDE, UNIFORME LIMPO;
+
+* É RESPONSABILIDADE DOS PAIS OU RESPONSÁVEIS, TRAZER A MOCHILA COM 3 (TRÊS) PECAS DE ROUPAS, SANDALIA TIPO HAVAIANAS, TOALHAS (DE BANHO) OU (DE MÃO) COM NOME BORDADO;
+
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="583" width="524" height="20" forecolor="#FA0E0A" uuid="bed46da3-6363-47a9-b0b9-53851d5f3542"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[(BERÇÁRIO TOALHA DE BANHO BORDADO)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="603" width="524" height="140" uuid="df4e518c-4dbd-4851-a93d-f885374d9b72"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[* É DE RESPONSABILIDADE DOS PAIS OU RESPONSÁVEIS COMUNICAR À INSTITUIÇÃO O MOTIVO DA AUSÊNCIA DA CRIANÇA APÓS TRÊS DIAS CONSECUTIVOS, ASSIM SENDO, A MESMA SERÁ DESLIGADA AUTOMATICAMENTE DA INTISTUIÇÃO;
+ 
+O NÃO CUMPRIMENTO DAS NORMAS ESTABELECIDAS NO PRESENTE TERMO DE RESPONSABILIDADE IMPLICARÁ NA ADVERTÊNCIA, POR ESCRITO AOS PAIS OU RESPONSÁVEIS. 
+
+POR ESTAR CIENTE DAS NORMAS ACIMA ESTABELECIDAS, COMPROMETO-ME E RESPONSABILIZO-ME A CUMPRI-LAS. ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="20" y="223" width="524" height="40" uuid="b48eef4d-86b7-4342-b5a3-dd971a145a4d"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["EU, "+ $F{nomeTutor}.toUpperCase()+", RESPONSÁVEL POR "+$F{nomeCrianca}.toUpperCase()+", MATRICULADO(A) NO __________________________."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="20" y="150" width="524" height="48" uuid="847a8660-2fc5-408d-8dc3-a2dcc7938c61"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TERMO DE RESPONSABILIDADE
+PELO PRESENTE TERMO DE RESPONSABILIDADE]]></text>
+			</staticText>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="20" y="0" width="524" height="150" uuid="453d254c-a2ea-4b8a-8f98-4df3f4ac3bb6"/>
+				<imageExpression><![CDATA["images/logo_termo.png"]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+</jasperReport>

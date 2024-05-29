@@ -40,6 +40,8 @@ import java.util.*;
 public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, MatriculaRepository>
         implements MatriculaService {
 
+    private final ControlePeriodoMatriculaServiceImpl controlePeriodoMatriculaServiceImpl;
+
     public MatriculaServiceImpl(DocumentoMatriculaServiceImpl documentoMatriculaService,
                                 InformacoesMatriculaService informacoesMatriculaService,
                                 ResponsavelServiceImpl responsavelService,
@@ -48,7 +50,8 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
                                 MatriculaMapper mapper,
                                 EnderecoServiceImpl enderecoService,
                                 MatriculaRepository matriculaRepository,
-                                NecessidadeEspecialServiceImpl necessidadeEspecialServiceImpl) {
+                                NecessidadeEspecialServiceImpl necessidadeEspecialServiceImpl,
+                                ControlePeriodoMatriculaServiceImpl controlePeriodoMatriculaServiceImpl) {
         this.documentoMatriculaService = documentoMatriculaService;
         this.informacoesMatriculaService = informacoesMatriculaService;
         this.responsavelService = responsavelService;
@@ -58,6 +61,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         this.enderecoService = enderecoService;
         this.matriculaRepository = matriculaRepository;
         this.necessidadeEspecialServiceImpl = necessidadeEspecialServiceImpl;
+        this.controlePeriodoMatriculaServiceImpl = controlePeriodoMatriculaServiceImpl;
     }
 
     private final DocumentoMatriculaServiceImpl documentoMatriculaService;
@@ -348,16 +352,12 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     public Matricula atualizaDocumentoMatricula(Long idMatricula, TipoDocumento tipoDocumento, MultipartFile multipartFile) {
 
-        try {
-            if (Objects.nonNull(repository.findById(idMatricula).orElse(null))){
-                documentoMatriculaService.atualizaContraChequeMatricula(idMatricula, tipoDocumento, multipartFile);
-                return repository.findById(idMatricula).get();
-            }
-            throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO_MATRICULA_NAO_ENCONTRADA);
 
-        }catch (Exception e){
-            throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO_MATRICULA_NAO_ENCONTRADA);
+        if (Objects.nonNull(repository.findById(idMatricula).orElse(null))){
+            documentoMatriculaService.atualizaDocumentoMatricula(idMatricula, tipoDocumento, multipartFile);
+            return repository.findById(idMatricula).get();
         }
+        throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO_MATRICULA_NAO_ENCONTRADA);
 
     }
 
@@ -478,15 +478,15 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         }
     }
 
-    private List<DadosTermoDTO> preencheDTO(Long idMatricula, String cpfTutor){
+    private List<DadosTermoDTO> preencheDTO(Long idMatricula, String nomeTutor){
         List<DadosTermoDTO> dadosTermo = new ArrayList<>();
         DadosTermoDTO dados = new DadosTermoDTO();
         Matricula matricula = obterPeloId(idMatricula);
         MatriculaDTO matriculaDTO = mapper.toDTO(matricula);
         if(!matriculaDTO.getTutorDTOList().isEmpty()){
             matriculaDTO.getTutorDTOList().forEach(tutorDTO -> {
-                if(tutorDTO.getCpf().equals(cpfTutor)){
-                    dados.setNomeTutor(tutorDTO.getNomeTutor());
+                if(tutorDTO.getNomeTutor().equals(nomeTutor)){
+                    dados.setNomeTutor(nomeTutor);
                     dados.setTelefoneTutor(tutorDTO.getPessoaTelefone());
                 }
             });
@@ -540,10 +540,6 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             ) {
                 throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
             }
-        }else{
-            if(!documentosNaoObrigatoriosNaoCasados.contains(tipoDocumento)){
-                throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
-            }
         }
 
         if(Objects.nonNull(informacoesMatricula)){
@@ -557,7 +553,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             if (tipoDocumento.equals(TipoDocumento.ENCAMINHAMENTO_CRAS) && informacoesMatricula.getPossuiEcaminhamentoCRAS()){
                 throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
             }
-        }else throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO_MATRICULA_NAO_ENCONTRADA);
+        }else throw new BusinessException(SistemaMessageCode.ERRO_INFORMACOES_MATRICULA_NAO_INFORMADA);
     }
 
 
@@ -597,5 +593,12 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     public Long quantidadeTotalMatriculas() {
         return repository.count();
+    }
+
+    public void validaPeriodoMatricula() {
+        if (!controlePeriodoMatriculaServiceImpl.obterPeloId(1L)
+                .getAceitandoCadastroMatricula()){
+            throw  new BusinessException(SistemaMessageCode.ERRO_PERIODO_MATRICULA_NAO_ACEITANDO);
+        };
     }
 }

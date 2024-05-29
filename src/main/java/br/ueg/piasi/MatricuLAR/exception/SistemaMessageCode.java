@@ -11,6 +11,7 @@ public enum SistemaMessageCode implements MessageCode {
         151 - 200 mensagens para turma
         201 - 300 mensagens para matricula
         301 - 400 mensagens para termo
+        401 - 450 mensagens para periodo matricula
     */
 
     //USUARIO
@@ -28,6 +29,7 @@ public enum SistemaMessageCode implements MessageCode {
     ERRO_DOCUMENTO_NAO_ACEITO("MSG-104", 400 ),
     ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO("MSG-105",400 ),
     ERRO_QUANTIDADE_DOCUMENTO_OBRIGATORIO("MSG-106", 400 ),
+    ERRO_INFORMACOES_MATRICULA_NAO_INFORMADA("MSG-107",400),
 
     //TURMA
     ERRO_SEM_ALUNOS_TURMA("MSG-151", 404),
@@ -47,7 +49,13 @@ public enum SistemaMessageCode implements MessageCode {
     ERRO_MATRICULA_STATUS_NAO_ATIVA("MSG-209", 400 ),
 
     //TERMO
-    ERRO_GERAR_TERMO("MSG-301", 404);
+    ERRO_GERAR_TERMO("MSG-301", 404),
+
+    //CONTROLE PERIODO MATRICULA
+    ERRO_CONTROLE_PERIODO_INCLUIR("MSG-401", 400),
+    ERRO_CONTROLE_PERIODO_ALTERAR("MSG-402", 400),
+    ERRO_CONTROLE_PERIODO_EXCLUIR("MSG-403", 400),
+    ERRO_PERIODO_MATRICULA_NAO_ACEITANDO("MSG-404",400 );
 
     private final String code;
     private final Integer status;

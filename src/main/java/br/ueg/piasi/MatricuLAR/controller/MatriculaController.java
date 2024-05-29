@@ -64,6 +64,7 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<MatriculaDTO> incluirComDocumentos(@RequestPart("dto") MatriculaDTO dto,
                                                  @RequestPart("files") List<MultipartFile> files) {
+        service.validaPeriodoMatricula();
         Matricula matricula = mapper.toModelo(dto);
         return ResponseEntity.ok(
                 mapper.toDTO(
@@ -451,9 +452,9 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                     )}
             )}
     )
-    public ResponseEntity<MatriculaDTO> gerarTermo(@PathVariable(name = "id") Long id, @RequestParam(name = "cpfTutor")String cpfTutor) throws JRException, IOException {
+    public ResponseEntity<MatriculaDTO> gerarTermo(@PathVariable(name = "id") Long id, @RequestParam(name = "nomeTutor")String nomeTutor) throws JRException, IOException {
         return ResponseEntity.ok(
-                mapper.toDTO(service.geraTermo(id, cpfTutor)));
+                mapper.toDTO(service.geraTermo(id, nomeTutor)));
     }
 
 
