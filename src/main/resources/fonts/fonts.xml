@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fontFamilies>
+    <fontFamily name="sansserif-bold">
+        <bold><![CDATA[fonts/sansserif-bold/sansserif-bold.ttf]]></bold>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+        <exportFonts/>
+    </fontFamily>
+    <fontFamily name="open sans">
+        <normal><![CDATA[fonts/open-sans/open-sans.regular.ttf]]></normal>
+        <bold><![CDATA[fonts/open-sans/open-sans.semibold.ttf]]></bold>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+        <exportFonts/>
+    </fontFamily>
+</fontFamilies>

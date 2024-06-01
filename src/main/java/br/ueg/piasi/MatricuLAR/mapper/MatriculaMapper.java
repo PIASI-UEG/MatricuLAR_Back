@@ -2,6 +2,7 @@ package br.ueg.piasi.MatricuLAR.mapper;
 
 import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
 import br.ueg.piasi.MatricuLAR.dto.MatriculaListagemDTO;
+import br.ueg.piasi.MatricuLAR.dto.MatriculaRelatorioDTO;
 import br.ueg.piasi.MatricuLAR.dto.MatriculaVisualizarDTO;
 import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import br.ueg.piasi.MatricuLAR.model.DocumentoMatricula;
@@ -55,6 +56,15 @@ public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
     @Mapping(target = "necessidadesEspeciais", source = "necessidades")
     @Mapping(target = "advertencias", source = "advertencias")
     MatriculaVisualizarDTO toMatriculaVisualizarDTO(Matricula matricula);
+
+    @Mapping(target = "nomeAluno", source = "pessoa.nome")
+    @Mapping(target = "cpfAluno", source = "pessoa.cpf")
+    @Mapping(target = "nascimento", source = "nascimento")
+    @Mapping(target = "statusAluno",  expression = "java(getStatusMatriculaDescricao(matricula.getStatus()))")
+    @Mapping(target = "tutores", source = "tutorList")
+    @Mapping(target = "caminhoImagem", expression = "java(getCaminhoImagemAluno(matricula.getDocumentoMatricula()))")
+    @Mapping(target = "necessidadesEspeciais", source = "necessidades")
+    MatriculaRelatorioDTO toMatriculaRelatorioDTO(Matricula matricula);
 
     default String getStatusMatriculaDescricao(StatusMatricula statusMatricula){
         return statusMatricula.getDescricao();

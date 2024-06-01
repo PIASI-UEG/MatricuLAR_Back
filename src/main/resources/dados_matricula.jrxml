@@ -10,99 +10,185 @@
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NO_DATA_ADAPTER"/>
+	<subDataset name="advertencias" uuid="5649a59d-9e17-4880-84c9-1cda69739cc7">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="titulo" class="java.lang.String"/>
+		<field name="descricao" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="tutores" uuid="66254742-80b5-490f-b32c-378f274f75ec">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="nomeTutor" class="java.lang.String"/>
+		<field name="pessoaTelefone" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="responsaveis" uuid="c980ff01-8ee9-42c2-a8d6-14c7ef08e32d">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="nomeResponsavel" class="java.lang.String"/>
+		<field name="cpfResponsavel" class="java.lang.String"/>
+	</subDataset>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="nomeTutor" class="java.lang.String"/>
-	<field name="nomeCrianca" class="java.lang.String"/>
+	<field name="nomeAluno" class="java.lang.String"/>
+	<field name="cpfAluno" class="java.lang.String"/>
+	<field name="statusAluno" class="java.lang.String"/>
+	<field name="tutores" class="java.util.List"/>
+	<field name="responsaveis" class="java.util.List"/>
+	<field name="caminhoImagem" class="java.lang.String"/>
+	<field name="necessidadesEspeciais" class="java.util.List"/>
+	<field name="advertencias" class="java.util.List"/>
+	<field name="nascimento" class="java.time.LocalDate"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="802" splitType="Stretch">
-			<staticText>
-				<reportElement x="20" y="762" width="524" height="40" uuid="4acb3077-cadd-4a8d-9146-68c9fddaf3b1"/>
-				<textElement textAlignment="Center">
-					<font size="10"/>
-				</textElement>
-				<text><![CDATA[ ________________________________________
-ASSINATURA DO PAI/MÃE/RESPONSÁVEL]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="20" y="743" width="180" height="20" uuid="159333df-f8b0-47be-b1da-df5ef2d3d2de"/>
-				<textElement>
-					<font size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Anápolis, "+new SimpleDateFormat("dd MMMM yyyy").format(new java.util.Date())]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="20" y="263" width="524" height="30" forecolor="#FF0905" uuid="4adb01b4-d311-4127-b31d-45ab3ca8ebca"/>
-				<textElement>
-					<font size="10"/>
-				</textElement>
-				<text><![CDATA[TOMO CONHECIMENTO DAS NORMAS ABAIXO ESTABELECIDAS:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="20" y="293" width="524" height="290" uuid="60b6db46-b02a-45d2-a543-9fb5f4ebafda"/>
-				<textElement>
-					<font size="10"/>
-				</textElement>
-				<text><![CDATA[* HORÁRIO DA CHEGADA DAS CRIANÇAS SERÁ DAS 07:00 ÀS 7:30, NÃO SERÁ  PERMITIDA A ENTRADA APÓS ESSE HORÁRIO;
-
-* HORARIO DE SAÍDA DAS CRIANÇAS SERÁ DAS 16:30 ÀS 17:00 , PORTANTO, SEJA PONTUAL. CASO OCORRER ALGUM IMPREVISTO, AVISAR NA SECRETARIA 3099-6423; 
-
-* NÃO SERÁ PERMITIDA A ENTRADA DAS CRIANÇAS SEM AGENDA; 
-
-* A ENTREGA DA CRIANÇA A TERCEIROS SÓ SERÁ PERMITIDA MEDIANTE AUTORIZAÇÃO DOS PAIS OU 
-RESPONSÁVEIS;
-
-* É RESPONSABILIDADE DOS PAIS OU RESPONSÁVEIS, TRAZER A MOCHILA COM 3 (TRÊS) PECAS DE ROUPAS, SANDALIA TIPO HAVAIANAS, TOALHAS (DE BANHO) OU (DE MÃO) COM NOME BORDADO; 
-
-* A TOALHA SERÁ DEVOLVIDA SEMPRE QUE NECESSARIO, PARA TRAZER-LAS LIMPAS PARA USO DA ASSOCIAÇÃO; 
-
-* É DE RESPONSABILIDADE DOS PAIS OU RESPONSÁVEIS TRAZEREM SEUS FILHOS À INSTITUÇÃO, EM BOAS CONDIÇÕES DE HIGIENE E SAÚDE, UNHAS A PARADAS, ORELHAS LIMPAS, CABELOS LAVADOS, PENTEADOS E SEM PIOLHOS, EM BOM ESTADO DE SAÚDE, UNIFORME LIMPO;
-
-* É RESPONSABILIDADE DOS PAIS OU RESPONSÁVEIS, TRAZER A MOCHILA COM 3 (TRÊS) PECAS DE ROUPAS, SANDALIA TIPO HAVAIANAS, TOALHAS (DE BANHO) OU (DE MÃO) COM NOME BORDADO;
-
-]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="20" y="583" width="524" height="20" forecolor="#FA0E0A" uuid="bed46da3-6363-47a9-b0b9-53851d5f3542"/>
-				<textElement>
-					<font size="10"/>
-				</textElement>
-				<text><![CDATA[(BERÇÁRIO TOALHA DE BANHO BORDADO)]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="20" y="603" width="524" height="140" uuid="df4e518c-4dbd-4851-a93d-f885374d9b72"/>
-				<textElement>
-					<font size="10"/>
-				</textElement>
-				<text><![CDATA[* É DE RESPONSABILIDADE DOS PAIS OU RESPONSÁVEIS COMUNICAR À INSTITUIÇÃO O MOTIVO DA AUSÊNCIA DA CRIANÇA APÓS TRÊS DIAS CONSECUTIVOS, ASSIM SENDO, A MESMA SERÁ DESLIGADA AUTOMATICAMENTE DA INTISTUIÇÃO;
- 
-O NÃO CUMPRIMENTO DAS NORMAS ESTABELECIDAS NO PRESENTE TERMO DE RESPONSABILIDADE IMPLICARÁ NA ADVERTÊNCIA, POR ESCRITO AOS PAIS OU RESPONSÁVEIS. 
-
-POR ESTAR CIENTE DAS NORMAS ACIMA ESTABELECIDAS, COMPROMETO-ME E RESPONSABILIZO-ME A CUMPRI-LAS. ]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="20" y="223" width="524" height="40" uuid="b48eef4d-86b7-4342-b5a3-dd971a145a4d"/>
-				<textElement>
-					<font size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA["EU, "+ $F{nomeTutor}.toUpperCase()+", RESPONSÁVEL POR "+$F{nomeCrianca}.toUpperCase()+", MATRICULADO(A) NO __________________________."]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="20" y="150" width="524" height="48" uuid="847a8660-2fc5-408d-8dc3-a2dcc7938c61"/>
-				<textElement textAlignment="Center">
-					<font size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[TERMO DE RESPONSABILIDADE
-PELO PRESENTE TERMO DE RESPONSABILIDADE]]></text>
-			</staticText>
+		<band height="207" splitType="Stretch">
 			<image hAlign="Center" vAlign="Middle">
 				<reportElement x="20" y="0" width="524" height="150" uuid="453d254c-a2ea-4b8a-8f98-4df3f4ac3bb6"/>
 				<imageExpression><![CDATA["images/logo_termo.png"]]></imageExpression>
 			</image>
+			<textField>
+				<reportElement x="20" y="170" width="524" height="30" uuid="bf84a944-a138-4955-afbe-59c329c99ae3"/>
+				<textElement textAlignment="Center">
+					<font fontName="open sans" size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomeAluno}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
+	<pageFooter>
+		<band height="55">
+			<textField>
+				<reportElement x="20" y="12" width="270" height="30" uuid="18a90b89-ca33-4ef5-8040-66553913665d"/>
+				<textElement>
+					<font fontName="open sans" size="12" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Gerado no dia "+ new SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="367">
+			<componentElement>
+				<reportElement x="40" y="240" width="330" height="23" isRemoveLineWhenBlank="true" uuid="9a1f6d30-868d-4660-bdf7-3c58457e68aa">
+					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="tutores" uuid="4a1b7060-d37c-4f39-9080-b57099bbf19e">
+						<datasetParameter name="REPORT_DATA_SOURCE">
+							<datasetParameterExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{tutores})]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:listContents height="23" width="330">
+						<textField>
+							<reportElement x="0" y="3" width="50" height="20" uuid="4d3687e6-f84c-4419-99af-116f9104a66a"/>
+							<textElement markup="styled">
+								<font fontName="open sans" size="14" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA["Nome: "]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="50" y="3" width="103" height="20" uuid="cfbd1964-c82e-4c15-b9e0-d47ad964fd42"/>
+							<textElement>
+								<font fontName="open sans" size="14"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{nomeTutor}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="153" y="3" width="77" height="20" uuid="e60f1ac8-1fc3-4f2c-800a-b9f086835fd0">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							</reportElement>
+							<textElement markup="styled">
+								<font fontName="open sans" size="14" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA["telefone: "]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="230" y="3" width="100" height="20" uuid="b26db475-e556-4767-a858-dfdb2db019f4"/>
+							<textElement>
+								<font fontName="open sans" size="14"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{pessoaTelefone}]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<componentElement>
+				<reportElement x="40" y="340" width="330" height="23" isRemoveLineWhenBlank="true" uuid="9a1f6d30-868d-4660-bdf7-3c58457e68aa">
+					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="responsaveis" uuid="4a1b7060-d37c-4f39-9080-b57099bbf19e">
+						<datasetParameter name="REPORT_DATA_SOURCE">
+							<datasetParameterExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{responsaveis})]]></datasetParameterExpression>
+						</datasetParameter>
+					</datasetRun>
+					<jr:listContents height="23" width="330">
+						<textField>
+							<reportElement x="0" y="3" width="50" height="20" uuid="4d3687e6-f84c-4419-99af-116f9104a66a"/>
+							<textElement markup="styled">
+								<font fontName="open sans" size="14" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA["Nome: "]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="50" y="3" width="103" height="20" uuid="cfbd1964-c82e-4c15-b9e0-d47ad964fd42"/>
+							<textElement>
+								<font fontName="open sans" size="14"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{nomeResponsavel}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="153" y="3" width="37" height="20" uuid="e60f1ac8-1fc3-4f2c-800a-b9f086835fd0">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							</reportElement>
+							<textElement markup="styled">
+								<font fontName="open sans" size="14" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA["CPF: "]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="190" y="3" width="140" height="20" uuid="b26db475-e556-4767-a858-dfdb2db019f4"/>
+							<textElement>
+								<font fontName="open sans" size="14"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{cpfResponsavel}]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<textField>
+				<reportElement x="259" y="30" width="285" height="180" uuid="1172f6dd-e0d6-4578-bdc7-4c497d1d0ab0"/>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font fontName="open sans" size="14"/>
+					<paragraph lineSpacing="Proportional" lineSpacingSize="2.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style isBold='true'>Status da matrícula: </style>"+$F{statusAluno}+"\n<style isBold='true'>Nome do aluno: </style>"+$F{nomeAluno}+"\n<style isBold='true'>CPF: </style>"+$F{cpfAluno}+"\n<style isBold='true'>Data de nascimento: </style>"+$F{nascimento}.format( java.time.format.DateTimeFormatter.ofPattern("dd/MM/uuuu"))+"\n<style isBold='true'>Número de advertências: </style>"+$F{advertencias}.size()]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="40" y="30" width="180" height="160" uuid="5ee23325-85af-4838-8f09-9df9760e6bff"/>
+				<imageExpression><![CDATA[$F{caminhoImagem}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="40" y="210" width="60" height="30" uuid="1e2f94ba-0e34-4927-af00-4692f8baf145"/>
+				<textElement>
+					<font fontName="open sans" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tutores]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="40" y="310" width="100" height="30" uuid="55198673-8d74-4211-9674-58cabcb441aa"/>
+				<textElement>
+					<font fontName="open sans" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Responsáveis]]></text>
+			</staticText>
+		</band>
+	</summary>
 </jasperReport>

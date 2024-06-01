@@ -1,9 +1,7 @@
 package br.ueg.piasi.MatricuLAR.service.impl;
 
 
-import br.ueg.piasi.MatricuLAR.dto.DadosTermoDTO;
-import br.ueg.piasi.MatricuLAR.dto.DocumentoMatriculaDTO;
-import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
+import br.ueg.piasi.MatricuLAR.dto.*;
 import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
@@ -70,9 +68,6 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     private final NecessidadeEspecialServiceImpl necessidadeEspecialServiceImpl;
     private final EnderecoServiceImpl enderecoService;
 
-    private String JASPER_TERMO = "termo.jrxml";
-    private String JASPER_TERMO_AUTORIZACAO = "uso_de_imagem.jrxml";
-    
     private final Path root = Paths.get("docs");
     private InformacoesMatricula informacoesMatricula;
     private  Set<Responsavel> responsavelSet;
@@ -396,7 +391,8 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     }
 
     public Matricula geraTermo(Long idMatricula, String cpfTutor) throws JRException, IOException {
-        try (InputStream termo = this.getClass().getClassLoader().getResourceAsStream(JASPER_TERMO)) {
+        String jasperTermo = "termo.jrxml";
+        try (InputStream termo = this.getClass().getClassLoader().getResourceAsStream(jasperTermo)) {
             if (!Files.exists(root)) {
                 Files.createDirectories(root);
             }
@@ -406,6 +402,8 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             Map<String, Object> parametros = new HashMap<String, Object>();
 
             JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(listDadosTermo);
+
+            System.out.println(dataSource.getData());
 
             String cpfCrianca = listDadosTermo.get(0).getCpfCrianca();
             Path caminhoTermo = this.root.resolve("Termo-Responsabilidade-"+ cpfCrianca +".pdf");
@@ -434,6 +432,40 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         }
     }
 
+    public Matricula geraPdfDadosMatricula(Long idMatricula) throws JRException, IOException {
+        String jasperTermo = "dados_matricula.jrxml";
+        try (InputStream pdf = this.getClass().getClassLoader().getResourceAsStream(jasperTermo)) {
+            if (!Files.exists(root)) {
+                Files.createDirectories(root);
+            }
+            List<MatriculaRelatorioDTO> listDados = new ArrayList<>();
+            MatriculaRelatorioDTO matricula = mapper.toMatriculaRelatorioDTO(obterPeloId(idMatricula));
+
+            listDados.add(matricula);
+            //            System.out.println(listDados.get(0));
+
+            Map<String, Object> parametros = new HashMap<String, Object>();
+
+            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(listDados);
+            System.out.println(dataSource.getData());
+
+            Path caminhoTermo = this.root.resolve(idMatricula+"_Dados-Matricula.pdf");
+
+            JasperReport report = JasperCompileManager.compileReport(pdf);
+
+            JasperPrint print = JasperFillManager.fillReport(report, parametros, dataSource);
+
+            //CAMINHO ONDE SERÁ SALVO O PDF (por enquanto deixando na pasta fotos)
+            JasperExportManager.exportReportToPdfFile(print, caminhoTermo.toString());
+            System.out.println("Gerando pdf");
+            return obterPeloId(idMatricula);
+
+        } catch (Exception e) {
+            System.out.println(e);
+            throw e;
+        }
+    }
+
     public void concatenaTermos(String caminhoTermo1, String caminhoTermo2, String cpfCrianca) throws IOException {
         PdfReader termo1 = new PdfReader(caminhoTermo1);
         PdfReader termo2 = new PdfReader(caminhoTermo2);
@@ -446,11 +478,11 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     }
 
     public String geraTermoAutorizacao(Long idMatricula, String cpfTutor) throws JRException, IOException {
-        try (InputStream termo = this.getClass().getClassLoader().getResourceAsStream(JASPER_TERMO_AUTORIZACAO)) {
+        String jasperTermo = "uso_de_imagem.jrxml";
+        try (InputStream termo = this.getClass().getClassLoader().getResourceAsStream(jasperTermo)) {
             if (!Files.exists(root)) {
                 Files.createDirectories(root);
             }
-            System.out.println("gerando termo");
             List<DadosTermoDTO> listDadosTermo = preencheDTO(idMatricula, cpfTutor);
 
             Map<String, Object> parametros = new HashMap<String, Object>();
@@ -465,7 +497,6 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
             //CAMINHO ONDE SERÁ SALVO O PDF (por enquanto deixando na pasta fotos)
             JasperExportManager.exportReportToPdfFile(print, caminhoTermo.toString());
-            System.out.println("Gerando pdf");
 
             return caminhoTermo.toString();
         } catch (Exception e) {
