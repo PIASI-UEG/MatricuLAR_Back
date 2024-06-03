@@ -234,9 +234,69 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     }
 
     @Override
-    public Matricula alterar(Matricula entidade, Long id) {
+    public Matricula alterar(Matricula matricula, Long id) {
 
-        return super.alterar(entidade, id);
+        tratarAntesDeAlterar(matricula, id);
+
+         matricula=  super.alterar(matricula, id);
+        tratarDepoisDeAlterar(matricula,id);
+        return repository.findById(matricula.getId()).get();
+    }
+
+    private void tratarDepoisDeAlterar(Matricula matricula, Long id) {
+
+        if(this.informacoesMatricula != null){
+            this.informacoesMatricula.setMatricula(Matricula.builder().id(id).build());
+            this.informacoesMatricula = informacoesMatriculaService.alterar(informacoesMatricula, matricula.getId());
+        }
+
+        salvarResponsaveisAlterar(this.responsavelSet, id);
+
+
+    }
+
+    private void salvarResponsaveisAlterar(Set<Responsavel> responsavelSet, Long idMatricula){
+
+        if (Objects.isNull(responsavelSet)) {
+            throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_SEM_RESPONSAVEL);
+        }
+
+        for (Responsavel responsavel : responsavelSet) {
+            responsavel.setMatricula(Matricula.builder().id(idMatricula).build());
+            if(responsavel.getId() != null){
+                responsavelService.alterar(responsavel, responsavel.getId());
+            }else{
+               responsavelService.incluir(responsavel);
+            }
+        }
+    }
+
+    private void tratarAntesDeAlterar(Matricula matricula, Long id) {
+        matricula.setTutorList(salvarTutores(matricula.getTutorList()));
+        validarIdadeResponsaveis(matricula);
+        this.responsavelSet = tratarMatriculaResponsaveis(matricula);
+        validarTodosCpf(matricula);
+        validarIdadeCrianca(matricula);
+        matricula.setDocumentoMatricula(new HashSet<>());
+        matricula.setAdvertencias(new HashSet<>());
+
+        if(Objects.nonNull(matricula.getInformacoesMatricula())){
+            this.informacoesMatricula = matricula.getInformacoesMatricula();
+            matricula.setInformacoesMatricula(null);
+        }
+
+        if(Objects.isNull(matricula.getEndereco().getId())){
+            Endereco endereco = enderecoService.incluir(matricula.getEndereco());
+            matricula.setEndereco(endereco);
+        }
+
+        if(Objects.nonNull(matricula.getNecessidades())){
+            List<NecessidadeEspecial> necessidadeEspecials = new ArrayList<>();
+            for(NecessidadeEspecial especial : matricula.getNecessidades()){
+                necessidadeEspecials.add(necessidadeEspecialServiceImpl.incluir(especial));
+            }
+            matricula.setNecessidades(new HashSet<>(necessidadeEspecials));
+        }
     }
 
     private Set<Responsavel> salvarResponsaveis(Set<Responsavel> responsavelSet, Matricula matricula){
