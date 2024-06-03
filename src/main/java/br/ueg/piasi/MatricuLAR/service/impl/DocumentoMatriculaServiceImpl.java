@@ -155,7 +155,7 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
                         .orElse(null);
 
         if (Objects.isNull(documentoMatricula)){
-            throw new BusinessException(ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO);
+           uploadDocumentos(idMatricula, tipoDocumento, multipartFile);
         }
 
         try{
