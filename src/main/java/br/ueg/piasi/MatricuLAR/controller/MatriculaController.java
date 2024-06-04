@@ -64,6 +64,7 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<MatriculaDTO> incluirComDocumentos(@RequestPart("dto") MatriculaDTO dto,
                                                  @RequestPart("files") List<MultipartFile> files) {
+        service.validaPeriodoMatricula();
         Matricula matricula = mapper.toModelo(dto);
         return ResponseEntity.ok(
                 mapper.toDTO(
@@ -566,4 +567,5 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
     private ResponseEntity<Long> quantidadeMatriculasPorStatus(@RequestParam StatusMatricula statusMatricula){
         return ResponseEntity.ok(service.quantidadeMatriculasPorStatus(statusMatricula));
     }
+
 }
