@@ -503,34 +503,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
                 Files.createDirectories(root);
             }
             List<MatriculaRelatorioDTO> listDados = new ArrayList<>();
-            List<AdvertenciaDTO> advertencias = new ArrayList<>();
-            List<NecessidadeEspecialDTO> necessidades = new ArrayList<>();
-            advertencias.add(AdvertenciaDTO.builder()
-                            .titulo("teste")
-                            .numero(1l)
-                            .descricao("Bateu no colega")
-                    .build());
-            advertencias.add(AdvertenciaDTO.builder()
-                    .titulo("teste dois")
-                    .numero(2l)
-                    .descricao("Dormiu na sala")
-                    .build());
-            TurmaDTO turma = new TurmaDTO();
-            turma.setId(1l);
-            turma.setTitulo("Turma de teste");
-            necessidades.add(NecessidadeEspecialDTO.builder()
-                            .id(1l)
-                            .titulo("Alergia à amendoim")
-                    .build());
-            necessidades.add(NecessidadeEspecialDTO.builder()
-                    .id(2l)
-                    .titulo("TDAH")
-                    .build());
             MatriculaRelatorioDTO matricula = mapper.toMatriculaRelatorioDTO(obterPeloId(idMatricula));
-            matricula.setCaminhoImagem("foto-exemplo.jpg");
-            matricula.setAdvertencias(advertencias);
-            matricula.setTurma(turma);
-            matricula.setNecessidadesEspeciais(necessidades);
 
             listDados.add(matricula);
             //            System.out.println(listDados.get(0));
