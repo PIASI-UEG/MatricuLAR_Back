@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MatriculaRelatorioDTO {
+    private Long id;
     private String nomeAluno;
     private String cpfAluno;
     private LocalDate nascimento;
@@ -23,4 +24,6 @@ public class MatriculaRelatorioDTO {
     private String caminhoImagem;
     private List<NecessidadeEspecialDTO> necessidadesEspeciais;
     private List<AdvertenciaDTO> advertencias;
+    private String endereco;
+    private TurmaDTO turma;
 }

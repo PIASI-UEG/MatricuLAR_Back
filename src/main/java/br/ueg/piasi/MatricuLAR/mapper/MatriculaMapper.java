@@ -5,10 +5,7 @@ import br.ueg.piasi.MatricuLAR.dto.MatriculaListagemDTO;
 import br.ueg.piasi.MatricuLAR.dto.MatriculaRelatorioDTO;
 import br.ueg.piasi.MatricuLAR.dto.MatriculaVisualizarDTO;
 import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
-import br.ueg.piasi.MatricuLAR.model.DocumentoMatricula;
-import br.ueg.piasi.MatricuLAR.model.Matricula;
-import br.ueg.piasi.MatricuLAR.model.Pessoa;
-import br.ueg.piasi.MatricuLAR.model.Responsavel;
+import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.prog.webi.api.mapper.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -64,10 +61,20 @@ public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
     @Mapping(target = "tutores", source = "tutorList")
     @Mapping(target = "caminhoImagem", expression = "java(getCaminhoImagemAluno(matricula.getDocumentoMatricula()))")
     @Mapping(target = "necessidadesEspeciais", source = "necessidades")
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "endereco", expression = "java(getEndereco(matricula.getEndereco()))")
+    @Mapping(target = "turma", source = "turma")
     MatriculaRelatorioDTO toMatriculaRelatorioDTO(Matricula matricula);
 
     default String getStatusMatriculaDescricao(StatusMatricula statusMatricula){
         return statusMatricula.getDescricao();
+    }
+
+    default String getEndereco(Endereco endereco){
+        return endereco.getCidade()+", "
+                +endereco.getBairro()+", "
+                +endereco.getLogradouro()+", "
+                +endereco.getComplemento();
     }
 
     default List<String> getNomeResponsaveisETutores(Set<Responsavel> responsaveis){
