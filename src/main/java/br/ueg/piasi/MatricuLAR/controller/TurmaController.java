@@ -52,7 +52,7 @@ public class TurmaController
                     )}
             )}
     )
-    @PostMapping("/adicionaAlunos")
+    @PostMapping("/adiciona-alunos")
     public ResponseEntity<TurmaDTO> adicionaAlunos(@RequestParam("idTurma") Long idTurma, @RequestBody() List<Long> idAlunos) {
 
         return ResponseEntity.ok(
@@ -89,7 +89,7 @@ public class TurmaController
                     )}
             )}
     )
-    @PostMapping("/adicionaUmAluno")
+    @PostMapping("/adiciona-um-aluno")
     public ResponseEntity<TurmaDTO> adicionaUmAluno(@RequestParam("idTurma") Long idTurma, @RequestParam("idAluno") Long idAlunos) {
 
         return ResponseEntity.ok(

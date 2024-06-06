@@ -59,7 +59,7 @@ public class TurmaServiceImpl extends BaseCrudService<Turma, Long, TurmaReposito
         Turma turma = repository.findById(idTurma).orElseThrow(() ->
                 new BusinessException(SistemaMessageCode.ERRO_TURMA_NAO_ENCONTRADA, idTurma));
         if(aluno != null && aluno.getStatus().equals(StatusMatricula.ATIVO)){
-            if(turma.getAlunos().contains(aluno)){
+            if(!turma.getAlunos().contains(aluno)){
                 matriculaService.addTurmaPorNroMatricula(idAluno, turma);
             }
             else {

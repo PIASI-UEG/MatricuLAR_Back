@@ -27,4 +27,16 @@ import java.util.List;
 public class AdvertenciaController extends
         CrudController<Advertencia, AdvertenciaDTO, PkAdvertencia, AdvertenciaMapper, AdvertenciaServiceImpl> {
 
+    @GetMapping("/obter-advertencia/{id-matricula}/{numero-advertencia}")
+    public ResponseEntity<AdvertenciaDTO> obterAdvertencia(@PathVariable("id-matricula") Long idMatricula,
+                                                           @PathVariable("numero-advertencia") Long nroAdvertencia) {
+        return super.obterPorId(new PkAdvertencia(idMatricula, nroAdvertencia));
+    }
+
+    @PutMapping("/alterar-advertencia/{id-matricula}/{numero-advertencia}")
+    public ResponseEntity<AdvertenciaDTO> alterarAdvertencia(@PathVariable("id-matricula") Long idMatricula,
+                                                           @PathVariable("numero-advertencia") Long nroAdvertencia,
+                                                             @RequestBody AdvertenciaDTO advertenciaDTO) {
+        return super.alterar(advertenciaDTO,new PkAdvertencia(idMatricula, nroAdvertencia));
+    }
 }

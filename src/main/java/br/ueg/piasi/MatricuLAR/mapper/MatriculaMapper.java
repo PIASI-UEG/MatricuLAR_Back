@@ -12,12 +12,13 @@ import br.ueg.prog.webi.api.mapper.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 @Mapper(componentModel = "spring", uses = {ResponsavelMapperImpl.class, NecessidadeEspecialMapperImpl.class,
-        TutorMapperImpl.class, DocumentoMatriculaMapperImpl.class, EnderecoMapperImpl.class})
+        TutorMapperImpl.class, DocumentoMatriculaMapperImpl.class, EnderecoMapperImpl.class, InformacoesMatriculaMapperImpl.class})
 public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
 
     @Mapping(source = "endereco", target = "endereco")
@@ -86,6 +87,7 @@ public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
                 .filter(Responsavel::getTutor)
                 .map(Responsavel::getPessoa)
                 .map(Pessoa::getNome)
+                .sorted(Collections.reverseOrder())
                 .toList();
     }
 

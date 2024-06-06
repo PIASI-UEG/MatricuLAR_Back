@@ -637,7 +637,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
                         new BusinessException(SistemaMessageCode.ERRO_MATRICULA_NAO_ENCONTRADA, idAluno));
         if(Objects.nonNull(matricula.getTurma()) && matricula.getTurma().getId().equals(turma.getId())){
             throw new BusinessException(SistemaMessageCode.ERRO_ALUNO_JA_ESTA_NA_TURMA,
-                    matricula.getPessoa().getNome(), turma.getTitulo());
+                    matricula.getPessoa().getNome());
         }
         if(Objects.nonNull(matricula.getStatus()) && !matricula.getStatus().equals(StatusMatricula.ATIVO)){
             throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_NAO_ATIVA_PARA_TURMA,
