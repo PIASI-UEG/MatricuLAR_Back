@@ -6,6 +6,7 @@ import br.ueg.piasi.MatricuLAR.enums.Turno;
 import br.ueg.piasi.MatricuLAR.enums.Vinculo;
 import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.repository.ControlePeriodoMatriculaRepository;
+import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
 import br.ueg.piasi.MatricuLAR.service.impl.*;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.boot.ApplicationArguments;
@@ -34,6 +35,7 @@ public class InitialRunner implements ApplicationRunner {
     private final MatriculaServiceImpl matriculaService;
 
     private final ControlePeriodoMatriculaRepository controlePeriodoMatriculaRepository;
+    private final MatriculaRepository matriculaRepository;
 
     public InitialRunner(UsuarioServiceImpl usuarioService,
                          PessoaServiceImpl pessoaService,
@@ -42,13 +44,14 @@ public class InitialRunner implements ApplicationRunner {
                          TurmaServiceImpl turmaService,
                          TutorServiceImpl tutorService,
                          MatriculaServiceImpl matriculaService,
-                         ControlePeriodoMatriculaRepository controlePeriodoMatriculaService) {
+                         ControlePeriodoMatriculaRepository controlePeriodoMatriculaService, MatriculaRepository matriculaRepository) {
         this.usuarioService = usuarioService;
         this.enderecoService = enderecoService;
         this.necessidadeEspecialService = necessidadeEspecialService;
         this.turmaService = turmaService;
         this.matriculaService = matriculaService;
         this.controlePeriodoMatriculaRepository = controlePeriodoMatriculaService;
+        this.matriculaRepository = matriculaRepository;
     }
 
     @Override
@@ -175,6 +178,9 @@ public class InitialRunner implements ApplicationRunner {
                 .build();
         controlePeriodoMatriculaRepository.save(controle);
 
+        Matricula matricula1 = matriculaRepository.findById(1L).get();
+        matricula1.setStatus(StatusMatricula.ATIVO);
+        matriculaRepository.save(matricula1);
         System.out.println("\n*** Fim da Inserção de dados para testes ***\n");
     }
 
