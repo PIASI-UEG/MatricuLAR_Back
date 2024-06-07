@@ -25,5 +25,5 @@ public class MatriculaRelatorioDTO {
     private List<NecessidadeEspecialDTO> necessidadesEspeciais;
     private List<AdvertenciaDTO> advertencias;
     private String endereco;
-    private TurmaDTO turma;
+    private String turma;
 }

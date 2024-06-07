@@ -62,6 +62,7 @@
 	<field name="nascimento" class="java.time.LocalDate"/>
 	<field name="id" class="java.lang.Long"/>
 	<field name="endereco" class="java.lang.String"/>
+	<field name="turma" class="java.lang.String"/>
 	<title>
 		<band height="665">
 			<image hAlign="Center" vAlign="Middle">
@@ -85,7 +86,7 @@
 					<font fontName="open sans" size="14"/>
 					<paragraph lineSpacing="Proportional" lineSpacingSize="2.0"/>
 				</textElement>
-				<textFieldExpression><![CDATA["<style isBold='true'>Status da matrícula: </style>"+$F{statusAluno}+"\n<style isBold='true'>Nome do aluno: </style>"+$F{nomeAluno}+"\n<style isBold='true'>CPF: </style>"+$F{cpfAluno}+"\n<style isBold='true'>Data de nascimento: </style>"+$F{nascimento}.format( java.time.format.DateTimeFormatter.ofPattern("dd/MM/uuuu"))+"\n<style isBold='true'>Número de advertências: </style>"+$F{advertencias}.size()]]></textFieldExpression>
+				<textFieldExpression><![CDATA["<style isBold='true'>Status da matrícula: </style>"+$F{statusAluno}+"\n<style isBold='true'>Nome do aluno: </style>"+$F{nomeAluno}+"\n<style isBold='true'>Turma: </style>"+$F{turma}+"\n<style isBold='true'>CPF: </style>"+$F{cpfAluno}+"\n<style isBold='true'>Data de nascimento: </style>"+$F{nascimento}.format( java.time.format.DateTimeFormatter.ofPattern("dd/MM/uuuu"))+"\n<style isBold='true'>Número de advertências: </style>"+$F{advertencias}.size()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement positionType="Float" x="31" y="415" width="507" height="24" uuid="8d9af5e6-5bb4-487f-9ed2-c3e57f957860"/>

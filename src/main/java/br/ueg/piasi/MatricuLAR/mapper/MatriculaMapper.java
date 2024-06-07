@@ -64,7 +64,7 @@ public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
     @Mapping(target = "necessidadesEspeciais", source = "necessidades")
     @Mapping(target = "id", source = "id")
     @Mapping(target = "endereco", expression = "java(getEndereco(matricula.getEndereco()))")
-    @Mapping(target = "turma", source = "turma")
+    @Mapping(target = "turma", source = "turma.titulo", defaultValue = "Sem turma")
     MatriculaRelatorioDTO toMatriculaRelatorioDTO(Matricula matricula);
 
     default String getStatusMatriculaDescricao(StatusMatricula statusMatricula){
