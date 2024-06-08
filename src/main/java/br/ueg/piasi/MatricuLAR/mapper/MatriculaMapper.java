@@ -10,10 +10,8 @@ import br.ueg.prog.webi.api.mapper.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = {ResponsavelMapperImpl.class, NecessidadeEspecialMapperImpl.class,
         TutorMapperImpl.class, DocumentoMatriculaMapperImpl.class, EnderecoMapperImpl.class, InformacoesMatriculaMapperImpl.class})
@@ -79,10 +77,10 @@ public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
     }
 
     default List<String> getNomeResponsaveisETutores(Set<Responsavel> responsaveis){
-        return responsaveis.stream()
+        return new ArrayList<>(responsaveis.stream()
                 .map(Responsavel::getPessoa)
                 .map(Pessoa::getNome)
-                .toList();
+                .toList());
     }
 
     default List<String> getTelefoneResponsaveis(Set<Responsavel> responsaveis){
@@ -93,19 +91,23 @@ public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
                 .toList();
     }
     default List<String> getNomeResponsaveisSemTutores(Set<Responsavel> responsaveis){
-        return responsaveis.stream()
+        List<String> lista = new ArrayList<>(responsaveis.stream()
                 .filter(responsavel -> !responsavel.getTutor())
                 .map(Responsavel::getPessoa)
                 .map(Pessoa::getNome)
-                .toList();
+                .toList());
+        Collections.reverse(lista);
+        return lista;
     }
     default List<String> getNomeTutores(Set<Responsavel> responsaveis){
-        return responsaveis.stream()
+        List<String> lista = new ArrayList<>(responsaveis.stream()
                 .filter(Responsavel::getTutor)
                 .map(Responsavel::getPessoa)
                 .map(Pessoa::getNome)
                 .sorted(Collections.reverseOrder())
-                .toList();
+                .toList());
+        Collections.reverse(lista);
+        return lista;
     }
 
     default List<String> getTelefoneTutores(Set<Responsavel> responsaveis){
