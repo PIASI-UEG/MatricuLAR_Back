@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class TurmaServiceImpl extends BaseCrudService<Turma, Long, TurmaRepository>
@@ -52,6 +53,18 @@ public class TurmaServiceImpl extends BaseCrudService<Turma, Long, TurmaReposito
 
     public Long quantidadeTotal() {
         return repository.count();
+    }
+
+    @Override
+    public Turma alterar(Turma turma, Long id) {
+        if(Objects.isNull(turma.getAlunos()) || turma.getAlunos().isEmpty()){
+            turma.setAlunos(new HashSet<>());
+            Turma turmaBd = repository.getReferenceById(id);
+            if(Objects.nonNull(turmaBd.getAlunos()) && !turmaBd.getAlunos().isEmpty()){
+                turma.setAlunos(turmaBd.getAlunos());
+            }
+        }
+        return super.alterar(turma, id);
     }
 
     public Turma adicionarAlunoTurma(Long idTurma, Long idAluno) {
