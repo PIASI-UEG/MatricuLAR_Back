@@ -6,6 +6,7 @@ import br.ueg.piasi.MatricuLAR.enums.Turno;
 import br.ueg.piasi.MatricuLAR.enums.Vinculo;
 import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.repository.ControlePeriodoMatriculaRepository;
+import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
 import br.ueg.piasi.MatricuLAR.service.impl.*;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.boot.ApplicationArguments;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +36,9 @@ public class InitialRunner implements ApplicationRunner {
     private final MatriculaServiceImpl matriculaService;
 
     private final ControlePeriodoMatriculaRepository controlePeriodoMatriculaRepository;
+    private final MatriculaRepository matriculaRepository;
+    private final InformacoesMatriculaServiceImpl informacoesMatriculaServiceImpl;
+    private final DocumentoMatriculaServiceImpl documentoMatriculaServiceImpl;
 
     public InitialRunner(UsuarioServiceImpl usuarioService,
                          PessoaServiceImpl pessoaService,
@@ -42,13 +47,16 @@ public class InitialRunner implements ApplicationRunner {
                          TurmaServiceImpl turmaService,
                          TutorServiceImpl tutorService,
                          MatriculaServiceImpl matriculaService,
-                         ControlePeriodoMatriculaRepository controlePeriodoMatriculaService) {
+                         ControlePeriodoMatriculaRepository controlePeriodoMatriculaService, MatriculaRepository matriculaRepository, InformacoesMatriculaServiceImpl informacoesMatriculaServiceImpl, DocumentoMatriculaServiceImpl documentoMatriculaServiceImpl) {
         this.usuarioService = usuarioService;
         this.enderecoService = enderecoService;
         this.necessidadeEspecialService = necessidadeEspecialService;
         this.turmaService = turmaService;
         this.matriculaService = matriculaService;
         this.controlePeriodoMatriculaRepository = controlePeriodoMatriculaService;
+        this.matriculaRepository = matriculaRepository;
+        this.informacoesMatriculaServiceImpl = informacoesMatriculaServiceImpl;
+        this.documentoMatriculaServiceImpl = documentoMatriculaServiceImpl;
     }
 
     @Override
@@ -175,6 +183,38 @@ public class InitialRunner implements ApplicationRunner {
                 .build();
         controlePeriodoMatriculaRepository.save(controle);
 
+        Matricula matricula1 = matriculaRepository.findById(1L).get();
+        matricula1.setStatus(StatusMatricula.ATIVO);
+
+        InformacoesMatricula infoMatricula = InformacoesMatricula.builder()
+                .matricula(matricula1)
+                .frequentouOutraCreche(false)
+                .observacao("Não possui observações")
+                .possuiBeneficiosDoGoverno(false)
+                .possuiEcaminhamentoCRAS(false)
+                .tipoResidencia("proprio")
+                .possuiVeiculoProprio(false)
+                .rendaFamiliar(BigDecimal.valueOf(1200))
+                .build();
+
+        InformacoesMatricula informacoesMatricula = informacoesMatriculaServiceImpl.incluir(infoMatricula);
+        DocumentoMatricula documentoMatricula = DocumentoMatricula.builder()
+                .matricula(matricula1)
+                .aceito(true)
+                .caminhoDocumento("1_FC.jpeg")
+                .idTipoDocumento("FC")
+                .build();
+
+        HashSet<DocumentoMatricula> documentos = new HashSet<>();
+
+        DocumentoMatricula dcMAtricula = documentoMatriculaServiceImpl.incluir(documentoMatricula);
+
+        documentos.add(dcMAtricula);
+
+        matricula1.setInformacoesMatricula(informacoesMatricula);
+        matricula.setDocumentoMatricula(documentos);
+
+        matriculaRepository.save(matricula1);
         System.out.println("\n*** Fim da Inserção de dados para testes ***\n");
     }
 

@@ -457,6 +457,40 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                 mapper.toDTO(service.geraTermo(id, nomeTutor)));
     }
 
+    @PostMapping(path = "/dados/{id}")
+    @Operation(
+            description = "Gera o pdf com os dados da matricula do aluno",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Caminho do termo",
+                    content = {@Content(
+                            mediaType = "application/json"
+                    )}
+            ), @ApiResponse(
+                    responseCode = "400",
+                    description = "Falha ao gerar pdf",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            ), @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            )}
+    )
+    public ResponseEntity<MatriculaDTO> gerarPdfDados(@PathVariable(name = "id") Long id) throws JRException, IOException {
+        return ResponseEntity.ok(
+                mapper.toDTO(service.geraPdfDadosMatricula(id)));
+    }
+
 
 
     @GetMapping("/listar-por-turma")

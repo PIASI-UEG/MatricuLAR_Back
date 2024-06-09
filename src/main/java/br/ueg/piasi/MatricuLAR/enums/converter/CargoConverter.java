@@ -6,6 +6,7 @@ import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
 public class CargoConverter implements AttributeConverter<Cargo,String> {
+
     @Override
     public String convertToDatabaseColumn(Cargo status) {
         return status != null ? status.getId() : null;

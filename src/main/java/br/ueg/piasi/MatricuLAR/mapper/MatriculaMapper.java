@@ -2,22 +2,19 @@ package br.ueg.piasi.MatricuLAR.mapper;
 
 import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
 import br.ueg.piasi.MatricuLAR.dto.MatriculaListagemDTO;
+import br.ueg.piasi.MatricuLAR.dto.MatriculaRelatorioDTO;
 import br.ueg.piasi.MatricuLAR.dto.MatriculaVisualizarDTO;
 import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
-import br.ueg.piasi.MatricuLAR.model.DocumentoMatricula;
-import br.ueg.piasi.MatricuLAR.model.Matricula;
-import br.ueg.piasi.MatricuLAR.model.Pessoa;
-import br.ueg.piasi.MatricuLAR.model.Responsavel;
+import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.prog.webi.api.mapper.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = {ResponsavelMapperImpl.class, NecessidadeEspecialMapperImpl.class,
-        TutorMapperImpl.class, DocumentoMatriculaMapperImpl.class, EnderecoMapperImpl.class})
+        TutorMapperImpl.class, DocumentoMatriculaMapperImpl.class, EnderecoMapperImpl.class, InformacoesMatriculaMapperImpl.class})
 public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
 
     @Mapping(source = "endereco", target = "endereco")
@@ -56,15 +53,34 @@ public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
     @Mapping(target = "advertencias", source = "advertencias")
     MatriculaVisualizarDTO toMatriculaVisualizarDTO(Matricula matricula);
 
+    @Mapping(target = "nomeAluno", source = "pessoa.nome")
+    @Mapping(target = "cpfAluno", source = "pessoa.cpf")
+    @Mapping(target = "nascimento", source = "nascimento")
+    @Mapping(target = "statusAluno",  expression = "java(getStatusMatriculaDescricao(matricula.getStatus()))")
+    @Mapping(target = "tutores", source = "tutorList")
+    @Mapping(target = "caminhoImagem", expression = "java(getCaminhoImagemAluno(matricula.getDocumentoMatricula()))")
+    @Mapping(target = "necessidadesEspeciais", source = "necessidades")
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "endereco", expression = "java(getEndereco(matricula.getEndereco()))")
+    @Mapping(target = "turma", source = "turma.titulo", defaultValue = "Sem turma")
+    MatriculaRelatorioDTO toMatriculaRelatorioDTO(Matricula matricula);
+
     default String getStatusMatriculaDescricao(StatusMatricula statusMatricula){
         return statusMatricula.getDescricao();
     }
 
+    default String getEndereco(Endereco endereco){
+        return endereco.getCidade()+", "
+                +endereco.getBairro()+", "
+                +endereco.getLogradouro()+", "
+                +endereco.getComplemento();
+    }
+
     default List<String> getNomeResponsaveisETutores(Set<Responsavel> responsaveis){
-        return responsaveis.stream()
+        return new ArrayList<>(responsaveis.stream()
                 .map(Responsavel::getPessoa)
                 .map(Pessoa::getNome)
-                .toList();
+                .toList());
     }
 
     default List<String> getTelefoneResponsaveis(Set<Responsavel> responsaveis){
@@ -75,18 +91,23 @@ public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
                 .toList();
     }
     default List<String> getNomeResponsaveisSemTutores(Set<Responsavel> responsaveis){
-        return responsaveis.stream()
+        List<String> lista = new ArrayList<>(responsaveis.stream()
                 .filter(responsavel -> !responsavel.getTutor())
                 .map(Responsavel::getPessoa)
                 .map(Pessoa::getNome)
-                .toList();
+                .toList());
+        Collections.reverse(lista);
+        return lista;
     }
     default List<String> getNomeTutores(Set<Responsavel> responsaveis){
-        return responsaveis.stream()
+        List<String> lista = new ArrayList<>(responsaveis.stream()
                 .filter(Responsavel::getTutor)
                 .map(Responsavel::getPessoa)
                 .map(Pessoa::getNome)
-                .toList();
+                .sorted(Collections.reverseOrder())
+                .toList());
+        Collections.reverse(lista);
+        return lista;
     }
 
     default List<String> getTelefoneTutores(Set<Responsavel> responsaveis){
