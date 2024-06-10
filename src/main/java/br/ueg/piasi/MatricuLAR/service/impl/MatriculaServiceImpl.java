@@ -231,10 +231,17 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     @Override
     public Matricula alterar(Matricula matricula, Long id) {
 
+        if(Objects.isNull(matricula.getStatus())){
+            StatusMatricula statusMatricula = repository.findById(id)
+                    .orElseThrow(() -> new BusinessException(SistemaMessageCode.ERRO_MATRICULA_NAO_ENCONTRADA))
+                    .getStatus();
+            matricula.setStatus(statusMatricula);
+        }
         tratarAntesDeAlterar(matricula, id);
-
-         matricula=  super.alterar(matricula, id);
+        matricula=  super.alterar(matricula, id);
         tratarDepoisDeAlterar(matricula,id);
+
+        assert matricula.getId() != null;
         return repository.findById(matricula.getId()).get();
     }
 
