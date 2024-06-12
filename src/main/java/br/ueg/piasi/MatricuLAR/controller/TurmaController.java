@@ -130,4 +130,43 @@ public class TurmaController
     private ResponseEntity<Long> quantidadeTotal(){
         return ResponseEntity.ok(service.quantidadeTotal());
     }
+
+
+    @PostMapping("/remove-alunos/{idTurma}")
+    @Operation(
+            description = "Remove alunos da turma",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Listagem do resultado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TurmaDTO.class)
+                    )}
+            ), @ApiResponse(
+                    responseCode = "400",
+                    description = "falha ao realizar a busca",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            ), @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            )}
+    )
+    private ResponseEntity<TurmaDTO> removeAlunosTurma(@PathVariable Long idTurma, @RequestBody List<Long> idAlunos){
+        return ResponseEntity.ok(
+                mapper.toDTO(
+                        service.removeAlunosTurma(idTurma, idAlunos)
+                )
+        );
+    }
 }

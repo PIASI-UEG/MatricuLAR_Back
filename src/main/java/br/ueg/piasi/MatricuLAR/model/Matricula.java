@@ -55,7 +55,7 @@ public class Matricula extends BaseEntidade<Long> {
     @Column(name = "nascimento", nullable = false)
     private LocalDate nascimento;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "endereco", nullable = false,
             referencedColumnName = Endereco.Fields.id,
             foreignKey = @ForeignKey(name = "fk_matricula_endereco"))
@@ -79,7 +79,8 @@ public class Matricula extends BaseEntidade<Long> {
     @OneToMany(mappedBy = "matricula", fetch = FetchType.EAGER)
     private Set<Responsavel> responsaveis = new HashSet<>();
 
-    @OneToMany(mappedBy = "matricula",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "matricula",fetch = FetchType.EAGER, orphanRemoval = true)
     @Builder.Default
     //@Searchable(label = "Advertências")
     private Set<Advertencia> advertencias = new HashSet<>();

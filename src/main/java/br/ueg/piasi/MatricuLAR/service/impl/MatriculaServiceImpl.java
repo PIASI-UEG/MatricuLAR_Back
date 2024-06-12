@@ -604,10 +604,10 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             List<Tutor> turores = matricula.getTutorList();
             boolean tutoresCasados = turores.get(0).getCasado();
 
-            if (tutoresCasados && documentos.length < 18){
+            if (tutoresCasados && documentos.length < 17){
                     throw new BusinessException(SistemaMessageCode.ERRO_QUANTIDADE_DOCUMENTO_OBRIGATORIO);
             }
-            if (!tutoresCasados && documentos.length < 11){
+            if (!tutoresCasados && documentos.length < 10){
                 throw new BusinessException(SistemaMessageCode.ERRO_QUANTIDADE_DOCUMENTO_OBRIGATORIO);
             }
 
@@ -630,14 +630,9 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     private void validaDocObrigatorio(Long idMatricula, TipoDocumento tipoDocumento, boolean tutoresCasados,
                                       List<TipoDocumento> documentosNaoObrigatoriosNaoCasados,
                                       InformacoesMatricula informacoesMatricula) {
-        if (!tutoresCasados) {
-            if (!tipoDocumento.equals(TipoDocumento.COMPROVANTE_BOLSA_FAMILIA) &&
-                    !tipoDocumento.equals(TipoDocumento.DOCUMENTO_VEICULO) &&
-                    !tipoDocumento.equals(TipoDocumento.ENCAMINHAMENTO_CRAS) &&
-                    !documentosNaoObrigatoriosNaoCasados.contains(tipoDocumento)
-            ) {
-                throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
-            }
+
+        if (tipoDocumento.equals(TipoDocumento.CPF_CRIANCA)){
+            return;
         }
 
         if(Objects.nonNull(informacoesMatricula)){
@@ -652,6 +647,12 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
                 throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
             }
         }else throw new BusinessException(SistemaMessageCode.ERRO_INFORMACOES_MATRICULA_NAO_INFORMADA);
+
+        if (!tutoresCasados) {
+            if (!documentosNaoObrigatoriosNaoCasados.contains(tipoDocumento)) {
+                throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
+            }
+        }
     }
 
 
@@ -698,5 +699,15 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
                 .getAceitandoCadastroMatricula()){
             throw  new BusinessException(SistemaMessageCode.ERRO_PERIODO_MATRICULA_NAO_ACEITANDO);
         };
+    }
+
+    public void removerTurma(List<Long> idMatriculas) {
+        for (Long idMatricula : idMatriculas){
+            Matricula matricula = matriculaRepository.findById(idMatricula)
+                    .orElseThrow(() ->
+                            new BusinessException(SistemaMessageCode.ERRO_MATRICULA_NAO_ENCONTRADA, idMatricula));
+            matricula.setTurma(null);
+            matriculaRepository.saveAndFlush(matricula);
+        }
     }
 }

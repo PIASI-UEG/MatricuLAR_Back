@@ -41,12 +41,11 @@ public class Advertencia extends BaseEntidade<PkAdvertencia> {
     private Long numero;
 
     @Id
-    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = Advertencia.MATRICULA_ID, nullable = false,
             referencedColumnName = Matricula.Fields.id,
             foreignKey = @ForeignKey(name = "fk_advertencia_matricula"))
-    @Searchable()
     private Matricula matricula;
 
     @Column(name = "titulo", length = 30, nullable = false)
