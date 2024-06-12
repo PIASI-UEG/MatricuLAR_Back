@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class TurmaServiceImpl extends BaseCrudService<Turma, Long, TurmaRepository>
@@ -82,6 +84,17 @@ public class TurmaServiceImpl extends BaseCrudService<Turma, Long, TurmaReposito
         else {
             throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_STATUS_NAO_ATIVA, idAluno);
         }
+        return repository.findById(idTurma).get();
+    }
+
+    public Turma removeAlunosTurma(Long idTurma, List<Long> idAlunos) {
+
+        if(!repository.existsById(idTurma)) {
+            throw new BusinessException(SistemaMessageCode.ERRO_TURMA_NAO_ENCONTRADA, idTurma);
+        }
+
+        matriculaService.removerTurma(idAlunos);
+
         return repository.findById(idTurma).get();
     }
 }

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
-//TODO resolver a parte do usuario aqui dentro
 @Service
 public class UserProviderService implements br.ueg.prog.webi.api.service.UserProviderService {
 
