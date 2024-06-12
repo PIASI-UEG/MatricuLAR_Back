@@ -24,8 +24,24 @@ import java.util.List;
 @RequestMapping(path = "/api/${app.api.version}/usuario")
 public class UsuarioController extends CrudController<Usuario, UsuarioDTO, Long, UsuarioMapperImpl, UsuarioServiceImpl> {
 
-    @Override
+
     @PostMapping("/singup")
+    @Operation(description = "Método utilizado para altlerar os dados de uma entidiade", responses = {
+            @ApiResponse(responseCode = "200", description = "Usuario incluido",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = UsuarioDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Registro não encontrado",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = MessageResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Acesso negado",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = MessageResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Erro de Negócio",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = MessageResponse.class)))
+    }
+    )
     public ResponseEntity<UsuarioDTO> incluir(@RequestBody() UsuarioDTO usuarioDTO) {
 
         Usuario usuarioParaIncluir = mapper.toModelo(usuarioDTO);

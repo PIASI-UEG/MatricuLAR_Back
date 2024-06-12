@@ -6,6 +6,7 @@ public enum Cargo {
 
     ADMIN("A","Administrador"),
     SECRETARIA("S","Secretaria"),
+    DIRETORA("D", "Diretora"),
     COORDENADORA("C", "Coordenadora");
 
     private final String id;
