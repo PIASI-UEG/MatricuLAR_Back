@@ -64,7 +64,7 @@
 	<field name="endereco" class="java.lang.String"/>
 	<field name="turma" class="java.lang.String"/>
 	<title>
-		<band height="665">
+		<band height="725">
 			<image hAlign="Center" vAlign="Middle">
 				<reportElement positionType="Float" isPrintRepeatedValues="false" x="30" y="10" width="524" height="150" uuid="e7dd7ef7-bbf9-4559-b87f-97cf27f6510e"/>
 				<imageExpression><![CDATA["images/logo_termo.png"]]></imageExpression>
@@ -89,21 +89,23 @@
 				<textFieldExpression><![CDATA["<style isBold='true'>Status da matrícula: </style>"+$F{statusAluno}+"\n<style isBold='true'>Nome do aluno: </style>"+$F{nomeAluno}+"\n<style isBold='true'>Turma: </style>"+$F{turma}+"\n<style isBold='true'>CPF: </style>"+$F{cpfAluno}+"\n<style isBold='true'>Data de nascimento: </style>"+$F{nascimento}.format( java.time.format.DateTimeFormatter.ofPattern("dd/MM/uuuu"))+"\n<style isBold='true'>Número de advertências: </style>"+$F{advertencias}.size()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" x="31" y="415" width="507" height="24" uuid="8d9af5e6-5bb4-487f-9ed2-c3e57f957860"/>
+				<reportElement positionType="Float" x="31" y="415" width="506" height="24" uuid="8d9af5e6-5bb4-487f-9ed2-c3e57f957860"/>
 				<textElement markup="styled">
 					<font fontName="open sans" size="14"/>
 				</textElement>
 				<textFieldExpression><![CDATA["<style isBold='true'>Endereço: </style>"+$F{endereco}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="31" y="439" width="506" height="30" uuid="fec0c4f2-90cd-4974-8470-cdcd2a688a0c"/>
+				<reportElement positionType="Float" x="31" y="439" width="506" height="30" uuid="fec0c4f2-90cd-4974-8470-cdcd2a688a0c">
+					<printWhenExpression><![CDATA[$F{tutores}.size()==1]]></printWhenExpression>
+				</reportElement>
 				<textElement verticalAlignment="Bottom">
 					<font fontName="open sans" size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Tutores]]></text>
+				<text><![CDATA[Responsável Legal]]></text>
 			</staticText>
 			<componentElement>
-				<reportElement positionType="Float" isPrintRepeatedValues="false" x="31" y="469" width="506" height="20" uuid="dfb9fd16-f0fe-4f5c-b434-eeaf2358c213">
+				<reportElement positionType="Float" isPrintRepeatedValues="false" x="31" y="500" width="506" height="20" uuid="dfb9fd16-f0fe-4f5c-b434-eeaf2358c213">
 					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
 				</reportElement>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
@@ -147,14 +149,14 @@
 				</jr:list>
 			</componentElement>
 			<textField evaluationTime="Band">
-				<reportElement positionType="Float" x="31" y="489" width="506" height="28" isPrintInFirstWholeBand="true" uuid="a1347574-8069-458f-afaa-d57ca1158f6a"/>
+				<reportElement positionType="Float" x="31" y="520" width="506" height="28" isPrintInFirstWholeBand="true" uuid="a1347574-8069-458f-afaa-d57ca1158f6a"/>
 				<textElement verticalAlignment="Bottom">
 					<font fontName="open sans" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Responsáveis"]]></textFieldExpression>
 			</textField>
 			<componentElement>
-				<reportElement positionType="Float" isPrintRepeatedValues="false" x="31" y="517" width="506" height="23" isPrintWhenDetailOverflows="true" uuid="e6e3a096-6308-4fb7-b19a-8e04e05f3114">
+				<reportElement positionType="Float" isPrintRepeatedValues="false" x="31" y="548" width="506" height="23" isPrintWhenDetailOverflows="true" uuid="e6e3a096-6308-4fb7-b19a-8e04e05f3114">
 					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
 				</reportElement>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
@@ -198,7 +200,7 @@
 				</jr:list>
 			</componentElement>
 			<textField>
-				<reportElement positionType="Float" x="31" y="540" width="506" height="30" uuid="37c15ca8-9134-4169-8da2-994dbcf13e8d">
+				<reportElement positionType="Float" x="31" y="571" width="506" height="30" uuid="37c15ca8-9134-4169-8da2-994dbcf13e8d">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<printWhenExpression><![CDATA[$F{necessidadesEspeciais}.size()>0]]></printWhenExpression>
@@ -209,7 +211,7 @@
 				<textFieldExpression><![CDATA["Necessidades especiais"]]></textFieldExpression>
 			</textField>
 			<componentElement>
-				<reportElement positionType="Float" isPrintRepeatedValues="false" x="31" y="570" width="506" height="20" isPrintWhenDetailOverflows="true" uuid="f7fd5c19-7ef5-4cb8-94f7-8aa1a30713d0">
+				<reportElement positionType="Float" isPrintRepeatedValues="false" x="31" y="601" width="506" height="20" isPrintWhenDetailOverflows="true" uuid="f7fd5c19-7ef5-4cb8-94f7-8aa1a30713d0">
 					<printWhenExpression><![CDATA[$F{necessidadesEspeciais}.size()>0]]></printWhenExpression>
 				</reportElement>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
@@ -230,7 +232,7 @@
 				</jr:list>
 			</componentElement>
 			<textField evaluationTime="Band">
-				<reportElement positionType="Float" x="31" y="590" width="506" height="28" uuid="aa210cc3-892e-4c54-b061-e43f63898392">
+				<reportElement positionType="Float" x="31" y="621" width="506" height="28" uuid="aa210cc3-892e-4c54-b061-e43f63898392">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<printWhenExpression><![CDATA[$F{advertencias}.size()>0]]></printWhenExpression>
 				</reportElement>
@@ -240,7 +242,7 @@
 				<textFieldExpression><![CDATA["Advertências"]]></textFieldExpression>
 			</textField>
 			<componentElement>
-				<reportElement positionType="Float" isPrintRepeatedValues="false" x="31" y="618" width="506" height="40" uuid="0c007deb-54ab-44c5-acf2-2162b8a4dde2">
+				<reportElement positionType="Float" isPrintRepeatedValues="false" x="31" y="649" width="506" height="40" uuid="0c007deb-54ab-44c5-acf2-2162b8a4dde2">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
 					<printWhenExpression><![CDATA[$F{advertencias}.size()>0]]></printWhenExpression>
 				</reportElement>
@@ -271,6 +273,15 @@
 					</jr:listContents>
 				</jr:list>
 			</componentElement>
+			<staticText>
+				<reportElement positionType="Float" x="31" y="469" width="506" height="30" uuid="5d120763-afc0-4e9f-a771-ca1fb50e1704">
+					<printWhenExpression><![CDATA[$F{tutores}.size()>1]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="open sans" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Responsáveis Legais]]></text>
+			</staticText>
 		</band>
 	</title>
 	<pageFooter>

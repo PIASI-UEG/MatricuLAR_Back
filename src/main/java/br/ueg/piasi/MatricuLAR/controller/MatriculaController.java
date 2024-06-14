@@ -11,6 +11,9 @@ import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
 import br.ueg.piasi.MatricuLAR.model.Matricula;
 import br.ueg.piasi.MatricuLAR.service.impl.MatriculaServiceImpl;
 import br.ueg.prog.webi.api.controller.CrudController;
+import br.ueg.prog.webi.api.dto.SearchFieldValue;
+import br.ueg.prog.webi.api.exception.ApiMessageCode;
+import br.ueg.prog.webi.api.exception.BusinessException;
 import br.ueg.prog.webi.api.exception.MessageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -18,7 +21,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import net.sf.jasperreports.engine.JRException;
+import org.bouncycastle.ocsp.Req;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +34,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(path = "/api/${app.api.version}/matricula")
@@ -602,4 +612,12 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
         return ResponseEntity.ok(service.quantidadeMatriculasPorStatus(statusMatricula));
     }
 
+    @PostMapping(path = "/search-fields-listagem")
+    public ResponseEntity<Page<MatriculaListagemDTO>> searchFieldsActionPageMatriculaListagemDto(
+            @RequestBody List<SearchFieldValue> searchFieldValues,
+            @RequestParam(name = "page",defaultValue = "0",required = false) Integer page,
+            @RequestParam(name = "size",defaultValue = "5",required = false) Integer size,
+            @RequestParam(name = "sort",defaultValue = "",required = false) List<String> sort) {
+        return ResponseEntity.ok(service.getPageListagemDTO(searchFieldValues, page, size, sort));
+    }
 }

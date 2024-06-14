@@ -10,6 +10,8 @@ import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
 import br.ueg.piasi.MatricuLAR.service.InformacoesMatriculaService;
 import br.ueg.piasi.MatricuLAR.service.MatriculaService;
+import br.ueg.prog.webi.api.dto.SearchFieldValue;
+import br.ueg.prog.webi.api.exception.ApiMessageCode;
 import br.ueg.prog.webi.api.exception.BusinessException;
 import br.ueg.prog.webi.api.service.BaseCrudService;
 import com.lowagie.text.pdf.PdfCopyFields;
@@ -17,6 +19,10 @@ import com.lowagie.text.pdf.PdfReader;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -555,6 +561,29 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         copy.addDocument(termo1);
         copy.addDocument(termo2);
         copy.close();
+    }
+
+    public Page<MatriculaListagemDTO> mapPageToMatriculaListagemDto(Page<Matricula> page){
+        return page.map(this.mapper::toMatriculaListagemDTO);
+    }
+
+    public Page<MatriculaListagemDTO> getPageListagemDTO(List<SearchFieldValue> searchFieldValues, Integer page, Integer size, List<String> sort) {
+        Sort sortObject = Sort.unsorted();
+        if (Objects.nonNull(sort)) {
+            List<Sort.Order> orderList = new ArrayList<>();
+            sort.forEach((s) -> {
+                orderList.add(Sort.Order.asc(s));
+            });
+            sortObject = Sort.by(orderList);
+        }
+
+        Pageable pageable = PageRequest.of(page, size, sortObject);
+        Page<Matricula> listSearchFields = searchFieldValuesPage(pageable, searchFieldValues);
+        if (listSearchFields.isEmpty()) {
+            throw new BusinessException(ApiMessageCode.SEARCH_FIELDS_RESULT_NONE);
+        } else {
+            return mapPageToMatriculaListagemDto(listSearchFields);
+        }
     }
 
     public String geraTermoAutorizacao(Long idMatricula, String cpfTutor) throws JRException, IOException {
