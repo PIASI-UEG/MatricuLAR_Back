@@ -661,7 +661,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
                 throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
             }
         }else{
-            if (documentosObrigatoriosCasados.contains(tipoDocumento) && !documentosNaoObrigados.contains(tipoDocumento)){
+            if (!documentosNaoObrigados.contains(tipoDocumento)){
                 throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
             }
         }
