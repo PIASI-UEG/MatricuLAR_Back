@@ -32,6 +32,7 @@ public class NecessidadeEspecial extends BaseEntidade<Long> {
             strategy = SEQUENCE,
             generator = "necessidade_especial_gerador_sequence"
     )
+
     @Id
     @Column(name = "id")
     private Long id;

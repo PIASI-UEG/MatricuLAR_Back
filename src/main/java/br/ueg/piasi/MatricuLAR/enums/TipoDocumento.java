@@ -57,14 +57,14 @@ public enum TipoDocumento {
         return Arrays.stream(values()).filter
                 (value -> value.getId().equals(id)).findFirst().orElse(null);
     }
-    public static List<TipoDocumento> getDocumentosNaoObrigatoriosCasados(){
+    public static List<TipoDocumento> getDocumentosNaoObrigatoriosGeral(){
          List<TipoDocumento> documentos = new ArrayList<>();
          documentos.add(TipoDocumento.DOCUMENTO_VEICULO);
          documentos.add(TipoDocumento.COMPROVANTE_BOLSA_FAMILIA);
          documentos.add(TipoDocumento.ENCAMINHAMENTO_CRAS);
          return documentos;
     }
-    public static List<TipoDocumento> getDocumentosNaoObrigatoriosNaoCasados(){
+    public static List<TipoDocumento> getDocumentosObrigatoriosCasados(){
         List<TipoDocumento> documentos = new ArrayList<>();
         documentos.add(TipoDocumento.CONTRA_CHEQUE1T2);
         documentos.add(TipoDocumento.CONTRA_CHEQUE2T2);

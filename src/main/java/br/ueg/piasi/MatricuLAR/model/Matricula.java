@@ -62,7 +62,7 @@ public class Matricula extends BaseEntidade<Long> {
     //@Searchable()
     private Endereco endereco;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name="matricula_necessidade", joinColumns=
             {@JoinColumn(name="matricula_id")}, inverseJoinColumns=
             {@JoinColumn(name="necessidade_id")})

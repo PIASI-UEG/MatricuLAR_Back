@@ -18,8 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @Transactional(propagation = Propagation.REQUIRED)
@@ -144,7 +146,7 @@ public class InitialRunner implements ApplicationRunner {
         NecessidadeEspecial necessidadeEspecial = NecessidadeEspecial.builder()
                 .titulo("Necessidade Teste")
                 .build();
-        necessidadeEspecialService.incluir(necessidadeEspecial);
+        necessidadeEspecial =  necessidadeEspecialService.incluir(necessidadeEspecial);
 
         //Insere turma de teste
         Turma turma = Turma.builder()
@@ -169,7 +171,7 @@ public class InitialRunner implements ApplicationRunner {
                 .tutorList(List.of(tutor, tutor2))
                 .nascimento(LocalDate.now())
                 .endereco(endereco)
-                .necessidades(new HashSet<>())
+                .necessidades(Collections.singleton(necessidadeEspecial))
                 .build();
 
         matriculaService.incluir(matricula);

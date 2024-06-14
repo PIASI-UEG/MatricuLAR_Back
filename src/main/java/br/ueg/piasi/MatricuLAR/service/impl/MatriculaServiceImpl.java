@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -137,6 +138,11 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     private void tratarAntesDeSalvar(Matricula matricula) {
 
+        BigDecimal rendaFamiliar = matricula.getInformacoesMatricula().getRendaFamiliar();
+        if(rendaFamiliar.compareTo(new BigDecimal(100000)) > 0){
+            throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_RENDA_FAMILIAR_VALOR_ALTO);
+        }
+
         matricula.setTutorList(salvarTutores(matricula.getTutorList()));
         validarIdadeResponsaveis(matricula);
         this.responsavelSet = tratarMatriculaResponsaveis(matricula);
@@ -158,7 +164,10 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         if(Objects.nonNull(matricula.getNecessidades())){
             List<NecessidadeEspecial> necessidadeEspecials = new ArrayList<>();
             for(NecessidadeEspecial especial : matricula.getNecessidades()){
-                necessidadeEspecials.add(necessidadeEspecialServiceImpl.incluir(especial));
+                if (Objects.isNull(especial.getId())) {
+                    necessidadeEspecials.add(necessidadeEspecialServiceImpl.incluir(especial));
+                }
+                necessidadeEspecials.add(especial);
             }
             matricula.setNecessidades(new HashSet<>(necessidadeEspecials));
         }
@@ -398,7 +407,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
         List<TipoDocumento> documentosObrigatorios = Arrays.asList(TipoDocumento.values());
         if(!casado){
-            documentosObrigatorios.removeAll(TipoDocumento.getDocumentosNaoObrigatoriosNaoCasados());
+            documentosObrigatorios.removeAll(TipoDocumento.getDocumentosObrigatoriosCasados());
         }
         List<String> idDocumentosObrigatorios = documentosObrigatorios.stream().map(TipoDocumento::getId).toList();
         for (DocumentoMatricula documentoMatricula : documentosCasados ){
@@ -611,15 +620,13 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
                 throw new BusinessException(SistemaMessageCode.ERRO_QUANTIDADE_DOCUMENTO_OBRIGATORIO);
             }
 
-            List<TipoDocumento> documentosNaoObrigatoriosNaoCasados = TipoDocumento.getDocumentosNaoObrigatoriosNaoCasados();
-
             for(int i = 0 ; i < documentos.length; i++){
                 TipoDocumento tipoDocumento = tipoDocumentoPelaPosicao(i);
                 String nomeDoc = documentos[i].getOriginalFilename()
                         .substring(documentos[i].getOriginalFilename().length()-3);
                 if(!nomeDoc.equals("txt")){
                     uploadDocumento(idMatricula, tipoDocumento, documentos[i]);
-                }else validaDocObrigatorio(idMatricula,tipoDocumento, tutoresCasados, documentosNaoObrigatoriosNaoCasados, informacoesMatricula);
+                }else validaDocObrigatorio(tipoDocumento, tutoresCasados, informacoesMatricula);
             }
             return matricula;
         }
@@ -627,8 +634,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_NAO_ENCONTRADA, idMatricula);
     }
 
-    private void validaDocObrigatorio(Long idMatricula, TipoDocumento tipoDocumento, boolean tutoresCasados,
-                                      List<TipoDocumento> documentosNaoObrigatoriosNaoCasados,
+    private void validaDocObrigatorio(TipoDocumento tipoDocumento, boolean tutoresCasados,
                                       InformacoesMatricula informacoesMatricula) {
 
         if (tipoDocumento.equals(TipoDocumento.CPF_CRIANCA)){
@@ -648,8 +654,14 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             }
         }else throw new BusinessException(SistemaMessageCode.ERRO_INFORMACOES_MATRICULA_NAO_INFORMADA);
 
+        List<TipoDocumento> documentosNaoObrigados = TipoDocumento.getDocumentosNaoObrigatoriosGeral();
+        List<TipoDocumento> documentosObrigatoriosCasados = TipoDocumento.getDocumentosObrigatoriosCasados();
         if (!tutoresCasados) {
-            if (!documentosNaoObrigatoriosNaoCasados.contains(tipoDocumento)) {
+            if (!documentosObrigatoriosCasados.contains(tipoDocumento) && !documentosNaoObrigados.contains(tipoDocumento)) {
+                throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
+            }
+        }else{
+            if (documentosObrigatoriosCasados.contains(tipoDocumento) && !documentosNaoObrigados.contains(tipoDocumento)){
                 throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_DOCUMENTO_OBRIGATORIO, tipoDocumento.getDescricao());
             }
         }
