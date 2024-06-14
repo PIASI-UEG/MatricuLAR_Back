@@ -612,6 +612,32 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
         return ResponseEntity.ok(service.quantidadeMatriculasPorStatus(statusMatricula));
     }
 
+    @Operation(
+            description = "Listagem dos campos de busca",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Listagem geral",
+                    useReturnTypeSchema = true
+            ), @ApiResponse(
+                    responseCode = "400",
+                    description = "Modelo não parametrizado para pesquisa",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            ), @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            )}
+    )
     @PostMapping(path = "/search-fields-listagem")
     public ResponseEntity<Page<MatriculaListagemDTO>> searchFieldsActionPageMatriculaListagemDto(
             @RequestBody List<SearchFieldValue> searchFieldValues,

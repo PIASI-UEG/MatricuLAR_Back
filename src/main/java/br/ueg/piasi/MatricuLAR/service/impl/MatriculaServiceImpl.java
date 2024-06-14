@@ -144,7 +144,8 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     private void tratarAntesDeSalvar(Matricula matricula) {
 
-        BigDecimal rendaFamiliar = matricula.getInformacoesMatricula().getRendaFamiliar();
+        BigDecimal rendaFamiliar = Objects.nonNull(matricula.getInformacoesMatricula()) ?
+                matricula.getInformacoesMatricula().getRendaFamiliar() : new BigDecimal(1);
         if(rendaFamiliar.compareTo(new BigDecimal(100000)) > 0){
             throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_RENDA_FAMILIAR_VALOR_ALTO);
         }
