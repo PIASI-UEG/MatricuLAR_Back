@@ -39,16 +39,18 @@ public class Matricula extends BaseEntidade<Long> {
 
     @Id
     @Column(name = "id")
+    @Searchable(label = "Número da matrícula")
     private Long id;
 
     @OneToOne(optional = false)
     @JoinColumn(name = "pessoa_cpf",
             referencedColumnName = Pessoa.Fields.cpf, nullable = false,
             foreignKey = @ForeignKey(name = "fk_matricula_pessoa"))
+    @Searchable(foreignEntityFieldTarget = "nome", foreignEntityFieldLabel = "Nome do(a) aluno(a)")
     private Pessoa pessoa;
 
     @Column(name = "status", length = 2, nullable = false)
-    @Searchable()
+//    @Searchable()
     private StatusMatricula status;
 
     @Temporal(TemporalType.DATE)
@@ -72,6 +74,7 @@ public class Matricula extends BaseEntidade<Long> {
    @JoinColumn(name = "turma",
            referencedColumnName = Turma.Fields.id,
            foreignKey = @ForeignKey(name = "fk_matricula_tuma"))
+   @Searchable(foreignEntityFieldTarget = "titulo", foreignEntityFieldLabel = "Turma")
     private Turma turma;
 
     @EqualsAndHashCode.Exclude
