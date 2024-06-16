@@ -679,6 +679,10 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
     )
     public ResponseEntity<List<MatriculaListagemDTO>> searchFieldsActionMatriculaListagemDto(
             @RequestBody List<SearchFieldValue> searchFieldValues) {
-        return ResponseEntity.ok(mapper.toMatriculaListagemDTO(service.searchFieldValues(searchFieldValues)));
+        List<Matricula> matriculas = service.searchFieldValues(searchFieldValues);
+        if(matriculas.isEmpty()){
+            throw new BusinessException(ApiMessageCode.SEARCH_FIELDS_RESULT_NONE);
+        }
+        return ResponseEntity.ok(mapper.toMatriculaListagemDTO(matriculas));
     }
 }
