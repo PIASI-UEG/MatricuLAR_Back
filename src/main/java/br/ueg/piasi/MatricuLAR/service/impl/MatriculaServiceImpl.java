@@ -81,6 +81,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     private final Path root = Paths.get("docs");
     private InformacoesMatricula informacoesMatricula;
+    private List<NecessidadeEspecial> necessidadeEspeciais;
     private  Set<Responsavel> responsavelSet;
 
 
@@ -169,14 +170,9 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         }
 
         if(Objects.nonNull(matricula.getNecessidades())){
-            List<NecessidadeEspecial> necessidadeEspecials = new ArrayList<>();
-            for(NecessidadeEspecial especial : matricula.getNecessidades()){
-                if (Objects.isNull(especial.getId())) {
-                    necessidadeEspecials.add(necessidadeEspecialServiceImpl.incluir(especial));
-                }
-                necessidadeEspecials.add(especial);
+            for(NecessidadeEspecial necessidadeEspecial : matricula.getNecessidades()){
+                necessidadeEspecial.setMatricula(matricula);
             }
-            matricula.setNecessidades(new HashSet<>(necessidadeEspecials));
         }
 
     }
@@ -309,11 +305,9 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         }
 
         if(Objects.nonNull(matricula.getNecessidades())){
-            List<NecessidadeEspecial> necessidadeEspecials = new ArrayList<>();
-            for(NecessidadeEspecial especial : matricula.getNecessidades()){
-                necessidadeEspecials.add(necessidadeEspecialServiceImpl.incluir(especial));
+            for(NecessidadeEspecial necessidadeEspecial : matricula.getNecessidades()){
+                necessidadeEspecial.setMatricula(matricula);
             }
-            matricula.setNecessidades(new HashSet<>(necessidadeEspecials));
         }
     }
 

@@ -37,6 +37,12 @@ public class NecessidadeEspecial extends BaseEntidade<Long> {
     @Column(name = "id")
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "matricula_id", nullable = false,
+            referencedColumnName = Matricula.Fields.id,
+            foreignKey = @ForeignKey(name="fk_matricula_necessidade"))
+    private Matricula matricula;
+
     @Column(name = "titulo", length = 50, nullable = false)
     @Searchable
     private String titulo;
