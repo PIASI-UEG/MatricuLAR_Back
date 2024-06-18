@@ -373,7 +373,6 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     public Matricula validaMatricula(Matricula matricula) {
 
         validaDocumentosTutores(matricula.getDocumentoMatricula().stream().toList(), matricula.getTutorList().get(0).getCasado());
-        validaDocumentosNaoObrigatorios(matricula.getInformacoesMatricula(), matricula.getDocumentoMatricula().stream().toList());
 
         matricula.setStatus(StatusMatricula.ATIVO);
 
@@ -381,38 +380,16 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
     }
 
-    private void validaDocumentosNaoObrigatorios(InformacoesMatricula informacoesMatricula, List<DocumentoMatricula> list) {
-        for(DocumentoMatricula documento : list) {
-                if (informacoesMatricula.getPossuiEcaminhamentoCRAS() &&
-                        TipoDocumento.ENCAMINHAMENTO_CRAS.getId().equals(documento.getIdTipoDocumento()) &&
-                        !documento.getAceito()) {
-                    throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_NAO_ACEITO,
-                            TipoDocumento.ENCAMINHAMENTO_CRAS.getDescricao());
-                }
-                if (informacoesMatricula.getPossuiVeiculoProprio() &&
-                        TipoDocumento.DOCUMENTO_VEICULO.getId().equals(documento.getIdTipoDocumento()) &&
-                        !documento.getAceito()) {
-                    throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_NAO_ACEITO,
-                            TipoDocumento.DOCUMENTO_VEICULO.getDescricao());
-                }
-                if (informacoesMatricula.getPossuiBeneficiosDoGoverno() &&
-                        TipoDocumento.COMPROVANTE_BOLSA_FAMILIA.getId().equals(documento.getIdTipoDocumento()) &&
-                        !documento.getAceito()) {
-                    throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_NAO_ACEITO,
-                            TipoDocumento.COMPROVANTE_BOLSA_FAMILIA.getDescricao());
-                }
-        }
-    }
+    public void validaDocumentosTutores(List<DocumentoMatricula> documentosMatricula, boolean casado) {
 
-    public void validaDocumentosTutores(List<DocumentoMatricula> documentosCasados, boolean casado) {
-
-        List<TipoDocumento> documentosObrigatorios = Arrays.asList(TipoDocumento.values());
+        List<TipoDocumento> documentosObrigatorios = new ArrayList<>(List.of(TipoDocumento.values()));
         if(!casado){
-            documentosObrigatorios.removeAll(TipoDocumento.getDocumentosObrigatoriosCasados());
+            for(TipoDocumento tipoDocumento : TipoDocumento.getDocumentosObrigatoriosCasados()) {
+                documentosObrigatorios.remove(tipoDocumento);
+            }
         }
         List<String> idDocumentosObrigatorios = documentosObrigatorios.stream().map(TipoDocumento::getId).toList();
-        for (DocumentoMatricula documentoMatricula : documentosCasados ){
-
+        for (DocumentoMatricula documentoMatricula : documentosMatricula ){
             if (idDocumentosObrigatorios.contains(documentoMatricula.getIdTipoDocumento()) && !documentoMatricula.getAceito()){
                 throw new BusinessException(SistemaMessageCode.ERRO_DOCUMENTO_NAO_ACEITO,
                         TipoDocumento.getById(documentoMatricula.getIdTipoDocumento()).getDescricao());
