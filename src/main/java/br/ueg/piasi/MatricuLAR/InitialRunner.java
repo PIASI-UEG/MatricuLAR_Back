@@ -6,6 +6,7 @@ import br.ueg.piasi.MatricuLAR.enums.Turno;
 import br.ueg.piasi.MatricuLAR.enums.Vinculo;
 import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.repository.ControlePeriodoMatriculaRepository;
+import br.ueg.piasi.MatricuLAR.repository.DocumentoMatriculaRepository;
 import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
 import br.ueg.piasi.MatricuLAR.service.impl.*;
 import net.sf.jasperreports.engine.JRException;
@@ -21,44 +22,32 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Component
 @Transactional(propagation = Propagation.REQUIRED)
 public class InitialRunner implements ApplicationRunner {
 
     private final UsuarioServiceImpl usuarioService;
-
     private final EnderecoServiceImpl enderecoService;
-
-    private final NecessidadeEspecialServiceImpl necessidadeEspecialService;
-
     private final TurmaServiceImpl turmaService;
-
     private final MatriculaServiceImpl matriculaService;
-
     private final ControlePeriodoMatriculaRepository controlePeriodoMatriculaRepository;
     private final MatriculaRepository matriculaRepository;
-    private final InformacoesMatriculaServiceImpl informacoesMatriculaServiceImpl;
-    private final DocumentoMatriculaServiceImpl documentoMatriculaServiceImpl;
+    private final DocumentoMatriculaRepository documentoMatriculaRepository;
 
     public InitialRunner(UsuarioServiceImpl usuarioService,
-                         PessoaServiceImpl pessoaService,
                          EnderecoServiceImpl enderecoService,
                          NecessidadeEspecialServiceImpl necessidadeEspecialService,
                          TurmaServiceImpl turmaService,
-                         TutorServiceImpl tutorService,
                          MatriculaServiceImpl matriculaService,
-                         ControlePeriodoMatriculaRepository controlePeriodoMatriculaService, MatriculaRepository matriculaRepository, InformacoesMatriculaServiceImpl informacoesMatriculaServiceImpl, DocumentoMatriculaServiceImpl documentoMatriculaServiceImpl) {
+                         ControlePeriodoMatriculaRepository controlePeriodoMatriculaService, MatriculaRepository matriculaRepository, InformacoesMatriculaServiceImpl informacoesMatriculaServiceImpl, DocumentoMatriculaServiceImpl documentoMatriculaServiceImpl, DocumentoMatriculaRepository documentoMatriculaRepository) {
         this.usuarioService = usuarioService;
         this.enderecoService = enderecoService;
-        this.necessidadeEspecialService = necessidadeEspecialService;
         this.turmaService = turmaService;
         this.matriculaService = matriculaService;
         this.controlePeriodoMatriculaRepository = controlePeriodoMatriculaService;
         this.matriculaRepository = matriculaRepository;
-        this.informacoesMatriculaServiceImpl = informacoesMatriculaServiceImpl;
-        this.documentoMatriculaServiceImpl = documentoMatriculaServiceImpl;
+        this.documentoMatriculaRepository = documentoMatriculaRepository;
     }
 
     @Override
@@ -146,7 +135,6 @@ public class InitialRunner implements ApplicationRunner {
         NecessidadeEspecial necessidadeEspecial = NecessidadeEspecial.builder()
                 .titulo("Necessidade Teste")
                 .build();
-        necessidadeEspecial =  necessidadeEspecialService.incluir(necessidadeEspecial);
 
         //Insere turma de teste
         Turma turma = Turma.builder()
@@ -165,6 +153,16 @@ public class InitialRunner implements ApplicationRunner {
                 .nome("Teste Matricula")
                 .build();
 
+        InformacoesMatricula infoMatricula = InformacoesMatricula.builder()
+                .frequentouOutraCreche(false)
+                .observacao("Não possui observações")
+                .possuiBeneficiosDoGoverno(false)
+                .possuiEcaminhamentoCRAS(false)
+                .tipoResidencia("proprio")
+                .possuiVeiculoProprio(false)
+                .rendaFamiliar(BigDecimal.valueOf(1200))
+                .build();
+
         Matricula matricula = Matricula.builder()
                 .pessoa(pessoaMatricula)
                 .status(StatusMatricula.INATIVO)
@@ -172,6 +170,7 @@ public class InitialRunner implements ApplicationRunner {
                 .nascimento(LocalDate.now())
                 .endereco(endereco)
                 .necessidades(Collections.singleton(necessidadeEspecial))
+                .informacoesMatricula(infoMatricula)
                 .build();
 
         matriculaService.incluir(matricula);
@@ -185,23 +184,8 @@ public class InitialRunner implements ApplicationRunner {
                 .build();
         controlePeriodoMatriculaRepository.save(controle);
 
-        Matricula matricula1 = matriculaRepository.findById(1L).get();
-        matricula1.setStatus(StatusMatricula.ATIVO);
-
-        InformacoesMatricula infoMatricula = InformacoesMatricula.builder()
-                .matricula(matricula1)
-                .frequentouOutraCreche(false)
-                .observacao("Não possui observações")
-                .possuiBeneficiosDoGoverno(false)
-                .possuiEcaminhamentoCRAS(false)
-                .tipoResidencia("proprio")
-                .possuiVeiculoProprio(false)
-                .rendaFamiliar(BigDecimal.valueOf(1200))
-                .build();
-
-        InformacoesMatricula informacoesMatricula = informacoesMatriculaServiceImpl.incluir(infoMatricula);
         DocumentoMatricula documentoMatricula = DocumentoMatricula.builder()
-                .matricula(matricula1)
+                .matricula(Matricula.builder().id(1L).build())
                 .aceito(true)
                 .caminhoDocumento("1_FC.jpeg")
                 .idTipoDocumento("FC")
@@ -209,12 +193,13 @@ public class InitialRunner implements ApplicationRunner {
 
         HashSet<DocumentoMatricula> documentos = new HashSet<>();
 
-        DocumentoMatricula dcMAtricula = documentoMatriculaServiceImpl.incluir(documentoMatricula);
+        DocumentoMatricula dcMAtricula = documentoMatriculaRepository.save(documentoMatricula);
 
         documentos.add(dcMAtricula);
 
-        matricula1.setInformacoesMatricula(informacoesMatricula);
-        matricula.setDocumentoMatricula(documentos);
+        Matricula matricula1 = matriculaRepository.findById(1L).get();
+        matricula1.setStatus(StatusMatricula.ATIVO);
+        matricula1.setDocumentoMatricula(documentos);
 
         matriculaRepository.save(matricula1);
         System.out.println("\n*** Fim da Inserção de dados para testes ***\n");
