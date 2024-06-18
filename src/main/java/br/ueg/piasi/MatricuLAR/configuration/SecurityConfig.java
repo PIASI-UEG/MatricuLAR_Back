@@ -95,6 +95,16 @@ public class SecurityConfig extends ApiSecurityConfig {
         return http.build();
     }
 
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
+                .requiresChannel(channel ->
+                        channel.anyRequest().requiresSecure())
+                .authorizeRequests(authorize ->
+                        authorize.anyRequest().permitAll())
+                .build();
+    }
+
     protected List<String> getCustomFreeAccessPaterns() {
         return Arrays.asList();
     };
