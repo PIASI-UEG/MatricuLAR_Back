@@ -78,6 +78,12 @@
 			</textField>
 			<image>
 				<reportElement positionType="Float" x="35" y="235" width="180" height="160" uuid="1387cb01-b7b8-4b4b-ba1f-d7398a1b8ba2"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
 				<imageExpression><![CDATA["docs/MAT_"+$F{id}+"/"+$F{caminhoImagem}]]></imageExpression>
 			</image>
 			<textField>
