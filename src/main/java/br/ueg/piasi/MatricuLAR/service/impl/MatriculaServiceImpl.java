@@ -7,6 +7,7 @@ import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
 import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
 import br.ueg.piasi.MatricuLAR.model.*;
+import br.ueg.piasi.MatricuLAR.model.pkComposta.PkDocumentoMatricula;
 import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
 import br.ueg.piasi.MatricuLAR.service.InformacoesMatriculaService;
 import br.ueg.piasi.MatricuLAR.service.MatriculaService;
@@ -122,6 +123,10 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     }
 
     public Matricula incluirComDocumentos(Matricula matricula,List<MultipartFile> documentos) {
+
+
+
+       validaSePodeSalvarMatricula(matricula);
         tratarAntesDeSalvar(matricula);
 
         matricula = super.incluir(matricula);
@@ -129,6 +134,24 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         tratarDepoisDeSalvar(matricula);
         uploadDocumentos(matricula.getId(), documentos.toArray(new MultipartFile[documentos.size()]), matricula.getInformacoesMatricula());
         return repository.findById(matricula.getId()).get();
+    }
+
+    private void validaSePodeSalvarMatricula(Matricula matricula) {
+
+        if (Objects.isNull(matricula) || Objects.isNull(matricula.getPessoa())){
+            throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_MATRICULA_DADOS_NAO_INFORMADOS);
+        }
+
+        Optional<Matricula> matriculaJaExistente = matriculaRepository
+                .findByPessoa_CpfIgnoreCase(matricula.getPessoa().getCpf());
+
+        if (matriculaJaExistente.isPresent() && matriculaJaExistente.get().getStatus()
+                .equals(StatusMatricula.AGUARDANDO_RENOVACAO)){
+            excluir(matriculaJaExistente.get().getId());
+        }else{
+            throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_MATRICULA_JA_EXISTE, matricula.getPessoa().getCpf());
+        }
+
     }
 
     private void tratarDepoisDeSalvar(Matricula matricula) {
@@ -720,6 +743,33 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
                     .orElseThrow(() ->
                             new BusinessException(SistemaMessageCode.ERRO_MATRICULA_NAO_ENCONTRADA, idMatricula));
             matricula.setTurma(null);
+            matriculaRepository.saveAndFlush(matricula);
+        }
+    }
+
+    @Override
+    public Matricula excluir(Long id) {
+        Optional<Matricula> matricula = matriculaRepository.findById(id);
+        if (matricula.isPresent()) {
+            matriculaRepository.deleteById(id);
+            documentoMatriculaService.excluirDocumentos(id);
+            return matricula.get();
+        }
+        throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_NAO_ENCONTRADA, id);
+    }
+
+    public void mudaStatusMatriculaAguardandoRenovacao(Long id){
+        Optional<Matricula> matricula = matriculaRepository.findById(id);
+        if (matricula.isPresent()){
+            matricula.get().setStatus(StatusMatricula.AGUARDANDO_RENOVACAO);
+            matriculaRepository.saveAndFlush(matricula.get());
+        }
+    }
+
+    public void mudaStatusTodasMatriculasParaAguardandoAceite(){
+        List<Matricula> matriculas = matriculaRepository.findAll();
+        for (Matricula matricula : matriculas){
+            matricula.setStatus(StatusMatricula.AGUARDANDO_RENOVACAO);
             matriculaRepository.saveAndFlush(matricula);
         }
     }

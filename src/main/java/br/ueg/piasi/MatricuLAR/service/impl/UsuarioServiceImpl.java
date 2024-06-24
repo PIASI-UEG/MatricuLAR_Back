@@ -151,8 +151,11 @@ public class UsuarioServiceImpl extends BaseCrudService<Usuario, Long, UsuarioRe
                 usuario.setSenha(novaSenha);
                 criptografarSenha(usuario);
                 alterar(usuario, usuario.getId());
-                Email.enviaEmail(usuario.getEmail(), novaSenha);
-                return;
+                Thread threadEnviaEmail = new Thread( () ->{
+                    Email.enviaEmail(usuario.getEmail(), novaSenha);
+                });
+               threadEnviaEmail.start();
+               return;
             }
             throw new BusinessException(ERRO_EMAIL_INCORRETO);
         }

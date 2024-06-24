@@ -21,8 +21,6 @@ public class Email {
         email.setAuthenticator(new DefaultAuthenticator(REMETENTE, SENHA));
         email.setSSLOnConnect(true);
 
-        Random rnd = new Random();
-        int number = rnd.nextInt(999999);
         try {
             email.setFrom(REMETENTE);
             email.setSubject("Nova senha para o sistema MatricuLAR");

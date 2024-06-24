@@ -97,4 +97,14 @@ public class TurmaServiceImpl extends BaseCrudService<Turma, Long, TurmaReposito
 
         return repository.findById(idTurma).get();
     }
+
+    @Override
+    public Turma excluir(Long id) {
+        Turma turma = repository.findById(id)
+                .orElseThrow(()-> new BusinessException(SistemaMessageCode.ERRO_TURMA_NAO_ENCONTRADA, id));
+        if (turma.getAlunos() == null || turma.getAlunos().isEmpty()){
+            throw new BusinessException(SistemaMessageCode.ERRO_EXLCUIR_TURMA_ALUNOS_NA_TURMA);
+        }
+        return super.excluir(id);
+    }
 }

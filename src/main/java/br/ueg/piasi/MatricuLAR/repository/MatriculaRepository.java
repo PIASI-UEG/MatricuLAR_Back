@@ -30,4 +30,10 @@ public interface MatriculaRepository extends JpaRepository<Matricula, Long>, Jpa
     Integer countAllWithStatus(@NonNull @Param("status") String status);
 
     long countByStatus(StatusMatricula status);
+
+    @Query("select (count(m) > 0) from Matricula m where upper(m.pessoa.cpf) = upper(?1)")
+    boolean existByAlunoCPF(@NonNull String cpf);
+
+    Optional<Matricula> findByPessoa_CpfIgnoreCase(@NonNull String cpf);
+
 }

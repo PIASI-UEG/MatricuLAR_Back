@@ -23,7 +23,8 @@ public class Pessoa extends BaseEntidade<String> {
     public static final String NOME_TABELA = "pessoa";
 
     @Id
-    @Column(name = "cpf", nullable = false, length = 11,updatable = false)
+    @Column(name = "cpf", nullable = false,
+            length = 11,updatable = false)
     @Searchable(label = "CPF")
     private String cpf;
 

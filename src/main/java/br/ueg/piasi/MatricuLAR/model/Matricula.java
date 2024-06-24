@@ -42,7 +42,7 @@ public class Matricula extends BaseEntidade<Long> {
     @Searchable(label = "Número da matrícula")
     private Long id;
 
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "pessoa_cpf",
             referencedColumnName = Pessoa.Fields.cpf, nullable = false,
             foreignKey = @ForeignKey(name = "fk_matricula_pessoa"))
@@ -80,19 +80,19 @@ public class Matricula extends BaseEntidade<Long> {
 
     @EqualsAndHashCode.Exclude
     @Builder.Default
-    @OneToMany(mappedBy = "matricula", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "matricula", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Responsavel> responsaveis = new HashSet<>();
 
     @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "matricula",fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "matricula",fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     @Builder.Default
     //@Searchable(label = "Advertências")
     private Set<Advertencia> advertencias = new HashSet<>();
 
-    @OneToOne(mappedBy = "matricula")
+    @OneToOne(mappedBy = "matricula", cascade = CascadeType.ALL)
     private InformacoesMatricula informacoesMatricula;
 
-    @OneToMany(mappedBy = "matricula")
+    @OneToMany(mappedBy = "matricula", cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
     private Set<DocumentoMatricula> documentoMatricula = new HashSet<>();
 
