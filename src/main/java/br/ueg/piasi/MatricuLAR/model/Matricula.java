@@ -50,7 +50,7 @@ public class Matricula extends BaseEntidade<Long> {
     private Pessoa pessoa;
 
     @Column(name = "status", length = 2, nullable = false)
-//    @Searchable()
+    @Searchable()
     private StatusMatricula status;
 
     @Temporal(TemporalType.DATE)
