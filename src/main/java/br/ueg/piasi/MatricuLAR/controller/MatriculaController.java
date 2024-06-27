@@ -679,4 +679,9 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
         }
         return ResponseEntity.ok(mapper.toMatriculaListagemDTO(matriculas));
     }
+
+    @PostMapping("/todas-aguardando-renovacao")
+    public void mudaStatusTodasMatriculasAguardandoRenovacao(){
+        service.mudaStatusTodasMatriculasParaAguardandoAceite();
+    }
 }

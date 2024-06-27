@@ -21,25 +21,17 @@
 	</background>
 	<pageHeader>
 		<band height="802" splitType="Stretch">
-			<staticText>
-				<reportElement x="20" y="420" width="524" height="40" uuid="4acb3077-cadd-4a8d-9146-68c9fddaf3b1"/>
-				<textElement textAlignment="Center">
-					<font size="10"/>
-				</textElement>
-				<text><![CDATA[ ________________________________________
-ASSINATURA DO PAI/MÃE/RESPONSÁVEL]]></text>
-			</staticText>
 			<textField>
 				<reportElement x="20" y="401" width="190" height="20" uuid="159333df-f8b0-47be-b1da-df5ef2d3d2de"/>
 				<textElement>
-					<font size="10"/>
+					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Anápolis, "+new SimpleDateFormat("dd MMMM yyyy").format(new java.util.Date())]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="20" y="223" width="524" height="178" uuid="b48eef4d-86b7-4342-b5a3-dd971a145a4d"/>
 				<textElement>
-					<font size="10"/>
+					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["EU, "+ $F{nomeTutor}.toUpperCase()+", RESPONSÁVEL POR "+$F{nomeCrianca}.toUpperCase()+", AUTORIZO O USO DE IMAGENS EM TRABALHOS REALIZADOS PELA ASSOCIAÇÃO SAGRADA FAMÍLIA PELO(A) PROFESSOR(A) PARA FINS EDUCATIVOS E REDE SOCIAL DA ASSOCIAÇÃO.\n\n"+"ESTOU CIENTE DE QUE AS IMAGENS SERÃO USADAS APENAS PARA FINS PEDAGÓGICOS, RESGUARDADAS AS LIMITAÇÕES LEGAIS E JURÍDICAS. \n\n"+"POR ESTA SER A EXPRESSÃO DA MINHA VONTADE DECLARO QUE AUTORIZO O USO ACIMA DESCRITO DA IMAGEM DO MEU FILHO, SEM QUE NADA HAJA A SER RECLAMADO A TÍTULO DE DIREITOS CONEXOS À SUA IMAGEM OU QUALQUER OUTRO, E ASSINO A PRESENTE AUTORIZAÇÃO EM DUAS VIAS DE IGUAL TEOR E FORMA.\n\n"+"TELEFONE(S) :  "+$F{telefoneTutor}]]></textFieldExpression>
 			</textField>
@@ -54,6 +46,14 @@ ASSINATURA DO PAI/MÃE/RESPONSÁVEL]]></text>
 				<reportElement x="20" y="0" width="524" height="150" uuid="453d254c-a2ea-4b8a-8f98-4df3f4ac3bb6"/>
 				<imageExpression><![CDATA["images/logo_termo.png"]]></imageExpression>
 			</image>
+			<textField>
+				<reportElement x="20" y="440" width="525" height="31" uuid="4e3e52bf-43d5-45d7-9dbb-60b6bcb2972b"/>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["________________________________________\nAssinatura "
++$F{nomeTutor}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 </jasperReport>

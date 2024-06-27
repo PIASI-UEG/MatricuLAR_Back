@@ -16,10 +16,14 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.TimeZone;
 
@@ -49,13 +53,13 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
     }
 
     public void uploadDocumentos(Long idMatricula, TipoDocumento tipoDocumento, MultipartFile documento) {
-
+       
+        String pastaMatricula = montaPastaMatricula(idMatricula);
+        Path pathPastaMatricula = Paths.get("docs/"+pastaMatricula);
         try {
             if (!Files.exists(root)) {
                 Files.createDirectories(root);
             }
-            String pastaMatricula = montaPastaMatricula(idMatricula);
-            Path pathPastaMatricula = Paths.get("docs/"+pastaMatricula);
 
             if(!Files.exists(pathPastaMatricula)) {
                 Files.createDirectories(pathPastaMatricula);
@@ -75,8 +79,40 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
             );
 
         }catch (Exception e){
-            throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO, e);
+            throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_DOCUMENTO);
         }
+    }
+
+    private void verficaEApagaDocs(Long idMatricula, Path pathPastaMatricula) {
+        File pasta = new File(pathPastaMatricula.toUri());
+
+        if (pasta.isDirectory()){
+            try {
+                String[] arquivos = pasta.list();
+                if (arquivos != null) {
+                    List<Path> caminhosArquivos = new ArrayList<>();
+                    for (String arquivo : arquivos) {
+
+                        String pastaComNomeArquivo = pathPastaMatricula.toString().concat("/" + arquivo);
+                        Path caminhoParaApagar = Paths.get(pastaComNomeArquivo);
+                        if (Files.exists(caminhoParaApagar)) {
+                            caminhosArquivos.add(caminhoParaApagar);
+                        }else{
+                            throw new BusinessException
+                                    (SistemaMessageCode.ERRO_EXCLUIR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO, pastaComNomeArquivo);
+                        }
+                    }
+
+                    for(Path arquivo: caminhosArquivos){
+                        Files.delete(arquivo);
+                    }
+                }
+                Files.delete(pathPastaMatricula);
+            }catch (Exception e){
+                throw new BusinessException(SistemaMessageCode.ERRO_EXCLUIR_DOCUMENTO, idMatricula);
+            }
+        }
+
     }
 
     private String montaPastaMatricula(Long idMatricula) {
@@ -178,5 +214,11 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
            throw new BusinessException(ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO);
        }
        return documentoMatricula.getCaminhoDocumento();
+    }
+
+    public void excluirDocumentos(Long idMatricula) {
+        String pastaMatricula = montaPastaMatricula(idMatricula);
+        Path pathPastaMatricula = Paths.get("docs/"+pastaMatricula);
+        verficaEApagaDocs(idMatricula, pathPastaMatricula);
     }
 }

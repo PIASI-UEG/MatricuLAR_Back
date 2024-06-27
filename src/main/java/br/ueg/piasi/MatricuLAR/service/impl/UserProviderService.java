@@ -30,7 +30,7 @@ public class UserProviderService implements br.ueg.prog.webi.api.service.UserPro
                 .id(user.getId())
                 .nome(user.getPessoaNome())
                 .email(user.getEmail())
-                .roles(Collections.singletonList(user.getCargo().getDescricao()))
+                .roles(Collections.singletonList(user.getCargo().getId()))
                 .statusAtivo(true)
                 .senha(user.getSenha())
                 .build();
