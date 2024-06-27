@@ -8,6 +8,7 @@ import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.piasi.MatricuLAR.repository.ControlePeriodoMatriculaRepository;
 import br.ueg.piasi.MatricuLAR.repository.DocumentoMatriculaRepository;
 import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
+import br.ueg.piasi.MatricuLAR.repository.UsuarioRepository;
 import br.ueg.piasi.MatricuLAR.service.impl.*;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.boot.ApplicationArguments;
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @Transactional(propagation = Propagation.REQUIRED)
@@ -34,13 +36,14 @@ public class InitialRunner implements ApplicationRunner {
     private final ControlePeriodoMatriculaRepository controlePeriodoMatriculaRepository;
     private final MatriculaRepository matriculaRepository;
     private final DocumentoMatriculaRepository documentoMatriculaRepository;
+    private final UsuarioRepository usuarioRepository;
 
     public InitialRunner(UsuarioServiceImpl usuarioService,
                          EnderecoServiceImpl enderecoService,
                          NecessidadeEspecialServiceImpl necessidadeEspecialService,
                          TurmaServiceImpl turmaService,
                          MatriculaServiceImpl matriculaService,
-                         ControlePeriodoMatriculaRepository controlePeriodoMatriculaService, MatriculaRepository matriculaRepository, InformacoesMatriculaServiceImpl informacoesMatriculaServiceImpl, DocumentoMatriculaServiceImpl documentoMatriculaServiceImpl, DocumentoMatriculaRepository documentoMatriculaRepository) {
+                         ControlePeriodoMatriculaRepository controlePeriodoMatriculaService, MatriculaRepository matriculaRepository, InformacoesMatriculaServiceImpl informacoesMatriculaServiceImpl, DocumentoMatriculaServiceImpl documentoMatriculaServiceImpl, DocumentoMatriculaRepository documentoMatriculaRepository, UsuarioRepository usuarioRepository) {
         this.usuarioService = usuarioService;
         this.enderecoService = enderecoService;
         this.turmaService = turmaService;
@@ -48,34 +51,39 @@ public class InitialRunner implements ApplicationRunner {
         this.controlePeriodoMatriculaRepository = controlePeriodoMatriculaService;
         this.matriculaRepository = matriculaRepository;
         this.documentoMatriculaRepository = documentoMatriculaRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @Override
     public void run(ApplicationArguments args) {
         try {
-            insereDadosParaTestes();
+            //insereDadosParaTestes();
+            if (Objects.isNull(usuarioRepository.findUsuarioByPessoaCpf("12345678900").orElse(null))) {
+                insereUsuarioAdmin();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void insereDadosParaTestes() throws IOException, JRException {
+    public void insereUsuarioAdmin() {
 
-        //Insere pessoa de teste para usuario
         Pessoa pessoaUsuario = Pessoa.builder()
                 .cpf("12345678900")
-                .nome("Teste Usuario")
-                .telefone("62999999999")
+                .nome("Administrador")
+                .telefone("6230996423")
                 .build();
 
-        //Insere usuario de teste
         Usuario usuario = Usuario.builder()
                 .pessoa(pessoaUsuario)
                 .senha("admin")
                 .cargo(Cargo.ADMIN)
-                .email("admin@gmail.com")
+                .email("admin@associacaosagradafamilia.com.br")
                 .build();
         usuarioService.incluir(usuario);
+    }
+
+    public void insereDadosParaTestes() throws IOException, JRException {
 
         //Insere pessoa de teste para tutor
         Pessoa pessoaTutor = Pessoa.builder()
