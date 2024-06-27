@@ -28,7 +28,7 @@ public class Email {
         try {
             email.setFrom(REMETENTE);
             email.setSubject("Nova senha sistema MatricuLAR");
-            email.setMsg("Sua nova senha é " + novaSenha + "já pode fazer o login e altera-lá no menu: Minha Conta");
+            email.setMsg("Sua nova senha é: " + novaSenha + ", já pode fazer o login e altera-lá no menu: Minha Conta");
             email.addTo(destinatario);
         } catch (EmailException e) {
             throw new RuntimeException(e);

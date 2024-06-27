@@ -1,13 +1,9 @@
 package br.ueg.piasi.MatricuLAR.controller;
 
 
-import br.ueg.piasi.MatricuLAR.dto.EnderecoDTO;
 import br.ueg.piasi.MatricuLAR.dto.PessoaDTO;
-import br.ueg.piasi.MatricuLAR.mapper.EnderecoMapper;
 import br.ueg.piasi.MatricuLAR.mapper.PessoaMapper;
-import br.ueg.piasi.MatricuLAR.model.Endereco;
 import br.ueg.piasi.MatricuLAR.model.Pessoa;
-import br.ueg.piasi.MatricuLAR.service.impl.EnderecoServiceImpl;
 import br.ueg.piasi.MatricuLAR.service.impl.PessoaServiceImpl;
 import br.ueg.prog.webi.api.controller.CrudController;
 import org.springframework.web.bind.annotation.RequestMapping;
