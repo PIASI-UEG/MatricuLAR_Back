@@ -29,7 +29,8 @@ public class UsuarioServiceImpl extends BaseCrudService<Usuario, Long, UsuarioRe
 
     @Autowired
     private UsuarioMapperImpl usuarioMapper;
-
+    @Autowired
+    private Email emailService;
     @Autowired
     private PessoaServiceImpl pessoaService;
     @Autowired
@@ -152,7 +153,7 @@ public class UsuarioServiceImpl extends BaseCrudService<Usuario, Long, UsuarioRe
                 criptografarSenha(usuario);
                 alterar(usuario, usuario.getId());
                 Thread threadEnviaEmail = new Thread( () ->{
-                    Email.enviaEmail(usuario.getEmail(), novaSenha);
+                    emailService.enviaEmail(usuario.getEmail(), novaSenha);
                 });
                threadEnviaEmail.start();
                return;
