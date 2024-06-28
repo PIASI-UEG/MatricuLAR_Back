@@ -145,13 +145,14 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         Optional<Matricula> matriculaJaExistente = matriculaRepository
                 .findByPessoa_CpfIgnoreCase(matricula.getPessoa().getCpf());
 
-        if (matriculaJaExistente.isPresent() && matriculaJaExistente.get().getStatus()
-                .equals(StatusMatricula.AGUARDANDO_RENOVACAO)){
-            excluir(matriculaJaExistente.get().getId());
-        }else{
-            throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_MATRICULA_JA_EXISTE, matricula.getPessoa().getCpf());
+        if (matriculaJaExistente.isPresent()){
+            if(matriculaJaExistente.get().getStatus()
+                    .equals(StatusMatricula.AGUARDANDO_RENOVACAO)){
+                excluir(matriculaJaExistente.get().getId());
+            }else{
+                throw new BusinessException(SistemaMessageCode.ERRO_INCLUIR_MATRICULA_JA_EXISTE, matricula.getPessoa().getCpf());
+            }
         }
-
     }
 
     private void tratarDepoisDeSalvar(Matricula matricula) {
