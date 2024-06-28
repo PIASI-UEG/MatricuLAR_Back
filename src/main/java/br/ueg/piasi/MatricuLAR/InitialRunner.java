@@ -61,6 +61,9 @@ public class InitialRunner implements ApplicationRunner {
             if (Objects.isNull(usuarioRepository.findUsuarioByPessoaCpf("12345678900").orElse(null))) {
                 insereUsuarioAdmin();
             }
+            if (Objects.isNull(controlePeriodoMatriculaRepository.findById(Long.valueOf(1)).orElse(null))) {
+                insereControles();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -81,6 +84,17 @@ public class InitialRunner implements ApplicationRunner {
                 .email("admin@associacaosagradafamilia.com.br")
                 .build();
         usuarioService.incluir(usuario);
+    }
+
+    public void insereControles() {
+        ControlePeriodoMatricula controle = ControlePeriodoMatricula.builder()
+                .id(1L)
+                .aceitandoCadastroMatricula(true)
+                .dataInicio(null)
+                .dataFim(null)
+                .atualizarPeriodoAutomatico(false)
+                .build();
+        controlePeriodoMatriculaRepository.save(controle);
     }
 
     public void insereDadosParaTestes() throws IOException, JRException {
@@ -182,15 +196,6 @@ public class InitialRunner implements ApplicationRunner {
                 .build();
 
         matriculaService.incluir(matricula);
-
-        ControlePeriodoMatricula controle = ControlePeriodoMatricula.builder()
-                .id(1L)
-                .aceitandoCadastroMatricula(true)
-                .dataInicio(null)
-                .dataFim(null)
-                .atualizarPeriodoAutomatico(false)
-                .build();
-        controlePeriodoMatriculaRepository.save(controle);
 
         DocumentoMatricula documentoMatricula = DocumentoMatricula.builder()
                 .matricula(Matricula.builder().id(1L).build())
