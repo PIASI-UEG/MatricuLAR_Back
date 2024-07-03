@@ -10,7 +10,8 @@ public enum Vinculo {
     VIZINHO ("VZ", "vizinho/vizinha"),
     AVO ("AV", "avô/avó"),
     TIA("TA", "tia"),
-    BISAVO("BIS", "bisavô/bisavó");
+    BISAVO("BIS", "bisavô/bisavó"),
+    PRIMO("PRI", "primo");
 
 
     private final String id;
