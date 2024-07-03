@@ -21,7 +21,6 @@ public class Advertencia extends BaseEntidade<PkAdvertencia> {
 
     public static final String NOME_TABELA = "advertencia";
 
-    public static final String MATRICULA_ID = "matricula_id";
 
     @SequenceGenerator(
             name = "advertencia_gerador_sequence",
@@ -42,8 +41,8 @@ public class Advertencia extends BaseEntidade<PkAdvertencia> {
 
     @Id
     @EqualsAndHashCode.Exclude
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    @JoinColumn(name = Advertencia.MATRICULA_ID, nullable = false,
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "matricula_id", nullable = false,
             referencedColumnName = Matricula.Fields.id,
             foreignKey = @ForeignKey(name = "fk_advertencia_matricula"))
     private Matricula matricula;

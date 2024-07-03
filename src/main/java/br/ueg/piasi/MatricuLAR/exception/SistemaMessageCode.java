@@ -12,6 +12,7 @@ public enum SistemaMessageCode implements MessageCode {
         201 - 300 mensagens para matricula
         301 - 400 mensagens para termo
         401 - 450 mensagens para periodo matricula
+        451 - 500 mensagens para advertencia
     */
 
     //USUARIO
@@ -63,7 +64,11 @@ public enum SistemaMessageCode implements MessageCode {
     ERRO_CONTROLE_PERIODO_INCLUIR("MSG-401", 400),
     ERRO_CONTROLE_PERIODO_ALTERAR("MSG-402", 400),
     ERRO_CONTROLE_PERIODO_EXCLUIR("MSG-403", 400),
-    ERRO_PERIODO_MATRICULA_NAO_ACEITANDO("MSG-404",400 );
+    ERRO_PERIODO_MATRICULA_NAO_ACEITANDO("MSG-404",400 ),
+
+    //ADVERTENCIA
+    ERRO_ADVERTENCIA_NAO_EXISTE("MSG-451", 404)
+    ;
 
     private final String code;
     private final Integer status;

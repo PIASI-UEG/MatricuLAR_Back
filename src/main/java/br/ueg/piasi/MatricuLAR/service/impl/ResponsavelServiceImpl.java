@@ -25,7 +25,7 @@ public class ResponsavelServiceImpl extends BaseCrudService<Responsavel, PkRespo
 
     @Override
     protected void prepararParaIncluir(Responsavel responsavel) {
-        Pessoa pessoa = pessoaServiceImpl.obterPeloId(responsavel.getPessoa().getCpf());
+        Pessoa pessoa = pessoaServiceImpl.findByCPF(responsavel.getPessoa().getCpf());
         if (Objects.nonNull(pessoa)) {
             responsavel.setPessoa(pessoa);
         }else{
@@ -42,5 +42,10 @@ public class ResponsavelServiceImpl extends BaseCrudService<Responsavel, PkRespo
     @Override
     protected void validarCamposObrigatorios(Responsavel entidade) {
 
+    }
+
+    public Responsavel incluirResponsavel(Responsavel responsavel) {
+        prepararParaIncluir(responsavel);
+        return repository.save(responsavel);
     }
 }
