@@ -10,7 +10,7 @@ public record MatriculaVisualizarDTO(
         String statusAluno,
         List<String> tutoresNomes,
         List<String> tutoresTelefone,
-        List<String> responsaveisNome,
+        List<ResponsavelDTO> responsaveis,
         String caminhoImagem,
         List<NecessidadeEspecialDTO> necessidades,
         List<AdvertenciaDTO> advertencias
