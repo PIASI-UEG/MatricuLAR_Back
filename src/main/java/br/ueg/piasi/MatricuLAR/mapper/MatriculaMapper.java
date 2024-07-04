@@ -47,6 +47,7 @@ public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
     @Mapping(target = "tutoresNomes", expression = "java(getNomeTutores(matricula.getResponsaveis()))")
     @Mapping(target = "tutoresTelefone", expression = "java(getTelefoneTutores(matricula.getResponsaveis()))")
     @Mapping(target = "responsaveis", expression = "java(getResponsaveisSemTutores(matricula.getResponsaveis()))")
+    @Mapping(target = "responsaveisNome", expression = "java(getNomeResponsaveisETutores(matricula.getResponsaveis()))")
     @Mapping(target = "caminhoImagem", expression = "java(getCaminhoImagemAluno(matricula.getDocumentoMatricula()))")
     @Mapping(target = "necessidades", source = "necessidades")
     @Mapping(target = "advertencias", source = "advertencias")
