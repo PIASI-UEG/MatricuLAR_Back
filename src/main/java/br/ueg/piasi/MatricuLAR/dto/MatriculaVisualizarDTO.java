@@ -11,7 +11,6 @@ public record MatriculaVisualizarDTO(
         List<String> tutoresNomes,
         List<String> tutoresTelefone,
         List<ResponsavelDTO> responsaveis,
-        List<String> responsaveisNome,
         String caminhoImagem,
         List<NecessidadeEspecialDTO> necessidades,
         List<AdvertenciaDTO> advertencias

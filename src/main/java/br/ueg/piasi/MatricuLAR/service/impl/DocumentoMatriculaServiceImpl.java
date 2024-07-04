@@ -17,15 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.TimeZone;
+import java.util.*;
 
 import static br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode.ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO;
 
@@ -197,7 +193,7 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
         try{
             String pastaMatricula = montaPastaMatricula(idMatricula);
             Path arquivo = root.resolve(pastaMatricula.concat("/"+documentoMatricula.getCaminhoDocumento()));
-            Files.delete(arquivo);
+            Files.deleteIfExists(arquivo);
             uploadDocumentos(idMatricula, tipoDocumento, multipartFile);
 
         }catch (Exception e){
@@ -220,5 +216,54 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
         String pastaMatricula = montaPastaMatricula(idMatricula);
         Path pathPastaMatricula = Paths.get("docs/"+pastaMatricula);
         verficaEApagaDocs(idMatricula, pathPastaMatricula);
+    }
+
+    private String montaNomeArquivo(Long idMatricula, TipoDocumento tipoDocumento) {
+
+        StringBuilder sbCaminhoDoc = new StringBuilder();
+        sbCaminhoDoc.append(idMatricula)
+                .append("_")
+                .append(tipoDocumento.getId());
+
+        if (ehContraCheque(tipoDocumento)){
+            adicionaMesAnoCaminho(sbCaminhoDoc);
+        }
+
+        return sbCaminhoDoc.toString();
+
+    }
+
+    public void salvarDocumentosPorIdTipoDoc(Set<String> setIdTipoDoc, Long idMatricula) {
+        for (String idTipoDoc : setIdTipoDoc) {
+            String nomeArquivo = montaNomeArquivo(idMatricula, TipoDocumento.getById(idTipoDoc));
+            this.repository.saveAndFlush(
+                    DocumentoMatricula.builder()
+                            .matricula(Matricula.builder().id(idMatricula).build())
+                            .idTipoDocumento(idTipoDoc)
+                            .caminhoDocumento(nomeArquivo)
+                            .aceito(false)
+                            .build()
+            );
+        }
+    }
+
+    public void excluirDocumentosPorIdTipoDoc(Set<String> setIdTipoDoc, Long idMatricula) {
+       for (String idTipoDoc : setIdTipoDoc) {
+           DocumentoMatricula documentoMatricula =
+                   repository.findByMatricula_IdAndIdTipoDocumento(idMatricula, idTipoDoc)
+                           .orElse(null);
+           if (documentoMatricula != null) {
+               try {
+                   String pastaMatricula = montaPastaMatricula(idMatricula);
+                   String nomeArquivo = montaNomeArquivo(idMatricula, TipoDocumento.getById(idTipoDoc));
+                   Path arquivo = root.resolve(pastaMatricula.concat("/" + documentoMatricula.getCaminhoDocumento()));
+                   Files.deleteIfExists(arquivo);
+                   repository.deleteById(new PkDocumentoMatricula(idMatricula, idTipoDoc));
+
+               } catch (Exception e) {
+                   throw new BusinessException(ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO);
+               }
+           }
+       }
     }
 }

@@ -46,8 +46,7 @@ public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
     @Mapping(target = "statusAluno",  expression = "java(getStatusMatriculaDescricao(matricula.getStatus()))")
     @Mapping(target = "tutoresNomes", expression = "java(getNomeTutores(matricula.getResponsaveis()))")
     @Mapping(target = "tutoresTelefone", expression = "java(getTelefoneTutores(matricula.getResponsaveis()))")
-    @Mapping(target = "responsaveis", expression = "java(getResponsaveisSemTutores(matricula.getResponsaveis()))")
-    @Mapping(target = "responsaveisNome", expression = "java(getNomeResponsaveisETutores(matricula.getResponsaveis()))")
+    @Mapping(target = "responsaveis", source ="responsaveis", qualifiedByName = "responsaveisSemTutores")
     @Mapping(target = "caminhoImagem", expression = "java(getCaminhoImagemAluno(matricula.getDocumentoMatricula()))")
     @Mapping(target = "necessidades", source = "necessidades")
     @Mapping(target = "advertencias", source = "advertencias")
@@ -77,10 +76,12 @@ public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
     }
 
     default List<String> getNomeResponsaveisETutores(Set<Responsavel> responsaveis){
-        return new ArrayList<>(responsaveis.stream()
+        List<String> nomes =  new ArrayList<>(responsaveis.stream()
                 .map(Responsavel::getPessoa)
                 .map(Pessoa::getNome)
                 .toList());
+        Collections.reverse(nomes);
+        return nomes;
     }
 
     default List<String> getTelefoneResponsaveis(Set<Responsavel> responsaveis){
@@ -90,6 +91,8 @@ public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
                 .filter(Objects::nonNull)
                 .toList();
     }
+
+    @Named("responsaveisSemTutores")
     default List<ResponsavelDTO> getResponsaveisSemTutores(Set<Responsavel> responsaveis){
         List<Responsavel> lista = new ArrayList<>(responsaveis.stream()
                 .filter(responsavel -> !responsavel.getTutor())

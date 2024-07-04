@@ -7,7 +7,6 @@ import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
 import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
 import br.ueg.piasi.MatricuLAR.model.*;
-import br.ueg.piasi.MatricuLAR.model.pkComposta.PkDocumentoMatricula;
 import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
 import br.ueg.piasi.MatricuLAR.service.InformacoesMatriculaService;
 import br.ueg.piasi.MatricuLAR.service.MatriculaService;
@@ -40,6 +39,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED)
@@ -83,7 +83,8 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     private final Path root = Paths.get("docs");
     private InformacoesMatricula informacoesMatricula;
     private List<NecessidadeEspecial> necessidadeEspeciais;
-    private  Set<Responsavel> responsavelSet;
+    private Set<Responsavel> responsavelSet;
+    private Set<String> documentosMatricula;
 
 
 
@@ -273,6 +274,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
                     .getStatus();
             matricula.setStatus(statusMatricula);
         }
+
         tratarAntesDeAlterar(matricula, id);
         matricula=  super.alterar(matricula, id);
         tratarDepoisDeAlterar(matricula,id);
@@ -290,6 +292,29 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
         salvarResponsaveisAlterar(this.responsavelSet, id);
 
+        if (matricula.getDocumentoMatricula() != null && !matricula.getDocumentoMatricula().isEmpty()){
+            tratarListaDocumentoMatricula(matricula.getDocumentoMatricula().stream()
+                    .map(DocumentoMatricula::getIdTipoDocumento).collect(Collectors.toSet()), matricula.getId());
+        }
+
+    }
+
+    private void tratarListaDocumentoMatricula(Set<String> documentosMatriculaBd, Long idMatricula) {
+        if(Objects.nonNull(documentosMatriculaBd) && Objects.nonNull(this.documentosMatricula)){
+
+            Set<String> documentosAExcluir = new HashSet<>();
+
+            Set<String> auxSet = new HashSet<>(this.documentosMatricula);
+
+            for (String doc : documentosMatriculaBd) {
+                if (!auxSet.remove(doc)) {
+                    documentosAExcluir.add(doc);
+                }
+            }
+            Set<String> documentosASalvar = new HashSet<>(auxSet);
+            documentoMatriculaService.salvarDocumentosPorIdTipoDoc(documentosASalvar, idMatricula);
+           // documentoMatriculaService.excluirDocumentosPorIdTipoDoc(documentosAExcluir, idMatricula);
+        }
 
     }
 
@@ -315,7 +340,13 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         this.responsavelSet = tratarMatriculaResponsaveis(matricula);
         validarTodosCpf(matricula);
         validarIdadeCrianca(matricula);
-        matricula.setDocumentoMatricula(new HashSet<>());
+
+        this.documentosMatricula = matricula.getDocumentoMatricula().stream()
+                .map(DocumentoMatricula :: getIdTipoDocumento)
+                .collect(Collectors.toSet());
+
+        matricula.setDocumentoMatricula(repository.findById(id).get().getDocumentoMatricula());
+
         matricula.setAdvertencias(new HashSet<>());
 
         if(Objects.nonNull(matricula.getInformacoesMatricula())){
