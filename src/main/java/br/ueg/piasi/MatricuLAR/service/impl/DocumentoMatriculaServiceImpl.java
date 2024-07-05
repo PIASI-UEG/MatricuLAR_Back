@@ -259,7 +259,6 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
                    Path arquivo = root.resolve(pastaMatricula.concat("/" + documentoMatricula.getCaminhoDocumento()));
                    Files.deleteIfExists(arquivo);
                    repository.deleteById(new PkDocumentoMatricula(idMatricula, idTipoDoc));
-
                } catch (Exception e) {
                    throw new BusinessException(ERRO_ENCONTRAR_DOCUMENTO_ARQUIVO_NAO_ENCONTRADO);
                }

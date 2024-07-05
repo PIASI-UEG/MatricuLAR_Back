@@ -7,15 +7,14 @@ import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 @Builder
+@Data
 @Entity
-@Table
+@Table(name = DocumentoMatricula.NOME_TABELA)
 @IdClass(PkDocumentoMatricula.class)
 public class DocumentoMatricula extends BaseEntidade<PkDocumentoMatricula> {
 
-    public static final String NOME_TABELA = "documento";
+    public static final String NOME_TABELA = "documento_matricula";
     public static final String MATRICULA_ID = "matricula_id";
 
     @Id

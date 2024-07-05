@@ -313,7 +313,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             }
             Set<String> documentosASalvar = new HashSet<>(auxSet);
             documentoMatriculaService.salvarDocumentosPorIdTipoDoc(documentosASalvar, idMatricula);
-           // documentoMatriculaService.excluirDocumentosPorIdTipoDoc(documentosAExcluir, idMatricula);
+            documentoMatriculaService.excluirDocumentosPorIdTipoDoc(documentosAExcluir, idMatricula);
         }
 
     }
