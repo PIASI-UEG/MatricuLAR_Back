@@ -153,7 +153,7 @@ public class DocumentoMatriculaServiceImpl extends BaseCrudService<DocumentoMatr
 
     public Resource getDocumentoMatricula(String caminhdoDoc){
         try {
-            String caminhoDocComPasta = "MAT_"+caminhdoDoc.charAt(0)+"/"+caminhdoDoc;
+            String caminhoDocComPasta = "MAT_"+caminhdoDoc.substring(0, caminhdoDoc.indexOf("_"))+"/"+caminhdoDoc;
             Path arquivo = root.resolve(caminhoDocComPasta);
 
             Resource resource = new UrlResource(arquivo.toUri());
