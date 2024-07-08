@@ -84,7 +84,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     private InformacoesMatricula informacoesMatricula;
     private List<NecessidadeEspecial> necessidadeEspeciais;
     private Set<Responsavel> responsavelSet;
-    private Set<String> documentosMatricula;
+    private Set<DocumentoMatricula> documentosMatricula;
 
 
 
@@ -292,28 +292,9 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
         salvarResponsaveisAlterar(this.responsavelSet, id);
 
-        if (matricula.getDocumentoMatricula() != null && !matricula.getDocumentoMatricula().isEmpty()){
-            tratarListaDocumentoMatricula(matricula.getDocumentoMatricula().stream()
-                    .map(DocumentoMatricula::getIdTipoDocumento).collect(Collectors.toSet()), matricula.getId());
-        }
-
-    }
-
-    private void tratarListaDocumentoMatricula(Set<String> documentosMatriculaBd, Long idMatricula) {
-        if(Objects.nonNull(documentosMatriculaBd) && Objects.nonNull(this.documentosMatricula)){
-
-            Set<String> documentosAExcluir = new HashSet<>();
-
-            Set<String> auxSet = new HashSet<>(this.documentosMatricula);
-
-            for (String doc : documentosMatriculaBd) {
-                if (!auxSet.remove(doc)) {
-                    documentosAExcluir.add(doc);
-                }
-            }
-            Set<String> documentosASalvar = new HashSet<>(auxSet);
-            documentoMatriculaService.salvarDocumentosPorIdTipoDoc(documentosASalvar, idMatricula);
-            documentoMatriculaService.excluirDocumentosPorIdTipoDoc(documentosAExcluir, idMatricula);
+        if (this.documentosMatricula != null && !this.documentosMatricula.isEmpty()){
+            documentoMatriculaService.atualizarListaDocumentosMatricula(documentosMatricula, matricula.getId());
+            this.documentosMatricula = null;
         }
 
     }
@@ -341,11 +322,9 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         validarTodosCpf(matricula);
         validarIdadeCrianca(matricula);
 
-        this.documentosMatricula = matricula.getDocumentoMatricula().stream()
-                .map(DocumentoMatricula :: getIdTipoDocumento)
-                .collect(Collectors.toSet());
+        this.documentosMatricula = matricula.getDocumentoMatricula();
 
-        matricula.setDocumentoMatricula(repository.findById(id).get().getDocumentoMatricula());
+        matricula.setDocumentoMatricula(new HashSet<>());
 
         matricula.setAdvertencias(new HashSet<>());
 
