@@ -9,5 +9,6 @@ public record MatriculaListagemDTO(Long nroMatricula,
                                    String tituloTurma,
                                    List<String> nomeResponsaveis,
                                    List<String> telefoneResponsaveis,
+                                   List<String> nomeTutores,
                                    String statusMatricula) {
 }
