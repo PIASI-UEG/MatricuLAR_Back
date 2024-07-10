@@ -18,22 +18,28 @@ public class TutorServiceImpl extends BaseCrudService<Tutor, String, TutorReposi
 
     private final PessoaServiceImpl pessoaServiceImpl;
     private final PessoaRepository pessoaRepository;
+    private final TutorRepository tutorRepository;
 
-    public TutorServiceImpl(PessoaServiceImpl pessoaServiceImpl, PessoaRepository pessoaRepository) {
+    public TutorServiceImpl(PessoaServiceImpl pessoaServiceImpl, PessoaRepository pessoaRepository, TutorRepository tutorRepository) {
         this.pessoaServiceImpl = pessoaServiceImpl;
         this.pessoaRepository = pessoaRepository;
+        this.tutorRepository = tutorRepository;
     }
 
     @Override
     protected void prepararParaIncluir(Tutor tutor) {
-        tutor.setPessoa(pessoaServiceImpl.incluir(
-                        Pessoa.builder()
-                                .nome(tutor.getPessoa().getNome())
-                                .cpf(tutor.getPessoa().getCpf())
-                                .telefone(tutor.getPessoa().getTelefone())
-                                .build()
-                )
-        );
+        if(pessoaRepository.findById(tutor.getCpf()).isPresent()){
+            tutor.setPessoa(pessoaServiceImpl.obterPeloId(tutor.getCpf()));
+        } else{
+            tutor.setPessoa(pessoaServiceImpl.incluir(
+                            Pessoa.builder()
+                                    .nome(tutor.getPessoa().getNome())
+                                    .cpf(tutor.getPessoa().getCpf())
+                                    .telefone(tutor.getPessoa().getTelefone())
+                                    .build()
+                    )
+            );
+        }
     }
 
     @Override
@@ -47,6 +53,6 @@ public class TutorServiceImpl extends BaseCrudService<Tutor, String, TutorReposi
     }
 
     protected boolean tutorExists(Tutor tutor) {
-        return pessoaRepository.findById(tutor.getCpf()).isPresent();
+        return tutorRepository.findById(tutor.getCpf()).isPresent();
     }
 }

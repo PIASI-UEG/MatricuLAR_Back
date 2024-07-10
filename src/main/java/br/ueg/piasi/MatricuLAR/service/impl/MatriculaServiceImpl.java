@@ -7,7 +7,6 @@ import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
 import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
 import br.ueg.piasi.MatricuLAR.model.*;
-import br.ueg.piasi.MatricuLAR.model.pkComposta.PkDocumentoMatricula;
 import br.ueg.piasi.MatricuLAR.repository.MatriculaRepository;
 import br.ueg.piasi.MatricuLAR.service.InformacoesMatriculaService;
 import br.ueg.piasi.MatricuLAR.service.MatriculaService;
@@ -40,6 +39,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED)
@@ -83,7 +83,8 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
     private final Path root = Paths.get("docs");
     private InformacoesMatricula informacoesMatricula;
     private List<NecessidadeEspecial> necessidadeEspeciais;
-    private  Set<Responsavel> responsavelSet;
+    private Set<Responsavel> responsavelSet;
+    private Set<DocumentoMatricula> documentosMatricula;
 
 
 
@@ -227,7 +228,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             if (Objects.isNull(nascimento)) {
                 throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_RESPONSAVEL_NASCIMENTO_NAO_INFORMADO);
             }
-            if (Period.between(nascimento, LocalDate.now()).getYears() < 18) {
+            if (Period.between(nascimento, LocalDate.now()).getYears() < 14) {
                 throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_RESPONSAVEL_MENOR_IDADE);
             }
         }
@@ -273,6 +274,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
                     .getStatus();
             matricula.setStatus(statusMatricula);
         }
+
         tratarAntesDeAlterar(matricula, id);
         matricula=  super.alterar(matricula, id);
         tratarDepoisDeAlterar(matricula,id);
@@ -290,6 +292,10 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
 
         salvarResponsaveisAlterar(this.responsavelSet, id);
 
+        if (this.documentosMatricula != null && !this.documentosMatricula.isEmpty()){
+            documentoMatriculaService.atualizarListaDocumentosMatricula(documentosMatricula, matricula.getId());
+            this.documentosMatricula = null;
+        }
 
     }
 
@@ -315,7 +321,11 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         this.responsavelSet = tratarMatriculaResponsaveis(matricula);
         validarTodosCpf(matricula);
         validarIdadeCrianca(matricula);
+
+        this.documentosMatricula = matricula.getDocumentoMatricula();
+
         matricula.setDocumentoMatricula(new HashSet<>());
+
         matricula.setAdvertencias(new HashSet<>());
 
         if(Objects.nonNull(matricula.getInformacoesMatricula())){
@@ -767,11 +777,12 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         }
     }
 
-    public void mudaStatusTodasMatriculasParaAguardandoAceite(){
-        List<Matricula> matriculas = matriculaRepository.findAll();
+    public RetornoString mudaStatusTodasMatriculasParaAguardandoAceite(){
+        List<Matricula> matriculas = matriculaRepository.findAllByStatus(StatusMatricula.ATIVO);
         for (Matricula matricula : matriculas){
             matricula.setStatus(StatusMatricula.AGUARDANDO_RENOVACAO);
             matriculaRepository.saveAndFlush(matricula);
         }
+        return new RetornoString("Todas as matriculas ativas foram alteradas para aguardando renovação");
     }
 }

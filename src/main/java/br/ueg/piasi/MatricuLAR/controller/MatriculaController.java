@@ -1,10 +1,7 @@
 package br.ueg.piasi.MatricuLAR.controller;
 
 
-import br.ueg.piasi.MatricuLAR.dto.DocumentoMatriculaDTO;
-import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
-import br.ueg.piasi.MatricuLAR.dto.MatriculaListagemDTO;
-import br.ueg.piasi.MatricuLAR.dto.MatriculaVisualizarDTO;
+import br.ueg.piasi.MatricuLAR.dto.*;
 import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
@@ -680,8 +677,40 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
         return ResponseEntity.ok(mapper.toMatriculaListagemDTO(matriculas));
     }
 
+
     @PostMapping("/todas-aguardando-renovacao")
-    public void mudaStatusTodasMatriculasAguardandoRenovacao(){
-        service.mudaStatusTodasMatriculasParaAguardandoAceite();
+    @Operation(
+            description = "Muda status todas as matriculas para aguardando renovação",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Listagem do resultado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                            implementation = RetornoString.class
+                    )
+                    )}
+            ), @ApiResponse(
+                    responseCode = "400",
+                    description = "falha ao realizar a busca",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            ), @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            )}
+    )
+    public ResponseEntity<RetornoString> mudaStatusTodasMatriculasAguardandoRenovacao(){
+        return ResponseEntity.ok(service.mudaStatusTodasMatriculasParaAguardandoAceite());
     }
 }

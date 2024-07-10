@@ -24,7 +24,7 @@ public class Responsavel extends BaseEntidade<PkResponsavel> {
 
     @Id
     @EqualsAndHashCode.Exclude
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = Responsavel.ID_MATRICULA, nullable = false,
             referencedColumnName = Matricula.Fields.id,
             foreignKey = @ForeignKey(name = "fk_responsavel_matricula"))

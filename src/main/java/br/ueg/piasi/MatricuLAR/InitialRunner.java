@@ -57,7 +57,7 @@ public class InitialRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         try {
-            //insereDadosParaTestes();
+           //insereDadosParaTestes();
             if (Objects.isNull(usuarioRepository.findUsuarioByPessoaCpf("12345678900").orElse(null))) {
                 insereUsuarioAdmin();
             }

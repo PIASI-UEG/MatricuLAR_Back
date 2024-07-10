@@ -1,14 +1,12 @@
 package br.ueg.piasi.MatricuLAR.mapper;
 
-import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
-import br.ueg.piasi.MatricuLAR.dto.MatriculaListagemDTO;
-import br.ueg.piasi.MatricuLAR.dto.MatriculaRelatorioDTO;
-import br.ueg.piasi.MatricuLAR.dto.MatriculaVisualizarDTO;
+import br.ueg.piasi.MatricuLAR.dto.*;
 import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import br.ueg.piasi.MatricuLAR.model.*;
 import br.ueg.prog.webi.api.mapper.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,7 +20,7 @@ public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
     @Mapping(source = "pessoa.nome", target = "nome")
     @Mapping(source = "pessoa.cpf", target = "cpf")
     @Mapping(source = "turma", target = "turma")
-    @Mapping(source = "tutorList", target = "tutorDTOList")
+    @Mapping(source = "tutorList", target = "tutorDTOList", qualifiedByName = "tutorListInvertida")
     MatriculaDTO toDTO(Matricula modelo);
 
     @Mapping(source = "endereco", target = "endereco")
@@ -37,6 +35,7 @@ public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
     @Mapping(target = "statusMatricula", expression = "java(getStatusMatriculaDescricao(matricula.getStatus()))")
     @Mapping(target = "nomeResponsaveis", expression = "java(getNomeResponsaveisETutores(matricula.getResponsaveis()))")
     @Mapping(target = "telefoneResponsaveis", expression = "java(getTelefoneResponsaveis(matricula.getResponsaveis()))" )
+    @Mapping(target = "nomeTutores", expression = "java(getNomeTutores(matricula.getResponsaveis()))")
     @Mapping(target = "tituloTurma", source = "turma.titulo", defaultValue = "Sem turma")
     MatriculaListagemDTO toMatriculaListagemDTO(Matricula matricula);
 
@@ -48,7 +47,7 @@ public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
     @Mapping(target = "statusAluno",  expression = "java(getStatusMatriculaDescricao(matricula.getStatus()))")
     @Mapping(target = "tutoresNomes", expression = "java(getNomeTutores(matricula.getResponsaveis()))")
     @Mapping(target = "tutoresTelefone", expression = "java(getTelefoneTutores(matricula.getResponsaveis()))")
-    @Mapping(target = "responsaveisNome", expression = "java(getNomeResponsaveisSemTutores(matricula.getResponsaveis()))")
+    @Mapping(target = "responsaveis", source ="responsaveis", qualifiedByName = "responsaveisSemTutores")
     @Mapping(target = "caminhoImagem", expression = "java(getCaminhoImagemAluno(matricula.getDocumentoMatricula()))")
     @Mapping(target = "necessidades", source = "necessidades")
     @Mapping(target = "advertencias", source = "advertencias")
@@ -78,10 +77,12 @@ public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
     }
 
     default List<String> getNomeResponsaveisETutores(Set<Responsavel> responsaveis){
-        return new ArrayList<>(responsaveis.stream()
+        List<String> nomes =  new ArrayList<>(responsaveis.stream()
                 .map(Responsavel::getPessoa)
                 .map(Pessoa::getNome)
                 .toList());
+        Collections.reverse(nomes);
+        return nomes;
     }
 
     default List<String> getTelefoneResponsaveis(Set<Responsavel> responsaveis){
@@ -91,14 +92,15 @@ public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
                 .filter(Objects::nonNull)
                 .toList();
     }
-    default List<String> getNomeResponsaveisSemTutores(Set<Responsavel> responsaveis){
-        List<String> lista = new ArrayList<>(responsaveis.stream()
+
+    @Named("responsaveisSemTutores")
+    default List<ResponsavelDTO> getResponsaveisSemTutores(Set<Responsavel> responsaveis){
+        List<Responsavel> lista = new ArrayList<>(responsaveis.stream()
                 .filter(responsavel -> !responsavel.getTutor())
-                .map(Responsavel::getPessoa)
-                .map(Pessoa::getNome)
                 .toList());
         Collections.reverse(lista);
-        return lista;
+        ResponsavelMapperImpl responseMapper = new ResponsavelMapperImpl();
+        return responseMapper.toDTO(lista);
     }
     default List<String> getNomeTutores(Set<Responsavel> responsaveis){
         List<String> lista = new ArrayList<>(responsaveis.stream()
@@ -124,6 +126,16 @@ public interface MatriculaMapper extends BaseMapper<Matricula, MatriculaDTO> {
         return documentoMatriculaSet.stream().filter(documentoMatricula ->
                 documentoMatricula.getIdTipoDocumento().equals("FC"))
                 .map(DocumentoMatricula::getCaminhoDocumento).findFirst().orElse(null);
+    }
+
+    @Named("tutorListInvertida")
+     default List<TutorDTO> getTutorListEInverteOrdem(List<Tutor> tutores){
+        TutorMapperImpl tutorMapper = new TutorMapperImpl();
+        List<TutorDTO> tutorDTOS = tutorMapper.toDTO(tutores);
+        if (Objects.nonNull(tutorDTOS)){
+            Collections.reverse(tutorDTOS);
+        }
+        return tutorDTOS;
     }
 
 }

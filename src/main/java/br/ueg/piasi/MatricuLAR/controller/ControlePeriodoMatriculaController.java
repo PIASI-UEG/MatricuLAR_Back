@@ -96,4 +96,40 @@ public class ControlePeriodoMatriculaController extends CrudController<ControleP
                 )
         );
     }
+
+    @Operation(
+            description = "obter status",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Boolean.class)
+                    )}
+            ), @ApiResponse(
+                    responseCode = "400",
+                    description = "falha ao realizar a busca",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            ), @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            )}
+    )
+    @PostMapping("/obter-status")
+    private ResponseEntity<Boolean> oberStatus() {
+        return ResponseEntity.ok(
+            service.obterPeloId(1L).getAceitandoCadastroMatricula()
+        );
+    }
 }

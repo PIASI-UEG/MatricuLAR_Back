@@ -7,19 +7,19 @@ import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 @Builder
+@Data
 @Entity
-@Table
+@Table(name = DocumentoMatricula.NOME_TABELA)
 @IdClass(PkDocumentoMatricula.class)
 public class DocumentoMatricula extends BaseEntidade<PkDocumentoMatricula> {
 
-    public static final String NOME_TABELA = "documento";
+    public static final String NOME_TABELA = "documento_matricula";
     public static final String MATRICULA_ID = "matricula_id";
 
     @Id
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @EqualsAndHashCode.Exclude
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = MATRICULA_ID, nullable = false,
             referencedColumnName = Matricula.Fields.id,
             foreignKey = @ForeignKey(name = "fk_documento_matricula"))

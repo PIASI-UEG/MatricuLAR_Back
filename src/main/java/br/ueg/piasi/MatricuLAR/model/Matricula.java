@@ -84,7 +84,8 @@ public class Matricula extends BaseEntidade<Long> {
     private Set<Responsavel> responsaveis = new HashSet<>();
 
     @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "matricula",fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "matricula",fetch = FetchType.EAGER,
+            orphanRemoval = true, cascade = CascadeType.ALL)
     @Builder.Default
     //@Searchable(label = "Advertências")
     private Set<Advertencia> advertencias = new HashSet<>();
@@ -92,8 +93,10 @@ public class Matricula extends BaseEntidade<Long> {
     @OneToOne(mappedBy = "matricula", cascade = CascadeType.ALL)
     private InformacoesMatricula informacoesMatricula;
 
-    @OneToMany(mappedBy = "matricula", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "matricula",fetch = FetchType.EAGER,
+            orphanRemoval = true, cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
+    @Builder.Default
     private Set<DocumentoMatricula> documentoMatricula = new HashSet<>();
 
     @Transient

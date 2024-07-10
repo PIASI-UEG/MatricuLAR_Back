@@ -15,12 +15,8 @@ public class TurmaDTO {
 
     private Integer ano;
 
-////    @Schema(type = "String", pattern = "07:00")
-//    @Temporal(TemporalType.TIME)
     private String horaInicio;
 
-//    @Schema(type = "String", pattern = "11:30")
-//    @Temporal(TemporalType.TIME)
     private String horaFim;
 
     private String telefoneProfessor;
