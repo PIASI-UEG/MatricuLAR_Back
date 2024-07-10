@@ -777,11 +777,12 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
         }
     }
 
-    public void mudaStatusTodasMatriculasParaAguardandoAceite(){
-        List<Matricula> matriculas = matriculaRepository.findAll();
+    public String mudaStatusTodasMatriculasParaAguardandoAceite(){
+        List<Matricula> matriculas = matriculaRepository.findAllByStatusByStatus(StatusMatricula.ATIVO);
         for (Matricula matricula : matriculas){
             matricula.setStatus(StatusMatricula.AGUARDANDO_RENOVACAO);
             matriculaRepository.saveAndFlush(matricula);
         }
+        return "Todas as matriculas ativas foram alteradas para aguardando renovação";
     }
 }

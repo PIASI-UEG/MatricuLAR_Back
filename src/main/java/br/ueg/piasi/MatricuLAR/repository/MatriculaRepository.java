@@ -36,4 +36,5 @@ public interface MatriculaRepository extends JpaRepository<Matricula, Long>, Jpa
 
     Optional<Matricula> findByPessoa_CpfIgnoreCase(@NonNull String cpf);
 
+    List<Matricula> findAllByStatusByStatus(@NonNull StatusMatricula status);
 }

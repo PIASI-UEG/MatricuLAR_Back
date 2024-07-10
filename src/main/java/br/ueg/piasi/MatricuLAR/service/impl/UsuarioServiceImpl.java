@@ -4,6 +4,7 @@ package br.ueg.piasi.MatricuLAR.service.impl;
 import br.ueg.piasi.MatricuLAR.dto.RedefinirSenhaDTO;
 import br.ueg.piasi.MatricuLAR.dto.UsuarioDTO;
 import br.ueg.piasi.MatricuLAR.enums.Cargo;
+import br.ueg.piasi.MatricuLAR.exception.SistemaMessageCode;
 import br.ueg.piasi.MatricuLAR.mapper.UsuarioMapperImpl;
 import br.ueg.piasi.MatricuLAR.model.Pessoa;
 import br.ueg.piasi.MatricuLAR.model.Usuario;
@@ -38,14 +39,19 @@ public class UsuarioServiceImpl extends BaseCrudService<Usuario, Long, UsuarioRe
 
     @Override
     protected void prepararParaIncluir(Usuario usuario) {
-       usuario.setPessoa(pessoaService.incluir(
-               Pessoa.builder()
-                        .nome(usuario.getPessoa().getNome())
-                        .cpf(usuario.getPessoa().getCpf())
-                        .telefone(usuario.getPessoa().getTelefone())
-                .build()
-               )
-       );
+        Pessoa pessoa = pessoaService.findByCPF(usuario.getPessoa().getCpf());
+        if(pessoa != null) {
+            usuario.setPessoa(pessoa);
+        }else{
+            usuario.setPessoa(pessoaService.incluir(
+                            Pessoa.builder()
+                                    .nome(usuario.getPessoa().getNome())
+                                    .cpf(usuario.getPessoa().getCpf())
+                                    .telefone(usuario.getPessoa().getTelefone())
+                                    .build()
+                    )
+            );
+        }
         criptografarSenha(usuario);
     }
 
@@ -78,9 +84,15 @@ public class UsuarioServiceImpl extends BaseCrudService<Usuario, Long, UsuarioRe
 
 
     private void criptografarSenha(Usuario usuario) {
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        String senhaCodificada = bCryptPasswordEncoder.encode(usuario.getSenha());
-        usuario.setSenha(senhaCodificada);
+        String senha = usuario.getSenha();
+        if (senha != null && !senha.isBlank()){
+            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+            String senhaCodificada = bCryptPasswordEncoder.encode(senha);
+            usuario.setSenha(senhaCodificada);
+        }else{
+            throw new BusinessException(SistemaMessageCode.ERRO_SENHA_NAO_PODE_SER_VAZIA);
+        }
+
     }
 
     public List<Usuario> findUsuarioWithSortAsc(String field){

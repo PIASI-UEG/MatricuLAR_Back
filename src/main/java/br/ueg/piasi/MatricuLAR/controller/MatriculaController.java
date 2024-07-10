@@ -680,8 +680,37 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
         return ResponseEntity.ok(mapper.toMatriculaListagemDTO(matriculas));
     }
 
+
     @PostMapping("/todas-aguardando-renovacao")
-    public void mudaStatusTodasMatriculasAguardandoRenovacao(){
-        service.mudaStatusTodasMatriculasParaAguardandoAceite();
+    @Operation(
+            description = "Muda status todas as matriculas para aguardando renovação",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Listagem do resultado",
+                    content = {@Content(
+                            mediaType = "application/json"
+                    )}
+            ), @ApiResponse(
+                    responseCode = "400",
+                    description = "falha ao realizar a busca",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            ), @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = MessageResponse.class
+                            )
+                    )}
+            )}
+    )
+    public ResponseEntity<String> mudaStatusTodasMatriculasAguardandoRenovacao(){
+        return ResponseEntity.ok(service.mudaStatusTodasMatriculasParaAguardandoAceite());
     }
 }

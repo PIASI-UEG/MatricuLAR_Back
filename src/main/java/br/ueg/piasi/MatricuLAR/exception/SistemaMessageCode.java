@@ -22,6 +22,7 @@ public enum SistemaMessageCode implements MessageCode {
     ERRO_EMAIL_INCORRETO("MSG-004", 400),
     SENHA_ANTIGA_INCORRETA("MSG-005", 400),
     ERRO_JA_EXISTE_USUARIO_ADMIN("MSG-006", 400),
+    ERRO_SENHA_NAO_PODE_SER_VAZIA("MSG-007", 400),
 
     //DOCUMENTOS
     ERRO_INCLUIR_DOCUMENTO("MSG-101", 500),
@@ -67,7 +68,7 @@ public enum SistemaMessageCode implements MessageCode {
     ERRO_PERIODO_MATRICULA_NAO_ACEITANDO("MSG-404",400 ),
 
     //ADVERTENCIA
-    ERRO_ADVERTENCIA_NAO_EXISTE("MSG-451", 404)
+    ERRO_ADVERTENCIA_NAO_EXISTE("MSG-451", 404),
     ;
 
     private final String code;
