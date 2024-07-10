@@ -228,7 +228,7 @@ public class MatriculaServiceImpl extends BaseCrudService<Matricula, Long, Matri
             if (Objects.isNull(nascimento)) {
                 throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_RESPONSAVEL_NASCIMENTO_NAO_INFORMADO);
             }
-            if (Period.between(nascimento, LocalDate.now()).getYears() < 18) {
+            if (Period.between(nascimento, LocalDate.now()).getYears() < 14) {
                 throw new BusinessException(SistemaMessageCode.ERRO_MATRICULA_RESPONSAVEL_MENOR_IDADE);
             }
         }
