@@ -1,10 +1,7 @@
 package br.ueg.piasi.MatricuLAR.controller;
 
 
-import br.ueg.piasi.MatricuLAR.dto.DocumentoMatriculaDTO;
-import br.ueg.piasi.MatricuLAR.dto.MatriculaDTO;
-import br.ueg.piasi.MatricuLAR.dto.MatriculaListagemDTO;
-import br.ueg.piasi.MatricuLAR.dto.MatriculaVisualizarDTO;
+import br.ueg.piasi.MatricuLAR.dto.*;
 import br.ueg.piasi.MatricuLAR.enums.StatusMatricula;
 import br.ueg.piasi.MatricuLAR.enums.TipoDocumento;
 import br.ueg.piasi.MatricuLAR.mapper.MatriculaMapper;
@@ -688,7 +685,10 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                     responseCode = "200",
                     description = "Listagem do resultado",
                     content = {@Content(
-                            mediaType = "application/json"
+                            mediaType = "application/json",
+                            schema = @Schema(
+                            implementation = RetornoString.class
+                    )
                     )}
             ), @ApiResponse(
                     responseCode = "400",
@@ -710,7 +710,7 @@ public class MatriculaController extends CrudController<Matricula, MatriculaDTO,
                     )}
             )}
     )
-    public ResponseEntity<String> mudaStatusTodasMatriculasAguardandoRenovacao(){
+    public ResponseEntity<RetornoString> mudaStatusTodasMatriculasAguardandoRenovacao(){
         return ResponseEntity.ok(service.mudaStatusTodasMatriculasParaAguardandoAceite());
     }
 }
